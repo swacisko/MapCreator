@@ -28,7 +28,7 @@ public class localGtfsDatabase {
     private String gtfsDirPath = (new File("").getAbsolutePath()) + "/GTFS/";
 
     private static ArrayList< Stop> stops = null;
-    private static ArrayList< Route> routes = null;
+    public static ArrayList< Route> routes = null;
     private static ArrayList< Shape> shapes = null;
     private static ArrayList< Trip> trips = null;
 }

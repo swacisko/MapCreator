@@ -11,27 +11,26 @@ import java.util.Map;
  *
  * @author swacisko
  */
-public class Stop {
+public class Stop extends GtfsStructure {
 
     public Stop(Map<String, String> d) {
-        data = d;
+        setData(d);
     }
 
     public String getStopId() {
-        return data.get("stop_id");
+        return getData().get("stop_id");
     }
 
     public String getStopName() {
-        return data.get("stop_name");
+        return getData().get("stop_name");
     }
 
     public String getStopLat() {
-        return data.get("stop_lat");
+        return getData().get("stop_lat");
     }
 
     public String getStopLon() {
-        return data.get("stop_lon");
+        return getData().get("stop_lon");
     }
 
-    private Map<String, String> data = null;
 }

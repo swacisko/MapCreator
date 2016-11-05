@@ -1,5 +1,6 @@
 package inz.mapcreator;
 
+import gtfsstructures.localGtfsDatabase;
 import java.awt.EventQueue;
 
 public class Main {
@@ -9,7 +10,13 @@ public class Main {
        // TEST_SVG t = new TEST_SVG();
        // t.test();
         
-        EventQueue.invokeLater(new Runnable(){            
+        
+        localGtfsDatabase.init();
+        
+        System.out.println( localGtfsDatabase.routes );
+        
+        
+        /*EventQueue.invokeLater(new Runnable(){            
                 @Override
                 public void run(){
                     InzFrame frame = new InzFrame();
@@ -17,7 +24,7 @@ public class Main {
                     frame.setResizable(true);
                 }            
             }
-        );
+        );*/
                 
                 
         

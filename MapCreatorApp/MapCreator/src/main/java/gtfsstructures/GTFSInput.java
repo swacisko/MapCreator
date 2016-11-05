@@ -33,7 +33,7 @@ public class GTFSInput {
         //String path = "/home/swacisko/NetBeansProjects/Inzynierka/GTFS/" + filename;
         String path = (new File("").getAbsolutePath()) + "/GTFS/" + filename;
 
-        System.out.println("path = " + path);
+     //   System.out.println("tutajpath = " + path);
 
         ArrayList<String> data = new ArrayList<>();
 
@@ -99,8 +99,11 @@ public class GTFSInput {
     }
 
     public static ArrayList< Map<String, String>> getDataMaps(String filename) {
-        String pth = gtfsDirPath + filename;
-        ArrayList<String> lista = processFile(pth);
+       // String pth = gtfsDirPath + filename;
+        ArrayList<String> lista = processFile(filename);
+        
+       // System.out.println( "mypth = " + pth + " ----------!" );
+        //System.out.println();
 
         ArrayList< Map<String, String>> res = new ArrayList<>();
 

@@ -11,28 +11,27 @@ import java.util.Map;
  *
  * @author swacisko
  */
-public class Shape {
+public class Shape extends GtfsStructure {
 
     public Shape(Map<String, String> d) {
-        data = d;
+        setData(d);
     }
 
     public String getShapeId() {
-        return data.get("shape_id");
+        return getData().get("shape_id");
     }
 
     public String getShapePtLat() {
-        return data.get("shape_pt_lat");
+        return getData().get("shape_pt_lat");
     }
 
     public String getShapePtLon() {
-        return data.get("shape_pt_lon");
+        return getData().get("shape_pt_lon");
     }
 
     public String getShapePtSequence() {
-        return data.get("shape_pt_sequence");
+        return getData().get("shape_pt_sequence");
     }
 
-    private Map<String, String> data = null;
 
 }

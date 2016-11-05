@@ -11,13 +11,11 @@ import java.util.Map;
  *
  * @author swacisko
  */
-public class Trip {
+public class Trip extends GtfsStructure{
 
     public Trip(Map<String, String> d) {
-        data = d;
+        setData(d);
     }
-
    
 
-    private Map<String, String> data = null;
 }

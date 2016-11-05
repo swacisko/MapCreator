@@ -18,6 +18,7 @@ import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
+import mapdrawing.DrawingModule;
 import mapdrawing.SVG;
 
 

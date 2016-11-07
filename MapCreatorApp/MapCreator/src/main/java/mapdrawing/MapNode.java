@@ -6,57 +6,47 @@
 package mapdrawing;
 
 import MCTemplates.Pair;
-import java.awt.Color;
 import java.util.ArrayList;
 
 /**
  *
  * @author swacisko
  */
-public class MapNode {
-    
-    public MapNode(  ){
-        
+public class MapNode extends MapStructure {
+
+    public MapNode(int id) {
+        super(id);
     }
-    
-    
-    
-    
-    public void setColor( Color c ){
-        color = c;
-    }
-    
-    public Color getColor(){
-        return color;
-    }
-    
-    public void setCoords( Pair<Float,Float> p ){
+
+    public void setCoords(Pair<Float, Float> p) {
         coords = p;
     }
-    
-    public Pair<Float,Float> getCoords(){
+
+    public Pair<Float, Float> getCoords() {
         return coords;
     }
-    
-    public void addMapEdge( MapEdge e ){
+
+    public void addMapEdge(MapEdge e) {
         edges.add(e);
     }
-    
+
     // jezeli nie ma krawedzi o takim indeksie, to zwracam null
-    public MapEdge getMapEdge( int index ){
-        if( index >= edges.size() ) return null;
-        else return edges.get(index);
+    public MapEdge getMapEdge(int index) {
+        if (index >= edges.size()) {
+            System.out.println( "Zle indeksowanie w funkcji getMapEdge() w MapNode, zwracam null" );
+            return null;
+        } else {
+            return edges.get(index);
+        }
     }
     
     
     
     
     
-    
-    private Color color = null;
-    
-    private ArrayList<MapEdge> edges = null;
-    
-    private Pair<Float,Float> coords = null;
-    
+
+    private ArrayList<MapEdge> edges = null; // to sa krawedzie o jednym z konców w danym wierzcholku
+    private Pair<Float, Float> coords = null; // to sa wspolrzedne danego wierzcholka na mapie, PRZED NORMALIZACJA!!!
+    // NORMALIZACJA WSPOLRZEDNYCH BEDZIE NASTEPOWALA TUZ PRZED WYPISYWANIEM GOTOWEJ STRUKTURY GRAFU DO SVG
+
 }

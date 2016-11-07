@@ -11,18 +11,10 @@ import MCTemplates.*;
  *
  * @author swacisko
  */
-public class MapEdge {
+public class MapEdge extends MapStructure {
     
-    
-    
-    
-    
-    public void setColor( Color c ){
-        color = c;
-    }
-    
-    public Color getColor(){
-        return color;
+    public MapEdge(int id){
+        super(id);
     }
     
     public void setEnds( Pair<MapNode,MapNode> p ){
@@ -31,14 +23,7 @@ public class MapEdge {
     public Pair<MapNode,MapNode> getEnds(){
         return ends;
     }
-    
-    
-    
-    
-    
-    
-    
-    private Color color = null;    
+       
     private Pair<MapNode,MapNode> ends;
     
     

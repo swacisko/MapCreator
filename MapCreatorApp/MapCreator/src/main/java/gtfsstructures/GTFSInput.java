@@ -161,6 +161,9 @@ public class GTFSInput {
         return res;
     }
 
+    
+    
+    
     public static String gtfsDirPath = (new File("").getAbsolutePath()) + "/GTFS/";
 
 }

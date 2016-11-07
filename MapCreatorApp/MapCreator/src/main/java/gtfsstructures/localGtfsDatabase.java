@@ -21,11 +21,16 @@ public class localGtfsDatabase {
         trips = GTFSInput.getAllTrips();
     }
 
-    public void setGtfsDirPath(String path) {
+    public static void setGtfsDirPath(String path) {
         gtfsDirPath = path;
     }
+    
+    public static String write(){
+        String s = stops.toString() + routes.toString() + shapes.toString() + trips.toString();
+        return s;
+    }
 
-    private String gtfsDirPath = (new File("").getAbsolutePath()) + "/GTFS/";
+    private static String gtfsDirPath = (new File("").getAbsolutePath()) + "/GTFS/";
 
     private static ArrayList< Stop> stops = null;
     public static ArrayList< Route> routes = null;

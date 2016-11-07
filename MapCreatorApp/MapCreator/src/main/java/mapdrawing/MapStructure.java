@@ -13,8 +13,8 @@ import java.awt.Color;
  */
 public class MapStructure {
 
-    public MapStructure(int id) {
-        ID = id;
+    public MapStructure() {
+        ID = MapGraph.getFreeID();
     }
 
     public void setColor(Color c) {

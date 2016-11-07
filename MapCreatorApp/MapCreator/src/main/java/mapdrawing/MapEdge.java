@@ -5,27 +5,26 @@
  */
 package mapdrawing;
 
-import java.awt.Color;
 import MCTemplates.*;
+
 /**
  *
  * @author swacisko
  */
 public class MapEdge extends MapStructure {
-    
-    public MapEdge(int id){
-        super(id);
+
+    public MapEdge() {
+        super();
     }
-    
-    public void setEnds( Pair<MapNode,MapNode> p ){
+
+    public void setEnds(Pair<MapNode, MapNode> p) {
         ends = p;
     }
-    public Pair<MapNode,MapNode> getEnds(){
+
+    public Pair<MapNode, MapNode> getEnds() {
         return ends;
     }
-       
-    private Pair<MapNode,MapNode> ends;
-    
-    
-    
+
+    private Pair<MapNode, MapNode> ends;
+
 }

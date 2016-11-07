@@ -13,7 +13,7 @@ public class Main {
         
         localGtfsDatabase.init();
         
-        System.out.println( localGtfsDatabase.routes );
+        System.out.println( localGtfsDatabase.write() );
         
         
         /*EventQueue.invokeLater(new Runnable(){            

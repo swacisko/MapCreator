@@ -57,6 +57,18 @@ public class MapNode extends MapStructure {
     
     // NIE MA SENSU PISAC FUNKCJI getNeighbourByID, poniewaz gdyby to ID bylo znane, to moznaby wziac tego sasiada prosto z grafu, a nie z 'listy sasiedztwa' wierzcholka
 
+    // funkcja usuwa krawedz, ale nie usuwa z te krawedzi z listy krawdzi sasiada (ta funkcja powinna być wiec wywolywana tylko przez funkcje MapGraph.removeMapEdgeByID
+    public void removeMapEdgeByID( int id ){
+        for( int i=0; i<edges.size(); i++ ){
+            if( edges.get(i).getID() == id ){
+                edges.remove(i);
+                return;
+            }
+        }        
+        System.out.println( "Nie ma krawedzi o ID = " + id + " w removeMapEdgeByID w MapNode" );
+    }
+    
+    
     private ArrayList<MapEdge> edges = null; // to sa krawedzie o jednym z konców w danym wierzcholku
     private Pair<Float, Float> coords = null; // to sa wspolrzedne danego wierzcholka na mapie, PRZED NORMALIZACJA!!! czyli po prostu wspolrzedne z GTFS
     // NORMALIZACJA WSPOLRZEDNYCH BEDZIE NASTEPOWALA TUZ PRZED WYPISYWANIEM GOTOWEJ STRUKTURY GRAFU DO SVG

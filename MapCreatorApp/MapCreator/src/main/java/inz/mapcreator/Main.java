@@ -2,6 +2,7 @@ package inz.mapcreator;
 
 import gtfsstructures.localGtfsDatabase;
 import java.awt.EventQueue;
+import mapdrawing.MapGraph;
 
 public class Main {
 
@@ -11,10 +12,12 @@ public class Main {
        // t.test();
         
         
-        localGtfsDatabase.init();
+        //localGtfsDatabase.init();
         
         
-        System.out.println( localGtfsDatabase.write() );
+        //System.out.println( localGtfsDatabase.write() );
+        
+        MapGraph g = new MapGraph();
         
         
         /*EventQueue.invokeLater(new Runnable(){            

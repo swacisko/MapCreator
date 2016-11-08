@@ -13,6 +13,7 @@ import java.util.Map;
  */
 public class Stop extends GtfsStructure {
 
+    
     public Stop(Map<String, String> d) {
         setData(d);
     }

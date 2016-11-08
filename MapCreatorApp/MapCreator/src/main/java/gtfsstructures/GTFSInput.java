@@ -13,6 +13,7 @@ public class GTFSInput {
 
     public GTFSInput() {
     }
+    
 
     // this function sets path to the GTFS folder we need to have
     public static void setGtfsDirPath(String path) {

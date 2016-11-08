@@ -13,6 +13,7 @@ import java.util.Map;
  */
 public class GtfsStructure {
     
+    
     @Override
     public String toString(){
         return data.toString();

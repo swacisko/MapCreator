@@ -13,7 +13,7 @@ public class DrawingModule {
         svg = s;
 
     }
-
+    
     // konwertuje wspolrzedne zapisane w stringu do inta - np 52.254167 zostanie zapisane jako int 52254167
     public int convertToInt(String coord) {
         int p = 0;

@@ -13,6 +13,7 @@ import java.util.Map;
  */
 public class Shape extends GtfsStructure {
 
+    
     public Shape(Map<String, String> d) {
         setData(d);
     }

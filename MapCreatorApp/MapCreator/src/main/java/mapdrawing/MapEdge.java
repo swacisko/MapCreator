@@ -13,7 +13,6 @@ import MCTemplates.*;
  */
 public class MapEdge extends MapStructure {
 
-    
     public MapEdge() {
         super();
     }
@@ -25,20 +24,19 @@ public class MapEdge extends MapStructure {
     public Pair<MapNode, MapNode> getEnds() {
         return ends;
     }
-    
-    
+
     // zwraca true, jezeli jeden z koncow krawedzi ma ID = id
-    public boolean hasEndInMapNodeOfID( int id ){
-        return ( (ends.getST().getID() == id) || (ends.getND().getID() == id) );
+    public boolean hasEndInMapNodeOfID(int id) {
+        return ((ends.getST().getID() == id) || (ends.getND().getID() == id));
     }
-    
+
     @Override
-    public String toString(){
+    public String toString() {
         String s = super.toString();
         s += "\tends:  ID1 = " + ends.getST().getID() + "   ID2 = " + ends.getND().getID();
         return s;
     }
 
-    private Pair<MapNode, MapNode> ends = new Pair<>(null,null);
+    private Pair<MapNode, MapNode> ends = new Pair<>(null, null);
 
 }

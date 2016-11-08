@@ -14,6 +14,7 @@ import java.util.ArrayList;
  */
 public class localGtfsDatabase {
 
+    
     public static void init() {
         stops = GTFSInput.getAllStops();
         routes = GTFSInput.getAllRoutes();

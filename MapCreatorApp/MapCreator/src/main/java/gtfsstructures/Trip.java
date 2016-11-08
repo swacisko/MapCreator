@@ -13,6 +13,7 @@ import java.util.Map;
  */
 public class Trip extends GtfsStructure{
 
+    
     public Trip(Map<String, String> d) {
         setData(d);
     }

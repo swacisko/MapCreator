@@ -69,7 +69,8 @@ public class DrawingModule {
 
         //svg.setSize( RBCorner.x - LUCorner.x, LUCorner.y - RBCorner.y );
         int A = 1000, B = 600;
-        svg.setSize(A, B);
+        svg.setWidth(A);
+        svg.setHeight(B);
 
         svg.beginSVG();
 
@@ -84,7 +85,7 @@ public class DrawingModule {
             System.out.println("stop at (" + x + "," + y + ")");
 
             P1 = normalizeCoordinate(new Point2D.Float(x, y), LUCorner, RBCorner, A, B);
-            svg.addPoint((int) P1.x, (int) P1.y);
+            svg.addCircle((int) P1.x, (int) P1.y, 5);
             if (i > 0 && P2 != null) {
                 svg.addLine((int) P1.x, (int) P1.y, (int) P2.x, (int) P2.y);
             }

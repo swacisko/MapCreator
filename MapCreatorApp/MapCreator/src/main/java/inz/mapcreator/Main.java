@@ -13,6 +13,7 @@ public class Main {
         
         localGtfsDatabase.init();
         
+        
         System.out.println( localGtfsDatabase.write() );
         
         

@@ -13,6 +13,7 @@ import java.util.Map;
  */
 public class Route extends GtfsStructure {
 
+    
     public Route(Map<String, String> d) {
         setData(d);
     }

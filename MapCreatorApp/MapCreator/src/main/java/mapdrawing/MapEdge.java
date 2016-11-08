@@ -13,6 +13,7 @@ import MCTemplates.*;
  */
 public class MapEdge extends MapStructure {
 
+    
     public MapEdge() {
         super();
     }

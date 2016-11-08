@@ -17,6 +17,7 @@ public class MapNode extends MapStructure {
     public MapNode() {
         super();
     }
+    
 
     public void setCoords(Pair<Float, Float> p) {
         coords = p;

@@ -16,7 +16,7 @@ public class MapStructure {
     public MapStructure() {
         ID = MapGraph.getFreeID();
     }
-
+    
     public void setColor(Color c) {
         color = c;
     }

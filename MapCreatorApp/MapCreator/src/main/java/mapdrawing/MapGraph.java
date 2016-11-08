@@ -6,8 +6,10 @@
 package mapdrawing;
 
 import MCTemplates.Pair;
+import com.sun.management.jmx.Trace;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Scanner;
 import java.util.Set;
 
 /**
@@ -36,8 +38,26 @@ public class MapGraph {
         edges = list;
     }
 
+    // dodaje dana krawedz do grafu
     public void addMapEdge(MapEdge e) {
         edges.add(e);
+        Pair<MapNode,MapNode> p = e.getEnds();
+        p.getST().addMapEdge(e);
+        p.getND().addMapEdge(e);
+    }
+    
+    // dodaje krawedz, laczaca dwa wierzcholki o ID rownych ID1 oraz ID2
+    public void addMapEdge( int id1, int id2 ){
+        MapEdge e = new MapEdge();
+        MapNode n1 = getMapNodeByID(id1);
+        MapNode n2 = getMapNodeByID(id2);
+        if( n1 == null || n2 == null ){
+            System.out.println( "Nie ma wierzcholka o ID1 = " + id1 + "  lun id2 = " + id2 + "   --> w addMapEdge,  Nie dodaje krawedzi" );
+        }else{
+            e.setEnds( new Pair<>( n1,n2 ) );
+            n1.addMapEdge(e);
+            n2.addMapEdge(e);
+        }
     }
 
     // jezeli nie ma krawedzi o takim indeksie, to zwracam null
@@ -127,16 +147,100 @@ public class MapGraph {
             }
         }
         
-        // czy tutaj sie nie popsuje cos?? czy usuwajac krawedz z edges nie posypie sie petla przelatujaca po wszystkich elementach z edges?
-        for( MapEdge e : edges ){ // usuwam z listy krawedzi grafu wszystkie 
+        ArrayList<MapEdge> copy = new ArrayList<>();
+        for( MapEdge e : edges ){ // usuwam z listy krawedzi grafu wszystkie krawedzie, ktorych co najmniej jeden koniec jest w wierzcholku o ID=id
             if( e.hasEndInMapNodeOfID(id) ){
-                removeMapEdgeByID( e.getID() );
+                Pair<MapNode,MapNode> p = e.getEnds();
+                p.getST().removeMapEdgeByID( e.getID() );
+                p.getND().removeMapEdgeByID( e.getID() );
+            }
+            else{
+                copy.add(e);
             }
         }
+        edges = copy;
         
         System.out.println("Nie ma MapNode o ID = " + id + ". Nic nie usuwam");
     }
 
+    
+    public String toSrString(){
+        String s = "nodes:\tsize = " + nodes.size() + "\n";
+        for( int i=0; i<nodes.size();i++ ){
+            s += nodes.get(i).toString() + "\n";
+        }
+        s += "\nedges:\tsize = " + edges.size() + "\n";
+        for(int i=0; i<edges.size(); i++){
+            s += edges.get(i).toString() + "\n";
+        }
+        return s;
+    }
+    
+    
+    // funkcja pozwala testowac graf - dodawac i usuwac wierzcholki lub krawedzie
+    public void testGraph(){
+        
+        while( true ){
+            System.out.println( "1. Dodaj wierzcholek\n2.Usun wierzcholek\n3.Dodaj krawedz\n4.Usun krawedz\n5.Wypisz graf\n9.Wyjdz" );
+            Scanner in = new Scanner( System.in );
+            int ans = in.nextInt();
+            
+            switch(ans){
+                case 1:{
+                    MapNode n = new MapNode();
+                    addMapNode(n);
+                    System.out.println( "Dodalem wierzcholek o ID = " + n.getID() );                   
+                    break;
+                }
+                case 2:{
+                    System.out.println( "Podaj ID wierzcholka, ktory chcesz usunac z grafu:" );
+                    int a = in.nextInt();   
+                    removeMapNodeByID(a);
+                    System.out.println( "Wykonalem zadanie usuniecia wierzhcolka o id = " + a );
+                    
+                    break;
+                }
+                case 3:{
+                    System.out.println( "Podaj dwa ID wierzcholkow, ktore maja zostac polaczone:" );
+                    int a = in.nextInt();
+                    int b = in.nextInt();
+                    addMapEdge(a,b);
+                    System.out.println( "Wykonalem prosbe dodania krawedz pomiedzy wierzcholkami o id rownych " + a + " oraz " + b ); 
+                    break;
+                }
+                case 4:{
+                    System.out.println( "Podaj id krawedzi, ktora chcesz usunac:" );
+                    int a = in.nextInt();
+                    removeMapEdgeByID(a);
+                    System.out.println( "Wykonalem operacje usuwania krawedzi z grafu" );
+                                       
+                    break;
+                }
+                case 5:{
+                    System.out.println( this );
+                    
+                    break;
+                }
+                case 9:{
+                    return;
+                }
+                default:{
+                    System.out.println( "Wybrales dupny numer. Wybierz inny." );
+                }
+                
+                
+            }
+            
+            
+            
+        }
+        
+        
+    }
+    
+    
+    
+    //*******************************************************  STATIC BLOCK - ID generators
     public static int getFreeID() {
         int p = 1;
         while (unavailableIds.contains(p)) {
@@ -150,6 +254,8 @@ public class MapGraph {
     public static void makeFreeID(int id) {
         unavailableIds.remove(id);
     }
+    
+    //******************************************************* END OF STATIC BLOCK
 
     private static Set<Integer> unavailableIds = new HashSet<>();
 

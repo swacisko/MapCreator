@@ -30,6 +30,13 @@ public class MapEdge extends MapStructure {
     public boolean hasEndInMapNodeOfID( int id ){
         return (ends.getST().getID() == id) || (ends.getND().getID() == id);
     }
+    
+    @Override
+    public String toString(){
+        String s = super.toString();
+        s += "\tends:  ID1 = " + ends.getST().getID() + "   ID2 = " + ends.getND().getID();
+        return s;
+    }
 
     private Pair<MapNode, MapNode> ends;
 

@@ -36,6 +36,11 @@ public class MapStructure {
     public boolean equals(MapStructure oth) {
         return ID == oth.ID;
     }
+    
+    @Override
+    public String toString(){
+        return "ID = " + ID + "    color = " + color;
+    }
 
     private int ID = -1;
 

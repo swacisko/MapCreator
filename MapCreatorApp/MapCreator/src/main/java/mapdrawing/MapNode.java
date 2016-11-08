@@ -28,7 +28,7 @@ public class MapNode extends MapStructure {
 
     public void addMapEdge(MapEdge e) {
         edges.add(e);
-    }
+    }    
 
     // jezeli nie ma krawedzi o takim indeksie, to zwracam null
     public MapEdge getMapEdge(int index) {
@@ -57,7 +57,7 @@ public class MapNode extends MapStructure {
     
     // NIE MA SENSU PISAC FUNKCJI getNeighbourByID, poniewaz gdyby to ID bylo znane, to moznaby wziac tego sasiada prosto z grafu, a nie z 'listy sasiedztwa' wierzcholka
 
-    // funkcja usuwa krawedz, ale nie usuwa z te krawedzi z listy krawdzi sasiada (ta funkcja powinna być wiec wywolywana tylko przez funkcje MapGraph.removeMapEdgeByID
+    // funkcja usuwa krawedz, ale nie usuwa tej krawedzi z listy krawdzi sasiada (ta funkcja powinna być wiec wywolywana tylko przez funkcje MapGraph.removeMapEdgeByID
     public void removeMapEdgeByID( int id ){
         for( int i=0; i<edges.size(); i++ ){
             if( edges.get(i).getID() == id ){
@@ -66,6 +66,15 @@ public class MapNode extends MapStructure {
             }
         }        
         System.out.println( "Nie ma krawedzi o ID = " + id + " w removeMapEdgeByID w MapNode" );
+    }
+    
+    @Override
+    public String toString(){
+        String s = super.toString();
+        s += "\tedges:\t";
+        for(int i=0; i<edges.size();i++) s += edges.get(i).getID() + " ";
+        s += "\tcoords:\t" + coords;
+        return s;
     }
     
     

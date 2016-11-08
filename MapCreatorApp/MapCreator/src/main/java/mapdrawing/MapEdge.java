@@ -29,7 +29,7 @@ public class MapEdge extends MapStructure {
     
     // zwraca true, jezeli jeden z koncow krawedzi ma ID = id
     public boolean hasEndInMapNodeOfID( int id ){
-        return (ends.getST().getID() == id) || (ends.getND().getID() == id);
+        return ( (ends.getST().getID() == id) || (ends.getND().getID() == id) );
     }
     
     @Override
@@ -39,6 +39,6 @@ public class MapEdge extends MapStructure {
         return s;
     }
 
-    private Pair<MapNode, MapNode> ends;
+    private Pair<MapNode, MapNode> ends = new Pair<>(null,null);
 
 }

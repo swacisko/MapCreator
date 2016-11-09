@@ -21,6 +21,7 @@ public class TEST_SVG {
             x.add(40);
             x.add(280);
             x.add(370);
+            
             y.add(10);
             y.add(180);
             y.add(140);

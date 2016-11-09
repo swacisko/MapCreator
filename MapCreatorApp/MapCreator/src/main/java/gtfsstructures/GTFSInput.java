@@ -141,9 +141,13 @@ public class GTFSInput {
         return res;
     }
 
-    public static ArrayList< Shape> getAllShapes() {
+    public static ArrayList< Shape > getAllShapes() {
         ArrayList< Shape> res = new ArrayList<>();
         ArrayList< Map<String,String> > dataMaps = getDataMaps( "shapes.txt" );
+        
+        
+        
+        
         for( Map<String,String> m : dataMaps ){
             Shape stp = new Shape( m );
             res.add( stp );

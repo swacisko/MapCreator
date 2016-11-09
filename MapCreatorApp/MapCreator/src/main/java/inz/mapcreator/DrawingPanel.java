@@ -122,8 +122,8 @@ public class DrawingPanel extends JPanel{
                            return;
                        }
                        
-                       DrawingModule module = new DrawingModule( new SVG() );
-                       module.drawStopsFile( textfield.getText() );
+                    //   DrawingModule module = new DrawingModule( new SVG() );
+                     //  module.drawStopsFile( textfield.getText() );
                        
                        ArrayList<String> stopdata = null;
                        for( String  s : stops ){

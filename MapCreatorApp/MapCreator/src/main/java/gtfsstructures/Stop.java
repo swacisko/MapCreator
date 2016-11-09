@@ -5,13 +5,15 @@
  */
 package gtfsstructures;
 
+import MCTemplates.Drawable;
+import MCTemplates.Pair;
 import java.util.Map;
 
 /**
  *
  * @author swacisko
  */
-public class Stop extends GtfsStructure {
+public class Stop extends GtfsStructure implements Drawable{
 
     
     public Stop(Map<String, String> d) {
@@ -32,6 +34,13 @@ public class Stop extends GtfsStructure {
 
     public String getStopLon() {
         return getData().get("stop_lon");
+    }
+
+    @Override
+    public Pair<Float, Float> getCoords() {
+        float lat = Float.parseFloat( getStopLat() );
+        float lon = Float.parseFloat( getStopLon() );
+        return new Pair<>(lat,lon);
     }
 
 }

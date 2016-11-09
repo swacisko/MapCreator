@@ -1,136 +1,132 @@
 package mapdrawing;
 
-import gtfsstructures.GTFSInput;
-
-import java.awt.geom.Point2D;
+import MCTemplates.Drawable;
+import MCTemplates.Pair;
+import gtfsstructures.*;
+import gtfsstructures.localGtfsDatabase;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class DrawingModule {
 
     public DrawingModule(SVG s) {
         svg = s;
-
+        localGtfsDatabase.init();        
     }
     
-    // konwertuje wspolrzedne zapisane w stringu do inta - np 52.254167 zostanie zapisane jako int 52254167
-    public int convertToInt(String coord) {
-        int p = 0;
-        int res = 0;
-        if (coord.length() > 0 && coord.charAt(0) == '-') {
-            p++;
-        }
-        while (p < coord.length()) {
-            if (coord.charAt(p) != '.') {
-                res *= 10;
-                res += ((int) coord.charAt(p) - '0');
+    
+    private void drawFragment( ArrayList<Shape> shapeById ){
+        
+    }
+    
+    
+    // jako parametry - LBC - left bottom corner, RUC right upper corner i coords - wspolrzedne do znormalizowania
+    // LBC i RUC to wspolrzedne najbardziej wysunietych struktur grafu z malym dodatkiem (np +- 10)
+    private Pair<Integer,Integer> normalizeCoordinates( Pair<Float,Float> LBC, Pair<Float,Float> RUC, Pair<Float,Float> coords ){
+        float x = coords.getST();
+        float y = coords.getND();
+        
+        x -= LBC.getST();
+        y -= LBC.getND(); // translacja tak, aby LBC byl w punkcie (0,0)
+        
+        float dW = RUC.getST() - LBC.getST();
+        float dH = RUC.getND() - LBC.getND();
+        
+        if( dW == 0 ) dW = 0.00001f;
+        if( dH == 0 ) dH = 0.00001f;
+        
+        y = dH - y; // zamiana wspolrzednych na wspolrzedne mapowe w svg        
+        
+        float W = (float) svg.getWidth();
+        float H = (float) svg.getHeight();
+        
+        int x2 = Math.round( (W*x) / dW);
+        int y2 = Math.round( (W*y) / dH );
+             
+        return new Pair<>(x2,y2);
+    }
+    
+    // dla zadanej listy struktur zwraca RUC i LBC
+    // struktury w liscie structures musza implementowac Drawable
+    // zwraca pare <LBC,RUC>
+    private Pair< Pair<Float,Float>, Pair<Float,Float> > getLBCandRUC( ArrayList<Drawable> structures ){
+        Pair<Float,Float> LBC = new Pair<>( Float.MAX_VALUE, Float.MAX_VALUE );
+        Pair<Float,Float> RUC = new Pair<>( Float.MIN_VALUE, Float.MIN_VALUE );
+        
+        for( Drawable d : structures ){
+            Pair<Float,Float> p = d.getCoords();
+            if( p.getST() < LBC.getST() ){
+                LBC.setST( p.getST() );
             }
-            p++;
+            
+            if( p.getND() < LBC.getND() ){
+                LBC.setND( p.getND() );
+            }
+            
+            if( p.getST() > RUC.getST() ){
+                RUC.setST( p.getST() );
+            }
+            
+            if( p.getND() > RUC.getND() ){
+                RUC.setND( p.getND() );
+            }            
         }
-        if (coord.length() > 0 && coord.charAt(0) == '-') {
-            res = -res;
-        }
-        return res;
+        
+        return new Pair<>( LBC,RUC );
+        
     }
-
-    private Point2D.Float normalizeCoordinate(Point2D.Float p, Point2D.Float LUCorner, Point2D.Float RBCorner, int A, int B) {
-        int x = (int) (A * ((double) (p.x - LUCorner.x) / (RBCorner.x - LUCorner.x)));
-        int y = (int) (B * ((double) (LUCorner.y - p.y) / (LUCorner.y - RBCorner.y)));
-
-        System.out.println("x = " + p.x + "   y = " + p.y + "   I return normalized point (" + x + "," + y + ")");
-
-        return new Point2D.Float(x, y);
-    }
-
-    // UWAGA - może nie dzialac dla miast na przelomie 180- stopni szerokosci geograficznej - wtedy narysuje linie przez caly swiat :)
-    private void drawStops() {
-        Point2D.Float LUCorner = new Point2D.Float(Integer.MAX_VALUE, Integer.MIN_VALUE); // left upper corner
-        Point2D.Float RBCorner = new Point2D.Float(Integer.MIN_VALUE, Integer.MAX_VALUE); // right bottom corner
-
-        for (Map<String, String> m : allStops) {
-            float x = Float.parseFloat(m.get("stop_lon"));
-            float y = Float.parseFloat(m.get("stop_lat"));
-
-            System.out.println("stop at (" + x + "," + y + ")");
-
-            LUCorner.x = Math.min(x, LUCorner.x);
-            LUCorner.y = Math.max(y, LUCorner.y);
-
-            RBCorner.x = Math.max(x, RBCorner.x);
-            RBCorner.y = Math.min(y, RBCorner.y);
-        }
-
-        LUCorner.x *= 0.99;
-        LUCorner.y *= 1.01;
-
-        RBCorner.x *= 1.01;
-        RBCorner.y *= 0.99;
-
-        //svg.setSize( RBCorner.x - LUCorner.x, LUCorner.y - RBCorner.y );
-        int A = 1000, B = 600;
-        svg.setWidth(A);
-        svg.setHeight(B);
-
+    
+    // funkcja tmczasowa - do zmiany, tylko do zaprezentowania dzialania
+    public void drawShapes(){
+        Set<String> set = new HashSet<String>();        
         svg.beginSVG();
-
-        System.out.println("LUCorner " + LUCorner + "   RBCorner " + RBCorner);
-
-        Point2D.Float P1 = null, P2 = null;
-        for (int i = 0; i < allStops.size(); i++) {
-            Map<String, String> m = allStops.get(i);
-            float x = Float.parseFloat(m.get("stop_lon"));
-            float y = Float.parseFloat(m.get("stop_lat"));
-
-            System.out.println("stop at (" + x + "," + y + ")");
-
-            P1 = normalizeCoordinate(new Point2D.Float(x, y), LUCorner, RBCorner, A, B);
-            svg.addCircle((int) P1.x, (int) P1.y, 5);
-            if (i > 0 && P2 != null) {
-                svg.addLine((int) P1.x, (int) P1.y, (int) P2.x, (int) P2.y);
-            }
-            P2 = P1;
+        
+        ArrayList<Shape> allShapes = localGtfsDatabase.getAllShapes();
+        ArrayList<Shape> shapeById = null;
+                
+        for( Shape s : allShapes ){            
+            if( !set.contains( s.getShapeId() ) ){
+                set.add( s.getShapeId() );
+                shapeById = localGtfsDatabase.getAllShapesOfID( s.getShapeId() );
+                               
+                Pair< Pair<Float,Float>, Pair<Float,Float> > LBCRUC = getLBCandRUC( new ArrayList<Drawable>( shapeById ) );
+                Pair<Float,Float> LBC = LBCRUC.getST();
+                Pair<Float,Float> RUC = LBCRUC.getND();
+                
+                ArrayList<Integer> x = new ArrayList<>();
+                ArrayList<Integer> y = new ArrayList<>(); // tego nie powinno byc - bedzie do czasu gdy Asia zrobic funkcje dodawania lini dla par
+                
+                
+                for( Shape sh :shapeById ){
+                    Pair<Integer,Integer> norm = normalizeCoordinates(LBC, RUC, sh.getCoords() );
+                    x.add( norm.getST() );
+                    y.add( norm.getND() );
+                }               
+                
+                svg.addPolyline(x, y);
+                
+            }           
         }
-
+        
+        
+        
+        
         svg.endSVG();
     }
+    
+    
+    
 
-    public void drawStopsFile(String filename) {
-        ArrayList<String> stops = GTFSInput.processFile(filename);
-        Map<String, String> mapa = new HashMap<>();
+    
 
-        allStops.clear();
-
-        ArrayList<String> header = GTFSInput.processFileData(stops.get(0));
-        ArrayList<String> singleStop;
-
-        for (int i = 1; i < stops.size(); i++) {
-            singleStop = GTFSInput.processFileData(stops.get(i));
-
-            if (singleStop.size() != header.size()) {
-                System.out.println("BLAD w wielkosci tablic. DrawingModule, drawStopsFile");
-                System.out.println("header: ");
-                for (String s : header) {
-                    System.out.println(s);
-                }
-                System.out.println("\n" + singleStop + ": ");
-                for (String s : singleStop) {
-                    System.out.println(s);
-                }
-
-            } else {
-                for (int j = 0; j < singleStop.size(); j++) { // here i create a map
-                    mapa.put(header.get(j), singleStop.get(j));
-                }
-
-                allStops.add(new HashMap<>(mapa));
-            }
-        }
-
-        drawStops();
-
-    }
+   
 
     private SVG svg = null;
-    private ArrayList< Map<String, String>> allStops = new ArrayList<>();
+   // private localGtfsDatabase database = new localGtfsDatabase(); // tego nie musi tutaj wogole byc poniewaz wszystko w lgdb jest statyczne
+    private MapGraph graph = new MapGraph();
+
+    
+    
 }

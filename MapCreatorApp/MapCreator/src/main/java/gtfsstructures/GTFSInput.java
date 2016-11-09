@@ -59,7 +59,9 @@ public class GTFSInput {
             if (data.charAt(i) == ',') {
                 if (!fragment.equals("")) {
                     if (fragment.endsWith("\"")) {
-                        fragment = fragment.substring(1, fragment.length() - 2);
+                    //    System.out.println( "fragment = " + fragment );
+                        fragment = fragment.substring(1, fragment.length() - 1);
+                     //   System.out.println( "\tnow fragment = " + fragment );
                     }
                     list.add(fragment);
                     fragment = "";

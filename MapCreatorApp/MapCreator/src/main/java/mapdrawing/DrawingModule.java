@@ -13,9 +13,47 @@ public class DrawingModule {
 
     public DrawingModule(SVG s) {
         svg = s;
-        localGtfsDatabase.init();        
+        localGtfsDatabase.init();  
+        createLBCandRUC();
+                
     }
     
+    public void beginSVG(){
+        svg.beginSVG();        
+        svg.addPolylineStyle();
+        svg.addCircleStyle();
+        svg.addRectangleStyle();
+        svg.addEllipseStyle();
+    }
+    
+    public void endSVG(){
+        svg.endSVG();
+    }
+    
+    private void compareLBCRUC( Pair< Pair<Float,Float>, Pair<Float,Float> > LBCRUC ){
+        if( LBCRUC.getST().getST() < LBC.getST() ){
+            LBC.setST( LBCRUC.getST().getST() );
+        }
+        if( LBCRUC.getST().getND() < LBC.getND() ){
+            LBC.setND( LBCRUC.getST().getND() );
+        }
+        if( LBCRUC.getND().getST() > RUC.getST() ){
+            RUC.setST( LBCRUC.getND().getST() );
+        }
+        if( LBCRUC.getND().getND() > RUC.getND() ){
+            RUC.setND( LBCRUC.getND().getND() );
+        }   
+        
+    }
+    
+    private void createLBCandRUC(){
+        Pair< Pair<Float,Float>, Pair<Float,Float> > LBCRUC = getLBCandRUC( new ArrayList<Drawable>( localGtfsDatabase.getAllShapes() ) );
+        LBC = LBCRUC.getST();
+        RUC = LBCRUC.getND();
+        
+        LBCRUC = getLBCandRUC( new ArrayList<Drawable>( localGtfsDatabase.getAllStops()) );        
+        compareLBCRUC( LBCRUC );
+    }
     
     private void drawFragment( ArrayList<Shape> shapeById ){
         
@@ -81,23 +119,19 @@ public class DrawingModule {
     // funkcja tmczasowa - do zmiany, tylko do zaprezentowania dzialania
     public void drawShapes(){
         Set<String> set = new HashSet<String>();        
-        svg.beginSVG();
         
         ArrayList<Shape> allShapes = localGtfsDatabase.getAllShapes();
         ArrayList<Shape> shapeById = null;
-                
+        
+        int counter = 0;
+               
         for( Shape s : allShapes ){            
             if( !set.contains( s.getShapeId() ) ){
                 set.add( s.getShapeId() );
                 shapeById = localGtfsDatabase.getAllShapesOfID( s.getShapeId() );
-                               
-                Pair< Pair<Float,Float>, Pair<Float,Float> > LBCRUC = getLBCandRUC( new ArrayList<Drawable>( shapeById ) );
-                Pair<Float,Float> LBC = LBCRUC.getST();
-                Pair<Float,Float> RUC = LBCRUC.getND();
-                
+                     
                 ArrayList<Integer> x = new ArrayList<>();
                 ArrayList<Integer> y = new ArrayList<>(); // tego nie powinno byc - bedzie do czasu gdy Asia zrobic funkcje dodawania lini dla par
-                
                 
                 for( Shape sh :shapeById ){
                     Pair<Integer,Integer> norm = normalizeCoordinates(LBC, RUC, sh.getCoords() );
@@ -105,7 +139,12 @@ public class DrawingModule {
                     y.add( norm.getND() );
                 }               
                 
-                svg.addPolyline(x, y);
+                svg.addPolylinePlain(x, y);
+                
+                System.out.println( "Narysowalem linie dla " + s.getShapeId() );
+                
+                counter++;
+               // if( counter >= 300 ) break;
                 
             }           
         }
@@ -116,9 +155,25 @@ public class DrawingModule {
         svg.endSVG();
     }
     
+    public void drawStops(){
+        ArrayList<Stop> stops = localGtfsDatabase.getAllStops();
+        int counter = 0;
+        for( Stop s : stops ){
+            float x = Float.parseFloat( s.getStopLat() );
+            float y = Float.parseFloat( s.getStopLon() );
+            Pair<Integer,Integer> p = normalizeCoordinates(LBC, RUC, new Pair<>(x,y) );
+            svg.addCirclePlain(p.getST(), p.getND(),3 );
+            System.out.println( "Dodalem przystanek o id = " + s.getStopId() + "   x = " + p.getST() + "  y = " + p.getND() );
+            
+           // if( counter++ > 4000 ) break;
+        }
+    }
     
-    
-
+    public void drawAll(){
+        drawStops();
+        drawShapes();
+        
+    }
     
 
    
@@ -126,7 +181,9 @@ public class DrawingModule {
     private SVG svg = null;
    // private localGtfsDatabase database = new localGtfsDatabase(); // tego nie musi tutaj wogole byc poniewaz wszystko w lgdb jest statyczne
     private MapGraph graph = new MapGraph();
-
+    
+    private Pair<Float,Float> RUC = null;
+    private Pair<Float,Float> LBC = null;
     
     
 }

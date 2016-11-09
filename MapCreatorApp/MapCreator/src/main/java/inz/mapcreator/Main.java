@@ -1,13 +1,14 @@
 package inz.mapcreator;
 
-import mapdrawing.TEST_SVG;
+import mapdrawing.*;
 
 public class Main {
 
     public static void main(String[] args) {
 
-       TEST_SVG t = new TEST_SVG();
-       t.test();
+     //  TEST_SVG t = new TEST_SVG();
+     //  t.test();
+        
         //localGtfsDatabase.init();
         //System.out.println( localGtfsDatabase.write() );
         
@@ -16,6 +17,11 @@ public class Main {
         g.testGraph();
         */
         
+        
+        DrawingModule dm = new DrawingModule( new SVG( 2000,2000,"Pierwsze rysowanie" ) );
+        dm.beginSVG();
+        dm.drawAll();
+        dm.endSVG();
         
         /*EventQueue.invokeLater(new Runnable(){            
          @Override

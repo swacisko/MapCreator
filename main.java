@@ -1,3 +1,4 @@
+import java.awt.Point;
 import java.util.ArrayList;
 
 
@@ -24,6 +25,13 @@ public class main {
 		y.add(280);
 		y.add(60);
 		
+		ArrayList<Point> points = new ArrayList<Point>();
+		points.add(point(10,10));
+		points.add(point(80,180));
+		points.add(point(40,140));
+		points.add(point(280,280));
+		points.add(point(370,60));
+		
 		graphic = new SVG(800,500,"linia");
 		graphic.beginSVG();
 		graphic.addPolylineStyle();
@@ -33,13 +41,18 @@ public class main {
 		graphic.addLine(40, 300, 50, 400);
 		graphic.addCirclePlain(40, 300,4);
 		graphic.addCirclePlain(50, 400,4);
-		graphic.addPolylinePlain(x, y);
+		graphic.addPolylinePlain(points);
 		for (int i=0;i<x.size();i++) graphic.addCirclePlain((int)x.get(i), (int)y.get(i),4);
 		graphic.addText(70, 30, "Rozkład jazdy");
 		graphic.addRectangleRoundPlain(200, 300, 20, 20, 100, 50);
 		graphic.addEllipsePlain(300, 420, 100, 50);
 		graphic.endSVG();
 
+	}
+
+	private static Point point(int i, int j) {
+		Point a = new Point(i,j);
+		return a;
 	}
 
 }

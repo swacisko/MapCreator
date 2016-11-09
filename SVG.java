@@ -1,19 +1,18 @@
+import java.awt.Point;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
 //TO DO:
-//dodawanie elips
 //dodawanie klasy (stylu)
 //dodawanie części parametrów stylu przy tworzeniu figur
 //styl napisów?
 
-//addSize (x,y)
 //funkcje - pair
 //dodanie do html wyblakłego obrazka mpk
 public class SVG {
 
-	SVG () {
+	public SVG () {
 		try {
 			writerSVG = new PrintWriter(fileName + ".svg");
 			writerHTML = new PrintWriter(fileName + ".html");
@@ -24,7 +23,7 @@ public class SVG {
 	}
 	
 	//konstruktor ustawiający wymiary rysunku
-	SVG (int widthp, int heightp) {
+	public SVG (int widthp, int heightp) {
 		width = widthp;
 		height = heightp;
 		try {
@@ -37,7 +36,7 @@ public class SVG {
 	}
 
 	//konstruktor ustawiający nazwę plików
-	SVG (String fileNamep) {
+	public SVG (String fileNamep) {
 		fileName = fileNamep;
 		try {
 			writerSVG = new PrintWriter(fileName + ".svg");
@@ -49,7 +48,7 @@ public class SVG {
 	}
 		
 	//konstruktor ustawiający wymiary rysunku i nazwę plików
-	SVG (int widthp, int heightp, String fileNamep) {
+	public SVG (int widthp, int heightp, String fileNamep) {
 		width = widthp;
 		height = heightp;
 		fileName = fileNamep;
@@ -63,7 +62,7 @@ public class SVG {
 	}
 	
 	//wszystkie potrzebne rzeczy na początek plików
-	void beginSVG () {
+	public void beginSVG () {
 		writerSVG.println("<svg width=\"" + width + "\" height=\"" + height +"\">");
 		
 		writerHTML.println("<!DOCTYPE html>");
@@ -75,7 +74,7 @@ public class SVG {
 	}
 	
 	//wszystkie potrzebne rzeczy na koniec plików
-	void endSVG () {
+	public void endSVG () {
 		writerSVG.println("</svg>");
 		writerSVG.close();
 		
@@ -90,7 +89,7 @@ public class SVG {
 	//sprawia, że wszystkie łamane będą miały taki styl
 	//nawet te, które mają wewnątrz określony styl
 	//chyba, że tutaj nie będzie danego parametru - wtedy liczy się ten z wnętrza definicji łamanej
-	void addPolylineStyle () {
+	public void addPolylineStyle () {
 		writerHTML.println( "<style>" );
 		writerHTML.println("\tpolyline{");
 		writerHTML.println("\t\tstroke:\t" + polylineColor + ";");
@@ -111,7 +110,7 @@ public class SVG {
 	}
 	
 	//dodaje styl łamanych wg parametrów (oprócz tych, które są równe "" (0 dla int))
-	void addPolylineStyle (String polylineColorp, int polylineWidthp, String polylineLinejoinp, String polylineLinecapp, String polylineColorHoverp, int polylineWidthHoverp) {
+	public void addPolylineStyle (String polylineColorp, int polylineWidthp, String polylineLinejoinp, String polylineLinecapp, String polylineColorHoverp, int polylineWidthHoverp) {
 		writerHTML.println( "<style>" );
 		writerHTML.println("\tpolyline{");
 		if (polylineColorp!="") writerHTML.println("\t\tstroke:\t" + polylineColorp + ";");
@@ -131,14 +130,27 @@ public class SVG {
 		writerHTML.println("");
 	}
 	
-	void addLine (int x1, int y1, int x2, int y2) {
+	public void addLine (int x1, int y1, int x2, int y2) {
 		writerSVG.println( "   <line x1=\"" + x1 + "\" y1=\"" + y1 +"\" x2=\"" + x2 + "\" y2=\"" + y2 +"\" style=\"stroke:rgb(255,0,0);stroke-width:2\" />" );
 		writerHTML.println( "   <line x1=\"" + x1 + "\" y1=\"" + y1 +"\" x2=\"" + x2 + "\" y2=\"" + y2 +"\" style=\"stroke:rgb(255,0,0);stroke-width:2\" />" );
 
 	}
 	
+	//przyjmuje jako parametr listę point (x,y)
 	//dodaje łamaną bez stylu do pliku HTML i łamaną z "domyślnym" (ustawionym w parametrach klasy) stylem do pliku SVG
-	void addPolylinePlain (ArrayList x,ArrayList y) {
+	public void addPolylinePlain (ArrayList<Point> points) {
+		int s = points.size();
+		writerSVG.print( "   <polyline points=\"" + points.get(0).getX() + "," + points.get(0).getY() );
+		for (int i=1;i<s;i++) writerSVG.print( " " + points.get(i).getX() + "," + points.get(i).getY() );
+		writerSVG.print( "\" style=\"stroke:" + polylineColor + "; stroke-width:"+ polylineWidth + "; fill:none; stroke-linejoin:" + polylineLinejoin +"; stroke-linecap:" + polylineLinecap + ";\" />\n" );
+		
+		writerHTML.print( "   <polyline points=\"" + points.get(0).getX() + "," + points.get(0).getY() );
+		for (int i=1;i<s;i++) writerHTML.print( " " + points.get(i).getX() + "," + points.get(i).getY() );
+		writerHTML.print( "\" />\n" );
+	}
+	
+	//dodaje łamaną bez stylu do pliku HTML i łamaną z "domyślnym" (ustawionym w parametrach klasy) stylem do pliku SVG
+	public void addPolylinePlain (ArrayList x,ArrayList y) {
 		int s = x.size();
 		writerSVG.print( "   <polyline points=\"" + x.get(0) + "," + y.get(0) );
 		for (int i=1;i<s;i++) writerSVG.print( " " + x.get(i) + "," + y.get(i) );
@@ -149,8 +161,21 @@ public class SVG {
 		writerHTML.print( "\" />\n" );
 	}
 	
+	//jako parametr przyjmuje listę punktów na płaszczyźnie
 	//dodaje łamaną ze stylem (czarna łamana)
-	void addPolyline (ArrayList x,ArrayList y) {
+	public void addPolyline (ArrayList<Point> points) {
+		int s = points.size();
+		writerSVG.print( "   <polyline points=\"" + points.get(0).getX() + "," + points.get(0).getY() );
+		for (int i=1;i<s;i++) writerSVG.print( " " + points.get(i).getX() + "," + points.get(i).getY() );
+		writerSVG.print( "\" style=\"fill:none;stroke:black;stroke-width:2\" />\n" );
+		
+		writerHTML.print( "   <polyline points=\"" + points.get(0).getX() + "," + points.get(0).getY() );
+		for (int i=1;i<s;i++) writerHTML.print( " " + points.get(i).getX() + "," + points.get(i).getY() );
+		writerHTML.print( "\" style=\"fill:none;stroke:black;stroke-width:2\" />\n" );
+	}
+	
+	//dodaje łamaną ze stylem (czarna łamana)
+	public void addPolyline (ArrayList x,ArrayList y) {
 		int s = x.size();
 		writerSVG.print( "   <polyline points=\"" + x.get(0) + "," + y.get(0) );
 		for (int i=1;i<s;i++) writerSVG.print( " " + x.get(i) + "," + y.get(i) );
@@ -163,7 +188,7 @@ public class SVG {
 	
 //KÓŁKA
 	//dodaje styl wszystkich kół - z parametrów określonych w klasie SVG
-	void addCircleStyle () {
+	public void addCircleStyle () {
 		writerHTML.println( "<style>" );
 		writerHTML.println("\tcircle{");
 		writerHTML.println("\t\tstroke:\t" + circleStrokeColor + ";");
@@ -180,7 +205,7 @@ public class SVG {
 	}
 	
 	//dodaje styl kółek wg parametrów (oprócz tych, które są równe "" (0 dla int))
-	void addCircleStyle (String circleStrokeColorp, int circleStrokeWidthp, String circleFillp, String circleStrokeColorHoverp, int circleStrokeWidthHoverp, String circleFillHoverp) {
+	public void addCircleStyle (String circleStrokeColorp, int circleStrokeWidthp, String circleFillp, String circleStrokeColorHoverp, int circleStrokeWidthHoverp, String circleFillHoverp) {
 		writerHTML.println( "<style>" );
 		writerHTML.println("\tcircle{");
 		if (circleStrokeColorp!="") writerHTML.println("\t\tstroke:\t" + circleStrokeColorp + ";");
@@ -196,21 +221,33 @@ public class SVG {
 		writerHTML.println("");
 	}
 	
+	//parametry: p - środek koła; r - promień
 	//dodaje kółko bez stylu do pliku HTML i kółko z "domyślnym" (ustawionym w parametrach klasy) stylem do pliku SVG
-	void addCirclePlain (int x, int y, int r) {
+	public void addCirclePlain (Point p, int r) {
+		addCirclePlain((int)p.getX(), (int)p.getY(),r);
+	}
+	
+	//dodaje kółko bez stylu do pliku HTML i kółko z "domyślnym" (ustawionym w parametrach klasy) stylem do pliku SVG
+	public void addCirclePlain (int x, int y, int r) {
 		writerSVG.println( "   <circle cx=\"" + x + "\" cy=\"" + y + "\" r=\"" + r + "\" stroke=\"" + circleStrokeColor + "\" stroke-width=\"" + circleStrokeWidth + "\" fill=\"" + circleFill + "\" />" );
 		writerHTML.println( "   <circle cx=\"" + x + "\" cy=\"" + y + "\" r=\"" + r + "\" />" );
 	}
 	
+	//parametry: p - środek koła; r - promień
 	//dodaje kółko ze stylem (żółte z zielonym brzegiem)
-	void addCircle (int x, int y, int r) {
+	public void addCircle (Point p, int r) {
+		addCirclePlain((int)p.getX(), (int)p.getY(),r);
+	}
+	
+	//dodaje kółko ze stylem (żółte z zielonym brzegiem)
+	public void addCircle (int x, int y, int r) {
 		writerSVG.println( "   <circle cx=\"" + x + "\" cy=\"" + y + "\" r=\"" + r + "\" stroke=\"green\" stroke-width=\"2\" fill=\"yellow\" />" );
 		writerHTML.println( "   <circle cx=\"" + x + "\" cy=\"" + y + "\" r=\"" + r + "\" stroke=\"green\" stroke-width=\"2\" fill=\"yellow\" />" );
 	}
 	
 //PROSTOKĄTY
 	//dodaje styl wszystkich prostokątów - z parametrów określonych w klasie SVG
-	void addRectangleStyle() {
+	public void addRectangleStyle() {
 		writerHTML.println( "<style>" );
 		writerHTML.println("\trect{");
 		writerHTML.println("\t\tstroke:\t" + rectangleStrokeColor + ";");
@@ -227,7 +264,7 @@ public class SVG {
 	}
 	
 	//dodaje styl prostokątów wg parametrów (oprócz tych, które są równe "" (0 dla int))
-	void addRectangleStyle (String rectangleStrokeColorp, int rectangleStrokeWidthp, String rectangleColorp, String rectangleStrokeColorHoverp, int rectangleStrokeWidthHoverp, String rectangleColorHoverp) {
+	public void addRectangleStyle (String rectangleStrokeColorp, int rectangleStrokeWidthp, String rectangleColorp, String rectangleStrokeColorHoverp, int rectangleStrokeWidthHoverp, String rectangleColorHoverp) {
 		writerHTML.println( "<style>" );
 		writerHTML.println("\trect{");
 		if (rectangleStrokeColorp!="") writerHTML.println("\t\tstroke:\t" + rectangleStrokeColorp + ";");
@@ -244,32 +281,32 @@ public class SVG {
 	}
 	
 	//dodaje prostokąt bez stylu do pliku HTML i prostokąt z "domyślnym" (ustawionym w parametrach klasy) stylem do pliku SVG
-	void addRectanglePlain (int x, int y, int width, int height) {
+	public void addRectanglePlain (int x, int y, int width, int height) {
 		writerSVG.println("   <rect x=\"" + x + "\" y=\"" + y + "\" width=\"" + width + "\" height=\"" + height + "\" style=\"fill:" + rectangleColor + ";stroke:" + rectangleStrokeColor + ";stroke-width:" + rectangleStrokeWidth + "\" />");
 		writerHTML.println("   <rect x=\"" + x + "\" y=\"" + y + "\" width=\"" + width + "\" height=\"" + height + "\" />");
 	}
 	
 	//dodaje prostokąt ze stylem (czerwone z czarnym brzegiem)
-	void addRectangle (int x, int y, int width, int height) {
+	public void addRectangle (int x, int y, int width, int height) {
 		writerSVG.println("   <rect x=\"" + x + "\" y=\"" + y + "\" width=\"" + width + "\" height=\"" + height + "\" style=\"fill:red;stroke:black;stroke-width:5\" />");
 		writerHTML.println("   <rect x=\"" + x + "\" y=\"" + y + "\" width=\"" + width + "\" height=\"" + height + "\" style=\"fill:red;stroke:black;stroke-width:5\" />");
 	}
 	
 	//dodaje prostokąt z zaokrąglonymi rogami bez stylu do pliku HTML i prostokąt z "domyślnym" (ustawionym w parametrach klasy) stylem do pliku SVG
-	void addRectangleRoundPlain (int x, int y, int rx, int ry, int width, int height) {
+	public void addRectangleRoundPlain (int x, int y, int rx, int ry, int width, int height) {
 		writerSVG.println("   <rect x=\"" + x + "\" y=\"" + y + "\" rx=\"" + rx + "\" ry=\"" + ry + "\" width=\"" + width + "\" height=\"" + height + "\" style=\"fill:" + rectangleColor + ";stroke:" + rectangleStrokeColor + ";stroke-width:" + rectangleStrokeWidth + "\" />");
 		writerHTML.println("   <rect x=\"" + x + "\" y=\"" + y + "\" rx=\"" + rx + "\" ry=\"" + ry + "\" width=\"" + width + "\" height=\"" + height + "\" />");
 	}
 	
 	//dodaje prostokąt z zaokrąglonymi rogami ze stylem (czerwone z czarnym brzegiem)
-	void addRectangleRound (int x, int y, int rx, int ry, int width, int height) {
+	public void addRectangleRound (int x, int y, int rx, int ry, int width, int height) {
 		writerSVG.println("   <rect x=\"" + x + "\" y=\"" + y + "\" rx=\"" + rx + "\" ry=\"" + ry + "\" width=\"" + width + "\" height=\"" + height + "\" style=\"fill:red;stroke:black;stroke-width:5\" />");
 		writerHTML.println("   <rect x=\"" + x + "\" y=\"" + y + "\" rx=\"" + rx + "\" ry=\"" + ry + "\" width=\"" + width + "\" height=\"" + height + "\" style=\"fill:red;stroke:black;stroke-width:5\" />");
 	}
 	
 //ELIPSY
 	//dodaje styl wszystkich elips - z parametrów określonych w klasie SVG
-	void addEllipseStyle () {
+	public void addEllipseStyle () {
 		writerHTML.println( "<style>" );
 		writerHTML.println("\tellipse{");
 		writerHTML.println("\t\tstroke:\t" + ellipseStrokeColor + ";");
@@ -286,7 +323,7 @@ public class SVG {
 	}
 	
 	//dodaje styl elips wg parametrów (oprócz tych, które są równe "" (0 dla int))
-	void addEllipseStyle (String ellipseStrokeColorp, int ellipseStrokeWidthp, String ellipseColorp, String ellipseStrokeColorHoverp, int ellipseStrokeWidthHoverp, String ellipseColorHoverp) {
+	public void addEllipseStyle (String ellipseStrokeColorp, int ellipseStrokeWidthp, String ellipseColorp, String ellipseStrokeColorHoverp, int ellipseStrokeWidthHoverp, String ellipseColorHoverp) {
 		writerHTML.println( "<style>" );
 		writerHTML.println("\tellipse{");
 		if (ellipseStrokeColorp!="") writerHTML.println("\t\tstroke:\t" + ellipseStrokeColorp + ";");
@@ -303,253 +340,259 @@ public class SVG {
 	}
 	
 	//dodaje elipsę bez stylu do pliku HTML i elipse z "domyślnym" (ustawionym w parametrach klasy) stylem do pliku SVG
-	void addEllipsePlain (int cx, int cy, int rx, int ry) {
+	public void addEllipsePlain (int cx, int cy, int rx, int ry) {
 		writerSVG.println("   <ellipse cx=\"" + cx + "\" cy=\"" + cy + "\" rx=\"" + rx + "\" ry=\"" + ry + "\" style=\"fill:" + ellipseColor + ";stroke:" + ellipseStrokeColor + ";stroke-width:" + ellipseStrokeWidth + "\" />");
 		writerHTML.println("   <ellipse cx=\"" + cx + "\" cy=\"" + cy + "\" rx=\"" + rx + "\" ry=\"" + ry + "\" />");
 	}
 	
 	//dodaje elipsę ze stylem (żółta z fioletowym brzegiem)
-	void addEllipse (int cx, int cy, int rx, int ry) {
+	public void addEllipse (int cx, int cy, int rx, int ry) {
 		writerSVG.println("   <ellipse cx=\"" + cx + "\" cy=\"" + cy + "\" rx=\"" + rx + "\" ry=\"" + ry + "\" style=\"fill:yellow;stroke:purple;stroke-width:2\" />");
 		writerHTML.println("   <ellipse cx=\"" + cx + "\" cy=\"" + cy + "\" rx=\"" + rx + "\" ry=\"" + ry + "\" style=\"fill:yellow;stroke:purple;stroke-width:2\" />");
 	}
 	
 //NAPISY
 	//dodaje napis w kolorze z parametrów klasy
-	void addText (int x, int y, String text) {
+	public void addText (int x, int y, String text) {
 		writerSVG.println( "   <text x=\"" + x + "\" y=\"" + y + "\" fill=\"" + textColor + "\">" + text + "</text>" );
 		writerHTML.println( "   <text x=\"" + x + "\" y=\"" + y + "\" fill=\"" + textColor + "\">" + text + "</text>" );
 	}
 	
 	//dodaje napis
-		void addText (int x, int y, String text, String color) {
-			writerSVG.println( "   <text x=\"" + x + "\" y=\"" + y + "\" fill=\"" + color + "\">" + text + "</text>" );
-			writerHTML.println( "   <text x=\"" + x + "\" y=\"" + y + "\" fill=\"" + color + "\">" + text + "</text>" );
-		}
+	public void addText (int x, int y, String text, String color) {
+		writerSVG.println( "   <text x=\"" + x + "\" y=\"" + y + "\" fill=\"" + color + "\">" + text + "</text>" );
+		writerHTML.println( "   <text x=\"" + x + "\" y=\"" + y + "\" fill=\"" + color + "\">" + text + "</text>" );
+	}
 	
 //SET
-	void setWidth (int w) {
+	
+	public void setSize (int widthp, int heightp) {
+		setWidth(widthp);
+		setHeight(heightp);
+	}
+	
+	public void setWidth (int w) {
 		width = w;
 	}
 	
-	void setHeight (int h) {
+	public void setHeight (int h) {
 		height = h;
 	}
 	
-	void setFileName (String filename) {
+	public void setFileName (String filename) {
 		fileName = filename;
 	}
 	
-	void setPolylineColor (String color) {
+	public void setPolylineColor (String color) {
 		polylineColor = color;
 	}
 	
-	void setPolylineColorHover (String colorHover) {
+	public void setPolylineColorHover (String colorHover) {
 		polylineColorHover = colorHover;
 	}
 	
-	void setPolylineWidth (int width) {
+	public void setPolylineWidth (int width) {
 		polylineWidth = width;
 	}
 	
-	void setPolylineWidthHover (int widthHover) {
+	public void setPolylineWidthHover (int widthHover) {
 		polylineWidthHover = widthHover;
 	}
 	
-	void setPolylineLinejoin (String linejoin) {
+	public void setPolylineLinejoin (String linejoin) {
 		polylineLinejoin = linejoin;
 	}
 	
-	void setPolylineLinecap (String linecap) {
+	public void setPolylineLinecap (String linecap) {
 		polylineLinecap = linecap;
 	}
 	
-	void setCircleStrokeColor (String circleStrokeColorp) {
+	public void setCircleStrokeColor (String circleStrokeColorp) {
 		circleStrokeColor = circleStrokeColorp;
 	}
 	
-	void setCircleStrokeColorHover (String circleStrokeColorHoverp) {
+	public void setCircleStrokeColorHover (String circleStrokeColorHoverp) {
 		circleStrokeColorHover = circleStrokeColorHoverp;
 	}
 
-	void setCircleStrokeWidth (int circleStrokeWidthp) {
+	public void setCircleStrokeWidth (int circleStrokeWidthp) {
 		circleStrokeWidth = circleStrokeWidthp;
 	}
 	
-	void setCircleStrokeWidthHover (int circleStrokeWidthHoverp) {
+	public void setCircleStrokeWidthHover (int circleStrokeWidthHoverp) {
 		circleStrokeWidthHover = circleStrokeWidthHoverp;
 	}
 
-	void setCircleFill (String circleFillp) {
+	public void setCircleFill (String circleFillp) {
 		circleFill = circleFillp;
 	}
 	
-	void setCircleFillHover (String circleFillHoverp) {
+	public void setCircleFillHover (String circleFillHoverp) {
 		circleFillHover = circleFillHoverp;
 	}
 	
-	void setTextColor (String textColorp) {
+	public void setTextColor (String textColorp) {
 		textColor = textColorp;
 	}
 	
-	void setRectangleColor (String rectangleColorp) {
+	public void setRectangleColor (String rectangleColorp) {
 		rectangleColor = rectangleColorp;
 	}
 	
-	void setRectangleStrokeWidth (int rectangleStrokeWidthp) {
+	public void setRectangleStrokeWidth (int rectangleStrokeWidthp) {
 		rectangleStrokeWidth = rectangleStrokeWidthp;
 	}
 	
-	void setRectangleStrokeColor (String rectangleStrokeColorp) {
+	public void setRectangleStrokeColor (String rectangleStrokeColorp) {
 		rectangleStrokeColor = rectangleStrokeColorp;
 	}
 	
-	void setRectangleColorHover (String rectangleColorHoverp) {
+	public void setRectangleColorHover (String rectangleColorHoverp) {
 		rectangleColorHover = rectangleColorHoverp;
 	}
 	
-	void setRectangleStrokeWidthHover (int rectangleStrokeWidthHoverp) {
+	public void setRectangleStrokeWidthHover (int rectangleStrokeWidthHoverp) {
 		rectangleStrokeWidthHover = rectangleStrokeWidthHoverp;
 	}
 	
-	void setRectangleStrokeColorHover (String rectangleStrokeColorHoverp) {
+	public void setRectangleStrokeColorHover (String rectangleStrokeColorHoverp) {
 		rectangleStrokeColorHover = rectangleStrokeColorHoverp;
 	}
 	
-	void setEllipseColor (String ellipseColorp) {
+	public void setEllipseColor (String ellipseColorp) {
 		ellipseColor = ellipseColorp;
 	}
 
-	void setEllipseStrokeWidth (int ellipseStrokeWidthp) {
+	public void setEllipseStrokeWidth (int ellipseStrokeWidthp) {
 		ellipseStrokeWidth = ellipseStrokeWidthp;
 	}
 	
-	void setEllipseStrokeColor (String ellipseStrokeColorp) {
+	public void setEllipseStrokeColor (String ellipseStrokeColorp) {
 		ellipseStrokeColor = ellipseStrokeColorp;
 	}
 	
-	void setEllipseColorHover (String ellipseColorHoverp) {
+	public void setEllipseColorHover (String ellipseColorHoverp) {
 		ellipseColorHover = ellipseColorHoverp;
 	}
 	
-	void setEllipseStrokeWidthHover (int ellipseStrokeWidthHoverp) {
+	public void setEllipseStrokeWidthHover (int ellipseStrokeWidthHoverp) {
 		ellipseStrokeWidthHover = ellipseStrokeWidthHoverp;
 	}
 	
-	void setEllipseStrokeColorHover (String ellipseStrokeColorHoverp) {
+	public void setEllipseStrokeColorHover (String ellipseStrokeColorHoverp) {
 		ellipseStrokeColorHover = ellipseStrokeColorHoverp;
 	}
 	
 //GET
-	int getWidth () {
+	public int getWidth () {
 		return width;
 	}
 	
-	int getHeight () {
+	public int getHeight () {
 		return  height;
 	}
 	
-	String getFileName () {
+	public String getFileName () {
 		return fileName;
 	}	
 	
-	String getPolylineColor () {
+	public String getPolylineColor () {
 		return polylineColor;
 	}
 	
-	String getPolylineColorHover () {
+	public String getPolylineColorHover () {
 		return polylineColorHover;
 	}
 	
-	int getPolylineWidth () {
+	public int getPolylineWidth () {
 		return polylineWidth;
 	}
 	
-	int getPolylineWidthHover () {
+	public int getPolylineWidthHover () {
 		return polylineWidthHover;
 	}
 	
-	String getPolylineLinejoin () {
+	public String getPolylineLinejoin () {
 		return polylineLinejoin;
 	}
 	
-	String getPolylineLinecap () {
+	public String getPolylineLinecap () {
 		return polylineLinecap;
 	}
 	
-	String getCircleStrokeColor () {
+	public String getCircleStrokeColor () {
 		return circleStrokeColor;
 	}
 	
-	String getCircleStrokeColorHover () {
+	public String getCircleStrokeColorHover () {
 		return circleStrokeColorHover;
 	}
 	
-	int getCircleStrokeWidth () {
+	public int getCircleStrokeWidth () {
 		return circleStrokeWidth;
 	}
 	
-	int getCircleStrokeWidthHover () {
+	public int getCircleStrokeWidthHover () {
 		return circleStrokeWidthHover;
 	}
 	
-	String getCircleFill () {
+	public String getCircleFill () {
 		return circleFill;
 	}
 	
-	String getCircleFillHover () {
+	public String getCircleFillHover () {
 		return circleFillHover;
 	}
 	
-	String getTextColor () {
+	public String getTextColor () {
 		return textColor;
 	}
 	
-	String getRectangleColor () {
+	public String getRectangleColor () {
 		return rectangleColor;
 	}
 	
-	int getRectangleStrokeWidth () {
+	public int getRectangleStrokeWidth () {
 		return rectangleStrokeWidth;
 	}
 	
-	String getRectangleStrokeColor () {
+	public String getRectangleStrokeColor () {
 		return rectangleStrokeColor;
 	}
 	
-	String getRectangleColorHover () {
+	public String getRectangleColorHover () {
 		return rectangleColorHover;
 	}
 	
-	int getRectangleStrokeWidthHover () {
+	public int getRectangleStrokeWidthHover () {
 		return rectangleStrokeWidthHover;
 	}
 	
-	String getRectangleStrokeColorHover () {
+	public String getRectangleStrokeColorHover () {
 		return rectangleStrokeColorHover;
 	}
 	
-	String getEllipseColor () {
+	public String getEllipseColor () {
 		return ellipseColor;
 	}
 	
-	int getEllipseStrokeWidth () {
+	public int getEllipseStrokeWidth () {
 		return ellipseStrokeWidth;
 	}
 	
-	String getEllipseStrokeColor () {
+	public String getEllipseStrokeColor () {
 		return ellipseStrokeColor;
 	}
 	
-	String getEllipseColorHover () {
+	public String getEllipseColorHover () {
 		return ellipseColorHover;
 	}
 	
-	int getEllipseStrokeWidthHover () {
+	public int getEllipseStrokeWidthHover () {
 		return ellipseStrokeWidthHover;
 	}
 	
-	String getEllipseStrokeColorHover () {
+	public String getEllipseStrokeColorHover () {
 		return ellipseStrokeColorHover;
 	}
 

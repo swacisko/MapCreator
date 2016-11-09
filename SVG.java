@@ -280,10 +280,22 @@ public class SVG {
 		writerHTML.println("");
 	}
 	
+	//p - lewy górny wierzchołek prostokąta
+	//dodaje prostokąt bez stylu do pliku HTML i prostokąt z "domyślnym" (ustawionym w parametrach klasy) stylem do pliku SVG
+	public void addRectanglePlain (Point p, int width, int height) {
+			addRectanglePlain((int)p.getX(),(int)p.getY(),width,height);
+	}
+	
 	//dodaje prostokąt bez stylu do pliku HTML i prostokąt z "domyślnym" (ustawionym w parametrach klasy) stylem do pliku SVG
 	public void addRectanglePlain (int x, int y, int width, int height) {
 		writerSVG.println("   <rect x=\"" + x + "\" y=\"" + y + "\" width=\"" + width + "\" height=\"" + height + "\" style=\"fill:" + rectangleColor + ";stroke:" + rectangleStrokeColor + ";stroke-width:" + rectangleStrokeWidth + "\" />");
 		writerHTML.println("   <rect x=\"" + x + "\" y=\"" + y + "\" width=\"" + width + "\" height=\"" + height + "\" />");
+	}
+	
+	//p - lewy górny wierzchołek prostokąta
+	//dodaje prostokąt ze stylem (czerwone z czarnym brzegiem)
+	public void addRectangle (Point p, int width, int height) {
+		addRectangle((int)p.getX(),(int)p.getY(),width,height);
 	}
 	
 	//dodaje prostokąt ze stylem (czerwone z czarnym brzegiem)
@@ -292,10 +304,22 @@ public class SVG {
 		writerHTML.println("   <rect x=\"" + x + "\" y=\"" + y + "\" width=\"" + width + "\" height=\"" + height + "\" style=\"fill:red;stroke:black;stroke-width:5\" />");
 	}
 	
+	//p - lewy górny wierzchołek prostokąta, rx,ry - jak bardzo zaokrąglone rogi
+	//dodaje prostokąt z zaokrąglonymi rogami bez stylu do pliku HTML i prostokąt z "domyślnym" (ustawionym w parametrach klasy) stylem do pliku SVG
+	public void addRectangleRoundPlain (Point p, int rx, int ry, int width, int height) {
+		addRectangleRoundPlain((int)p.getX(),(int)p.getY(), rx, ry,width,height);
+	}
+	
 	//dodaje prostokąt z zaokrąglonymi rogami bez stylu do pliku HTML i prostokąt z "domyślnym" (ustawionym w parametrach klasy) stylem do pliku SVG
 	public void addRectangleRoundPlain (int x, int y, int rx, int ry, int width, int height) {
 		writerSVG.println("   <rect x=\"" + x + "\" y=\"" + y + "\" rx=\"" + rx + "\" ry=\"" + ry + "\" width=\"" + width + "\" height=\"" + height + "\" style=\"fill:" + rectangleColor + ";stroke:" + rectangleStrokeColor + ";stroke-width:" + rectangleStrokeWidth + "\" />");
 		writerHTML.println("   <rect x=\"" + x + "\" y=\"" + y + "\" rx=\"" + rx + "\" ry=\"" + ry + "\" width=\"" + width + "\" height=\"" + height + "\" />");
+	}
+	
+	//p - lewy górny wierzchołek prostokąta, rx,ry - jak bardzo zaokrąglone rogi
+	//dodaje prostokąt z zaokrąglonymi rogami ze stylem (czerwone z czarnym brzegiem)
+	public void addRectangleRound (Point p, int rx, int ry, int width, int height) {
+		addRectangleRound((int)p.getX(),(int)p.getY(), rx, ry,width,height);
 	}
 	
 	//dodaje prostokąt z zaokrąglonymi rogami ze stylem (czerwone z czarnym brzegiem)
@@ -339,10 +363,22 @@ public class SVG {
 		writerHTML.println("");
 	}
 	
+	//c - środek elipsy, rx - promień poziomy, ry - promień pionowy
+	//dodaje elipsę bez stylu do pliku HTML i elipse z "domyślnym" (ustawionym w parametrach klasy) stylem do pliku SVG
+	public void addEllipsePlain (Point c, int rx, int ry) {
+		addEllipsePlain((int)c.getX(), (int)c.getY(), rx, ry);
+	}
+	
 	//dodaje elipsę bez stylu do pliku HTML i elipse z "domyślnym" (ustawionym w parametrach klasy) stylem do pliku SVG
 	public void addEllipsePlain (int cx, int cy, int rx, int ry) {
 		writerSVG.println("   <ellipse cx=\"" + cx + "\" cy=\"" + cy + "\" rx=\"" + rx + "\" ry=\"" + ry + "\" style=\"fill:" + ellipseColor + ";stroke:" + ellipseStrokeColor + ";stroke-width:" + ellipseStrokeWidth + "\" />");
 		writerHTML.println("   <ellipse cx=\"" + cx + "\" cy=\"" + cy + "\" rx=\"" + rx + "\" ry=\"" + ry + "\" />");
+	}
+	
+	//c - środek elipsy, rx - promień poziomy, ry - promień pionowy
+	//dodaje elipsę ze stylem (żółta z fioletowym brzegiem)
+	public void addEllipse (Point c, int rx, int ry) {
+		addEllipse((int)c.getX(), (int)c.getY(), rx, ry);
 	}
 	
 	//dodaje elipsę ze stylem (żółta z fioletowym brzegiem)
@@ -352,10 +388,23 @@ public class SVG {
 	}
 	
 //NAPISY
+	
+	//p - lewy dolny wierzchołek prostokąta, w którym znajduje się napis
+	//dodaje napis w kolorze z parametrów klasy
+	public void addText (Point p, String text) {
+		addText((int)p.getX(), (int)p.getY(), text);
+	}
+	
 	//dodaje napis w kolorze z parametrów klasy
 	public void addText (int x, int y, String text) {
 		writerSVG.println( "   <text x=\"" + x + "\" y=\"" + y + "\" fill=\"" + textColor + "\">" + text + "</text>" );
 		writerHTML.println( "   <text x=\"" + x + "\" y=\"" + y + "\" fill=\"" + textColor + "\">" + text + "</text>" );
+	}
+	
+	//p - lewy dolny wierzchołek prostokąta, w którym znajduje się napis
+	//dodaje napis
+	public void addText (Point p, String text, String color) {
+		addText((int)p.getX(), (int)p.getY(), text, color);
 	}
 	
 	//dodaje napis

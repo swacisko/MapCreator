@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mapdrawing;
+package mcmapdrawing;
 
-import MCTemplates.Pair;
+import mctemplates.Pair;
 import com.sun.management.jmx.Trace;
 import java.util.ArrayList;
 import java.util.HashSet;

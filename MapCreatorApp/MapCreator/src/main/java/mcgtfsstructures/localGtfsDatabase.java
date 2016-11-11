@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gtfsstructures;
+package mcgtfsstructures;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -21,6 +21,7 @@ public class localGtfsDatabase {
         routes = GTFSInput.getAllRoutes();
         shapes = GTFSInput.getAllShapes();
         trips = GTFSInput.getAllTrips();
+        stoptimes = GTFSInput.getAllStopTimes();
     }
 
     public static void setGtfsDirPath(String path) {
@@ -107,4 +108,5 @@ public class localGtfsDatabase {
     public static ArrayList< Route> routes = null;
     private static ArrayList< Shape > shapes = null;
     private static ArrayList< Trip> trips = null;
+    private static ArrayList< StopTime> stoptimes = null;
 }

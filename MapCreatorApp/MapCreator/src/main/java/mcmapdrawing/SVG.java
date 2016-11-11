@@ -1,4 +1,4 @@
-package mapdrawing;
+package mcmapdrawing;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -561,19 +561,19 @@ public class SVG {
 	private int height = 500;
 	private String fileName = "domyslny";
 	
-	private String polylineColor = "rgb(155,150,255)";
-	private String polylineColorHover = "rgb(55,70,170)";
-	private int polylineWidth = 3;
-	private int polylineWidthHover = 6;
+	private String polylineColor = "blue";
+	private String polylineColorHover = "red";
+	private int polylineWidth = 2;
+	private int polylineWidthHover = 8;
 	private String polylineLinejoin = "round";
 	private String polylineLinecap = "round";
 	
-	private String circleStrokeColor = "rgb(50,155,50)";
-	private String circleStrokeColorHover = "rgb(55,100,55)";
-	private int circleStrokeWidth = 4;
-	private int circleStrokeWidthHover = 6;
-	private String circleFill = "rgb(200,200,0)";
-	private String circleFillHover = "rgb(250,250,0)";
+	private String circleStrokeColor = "green";
+	private String circleStrokeColorHover = "black";
+	private int circleStrokeWidth = 2;
+	private int circleStrokeWidthHover = 10;
+	private String circleFill = "green";
+	private String circleFillHover = "yellow";
 	
 	private String textColor = "black";
 	

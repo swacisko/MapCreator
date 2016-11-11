@@ -1,4 +1,4 @@
-package inz.mapcreator;
+package mcmapcreator;
 
 import javax.swing.JButton;
 

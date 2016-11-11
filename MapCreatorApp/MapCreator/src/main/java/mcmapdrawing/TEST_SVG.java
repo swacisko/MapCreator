@@ -1,4 +1,4 @@
-package mapdrawing;
+package mcmapdrawing;
 
 import java.util.ArrayList;
 

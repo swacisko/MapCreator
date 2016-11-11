@@ -1,9 +1,10 @@
-package mapdrawing;
+package mcmapdrawing;
 
-import MCTemplates.Drawable;
-import MCTemplates.Pair;
-import gtfsstructures.*;
-import gtfsstructures.localGtfsDatabase;
+import mcgtfsstructures.Stop;
+import mcgtfsstructures.Shape;
+import mctemplates.Drawable;
+import mctemplates.Pair;
+import mcgtfsstructures.localGtfsDatabase;
 import java.util.ArrayList;
 
 import java.util.HashSet;
@@ -117,7 +118,7 @@ public class DrawingModule {
     }
     
     // funkcja tmczasowa - do zmiany, tylko do zaprezentowania dzialania
-    public void drawShapes(){
+    public void drawShapesOnMap(){
         Set<String> set = new HashSet<String>();        
         
         ArrayList<Shape> allShapes = localGtfsDatabase.getAllShapes();
@@ -155,7 +156,7 @@ public class DrawingModule {
         svg.endSVG();
     }
     
-    public void drawStops(){
+    public void drawStopsOnMap(){
         ArrayList<Stop> stops = localGtfsDatabase.getAllStops();
         int counter = 0;
         for( Stop s : stops ){
@@ -169,12 +170,26 @@ public class DrawingModule {
         }
     }
     
-    public void drawAll(){
-        drawStops();
-        drawShapes();
+    // jedna z mapek, ktora tworzy nasz program
+    // rysuje na mapie wszystko co jest dane w stops.txt oraz shapes.txt
+    // dodaje rowniez podpisy do przystankow czy lini
+    public void drawShapeMap(){
+        drawShapesOnMap(); 
+        drawStopsOnMap();               
+    }
+    
+    
+    // rysuje schematyczna mapke - czyli to o co w całym projekcie miało chodzic, ale ze jestesmy ambitni to robimy wieeeeecej
+    public void drawSchemeMap(){
         
     }
     
+    
+    
+    public void drawAllMaps(){
+        drawShapeMap();
+        drawSchemeMap();
+    }
 
    
 
@@ -182,7 +197,7 @@ public class DrawingModule {
    // private localGtfsDatabase database = new localGtfsDatabase(); // tego nie musi tutaj wogole byc poniewaz wszystko w lgdb jest statyczne
     private MapGraph graph = new MapGraph();
     
-    private Pair<Float,Float> RUC = null;
+    private Pair<Float,Float> RUC = null; 
     private Pair<Float,Float> LBC = null;
     
     

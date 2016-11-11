@@ -1,6 +1,6 @@
-package inz.mapcreator;
+package mcmapcreator;
 
-import gtfsstructures.GTFSInput;
+import mcgtfsstructures.GTFSInput;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,8 +18,8 @@ import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
-import mapdrawing.DrawingModule;
-import mapdrawing.SVG;
+import mcmapdrawing.DrawingModule;
+import mcmapdrawing.SVG;
 
 
 public class DrawingPanel extends JPanel{

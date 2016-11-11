@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gtfsstructures;
+package mcgtfsstructures;
 
 import java.util.Map;
 
@@ -15,7 +15,7 @@ public class Route extends GtfsStructure {
 
     
     public Route(Map<String, String> d) {
-        setData(d);
+        super(d);
     }
 
     public String getRouteId() {

@@ -3,15 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package MCTemplates;
+package mcgtfsstructures;
 
-import MCTemplates.Pair;
+import java.util.Map;
 
 /**
  *
  * @author swacisko
  */
-public interface Drawable {
+public class Trip extends GtfsStructure{
+
     
-    public Pair<Float,Float> getCoords();   
+    public Trip(Map<String, String> d) {
+        super(d);
+    }
+   
+
 }

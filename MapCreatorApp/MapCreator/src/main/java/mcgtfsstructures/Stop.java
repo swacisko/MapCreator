@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gtfsstructures;
+package mcgtfsstructures;
 
-import MCTemplates.Drawable;
-import MCTemplates.Pair;
+import mctemplates.Drawable;
+import mctemplates.Pair;
 import java.util.Map;
 
 /**
@@ -17,7 +17,7 @@ public class Stop extends GtfsStructure implements Drawable{
 
     
     public Stop(Map<String, String> d) {
-        setData(d);
+        super(d);
     }
 
     public String getStopId() {

@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gtfsstructures;
+package mcgtfsstructures;
 
-import MCTemplates.Drawable;
-import MCTemplates.Pair;
+import mctemplates.Drawable;
+import mctemplates.Pair;
 import java.util.Comparator;
 import java.util.Map;
 
@@ -18,7 +18,7 @@ public class Shape extends GtfsStructure implements Drawable{
 
     
     public Shape(Map<String, String> d) {
-        setData(d);
+        super(d);
     }
 
     public String getShapeId() {

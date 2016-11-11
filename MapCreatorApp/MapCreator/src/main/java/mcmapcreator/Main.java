@@ -1,6 +1,7 @@
-package inz.mapcreator;
+package mcmapcreator;
 
-import mapdrawing.*;
+import mcmapdrawing.SVG;
+import mcmapdrawing.DrawingModule;
 
 public class Main {
 
@@ -20,7 +21,7 @@ public class Main {
         
         DrawingModule dm = new DrawingModule( new SVG( 2000,2000,"Pierwsze rysowanie" ) );
         dm.beginSVG();
-        dm.drawAll();
+        dm.drawAllMaps();
         dm.endSVG();
         
         /*EventQueue.invokeLater(new Runnable(){            

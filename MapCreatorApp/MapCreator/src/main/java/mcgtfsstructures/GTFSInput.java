@@ -1,4 +1,4 @@
-package gtfsstructures;
+package mcgtfsstructures;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -168,6 +168,16 @@ public class GTFSInput {
         return res;
     }
 
+    public static ArrayList< StopTime> getAllStopTimes(){
+        ArrayList< StopTime> res = new ArrayList<>();
+        ArrayList< Map<String,String> > dataMaps = getDataMaps( "stop_times.txt" );
+        for( Map<String,String> m : dataMaps ){
+            StopTime stp = new StopTime( m );
+            res.add( stp );
+        }
+        
+        return res;
+    }
     
     
     

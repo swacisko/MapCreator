@@ -5,6 +5,7 @@
  */
 package mcgtfsstructures;
 
+import java.util.Comparator;
 import java.util.Map;
 
 /**
@@ -36,5 +37,25 @@ public class StopTime extends GtfsStructure {
     public String getStopSequence(){
         return getData().get( "stop_sequence" );
     }   
+    
+}
+
+
+class StopTimeSequenceComparator implements Comparator{
+    
+    @Override
+    public int compare(Object o1, Object o2) {
+        StopTime s1 = (StopTime)o1;
+        StopTime s2 = (StopTime)o2;
+        
+        int f1 = Integer.parseInt(s1.getStopSequence());
+        int f2 = Integer.parseInt(s2.getStopSequence());
+        
+        if( f1 < f2 ) return -1;
+        else if( f1 > f2 ) return 1;
+        else return 0;        
+    }
+    
+    
     
 }

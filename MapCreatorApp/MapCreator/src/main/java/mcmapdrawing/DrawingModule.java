@@ -129,7 +129,7 @@ public class DrawingModule {
         for( Shape s : allShapes ){            
             if( !set.contains( s.getShapeId() ) ){
                 set.add( s.getShapeId() );
-                shapeById = localGtfsDatabase.getAllShapesOfID( s.getShapeId() );
+                shapeById = localGtfsDatabase.getAllShapesOfId( s.getShapeId() );
                      
                 ArrayList<Integer> x = new ArrayList<>();
                 ArrayList<Integer> y = new ArrayList<>(); // tego nie powinno byc - bedzie do czasu gdy Asia zrobic funkcje dodawania lini dla par

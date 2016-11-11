@@ -54,8 +54,8 @@ class ShapeSequenceComparator implements Comparator{
         Shape s1 = (Shape)o1;
         Shape s2 = (Shape)o2;
         
-        float f1 = Float.parseFloat( s1.getShapePtSequence() );
-        float f2 = Float.parseFloat( s2.getShapePtSequence() );
+        int f1 = Integer.parseInt(s1.getShapePtSequence() );
+        int f2 = Integer.parseInt(s2.getShapePtSequence() );
         
         if( f1 < f2 ) return -1;
         else if( f1 > f2 ) return 1;

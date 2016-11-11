@@ -47,18 +47,41 @@ public class DrawingModule {
         
     }
     
+    
     private void createLBCandRUC(){
-        Pair< Pair<Float,Float>, Pair<Float,Float> > LBCRUC = getLBCandRUC( new ArrayList<Drawable>( localGtfsDatabase.getAllShapes() ) );
+        Pair< Pair<Float,Float>, Pair<Float,Float> > LBCRUC = getLBCandRUC( new ArrayList<Drawable>( localGtfsDatabase.getAllStops()) ); // TUTAJ NIE MOZE BYC
         LBC = LBCRUC.getST();
         RUC = LBCRUC.getND();
         
-        LBCRUC = getLBCandRUC( new ArrayList<Drawable>( localGtfsDatabase.getAllStops()) );        
-        compareLBCRUC( LBCRUC );
+        /*LBCRUC = getLBCandRUC( new ArrayList<Drawable>( localGtfsDatabase.getAllShapes()) );        // to mozna uzyc tylko wtedy gdy istnieje plik shapes
+        compareLBCRUC( LBCRUC );*/
     }
     
-    private void drawFragment( ArrayList<Shape> shapeById ){
+    private void createLBCandRUC( MapGraph graph ){
+        LBC = new Pair<>( Float.MAX_VALUE, Float.MAX_VALUE );
+        RUC = new Pair<>( Float.MIN_VALUE, Float.MIN_VALUE );
         
+        ArrayList<MapNode> nodes = graph.getNodes();
+        for( MapNode n : nodes ){
+            Pair<Float,Float> p = n.getCoords();
+            if( p.getST() < LBC.getST() ){
+                LBC.setST( p.getST() );
+            }
+            
+            if( p.getND() < LBC.getND() ){
+                LBC.setND( p.getND() );
+            }
+            
+            if( p.getST() > RUC.getST() ){
+                RUC.setST( p.getST() );
+            }
+            
+            if( p.getND() > RUC.getND() ){
+                RUC.setND( p.getND() );
+            }            
+        }        
     }
+    
     
     
     // jako parametry - LBC - left bottom corner, RUC right upper corner i coords - wspolrzedne do znormalizowania
@@ -124,7 +147,6 @@ public class DrawingModule {
         ArrayList<Shape> allShapes = localGtfsDatabase.getAllShapes();
         ArrayList<Shape> shapeById = null;
         
-        int counter = 0;
                
         for( Shape s : allShapes ){            
             if( !set.contains( s.getShapeId() ) ){
@@ -142,31 +164,23 @@ public class DrawingModule {
                 
                 svg.addPolylinePlain(x, y);
                 
-                System.out.println( "Narysowalem linie dla " + s.getShapeId() );
-                
-                counter++;
-               // if( counter >= 300 ) break;
-                
+             //   System.out.println( "Narysowalem linie dla " + s.getShapeId() );
+                                
             }           
         }
         
-        
-        
-        
-        svg.endSVG();
     }
     
     public void drawStopsOnMap(){
         ArrayList<Stop> stops = localGtfsDatabase.getAllStops();
-        int counter = 0;
+        
         for( Stop s : stops ){
             float x = Float.parseFloat( s.getStopLat() );
             float y = Float.parseFloat( s.getStopLon() );
             Pair<Integer,Integer> p = normalizeCoordinates(LBC, RUC, new Pair<>(x,y) );
             svg.addCirclePlain(p.getST(), p.getND(),3 );
-            System.out.println( "Dodalem przystanek o id = " + s.getStopId() + "   x = " + p.getST() + "  y = " + p.getND() );
+         //   System.out.println( "Dodalem przystanek o id = " + s.getStopId() + "   x = " + p.getST() + "  y = " + p.getND() );
             
-           // if( counter++ > 4000 ) break;
         }
     }
     
@@ -174,21 +188,40 @@ public class DrawingModule {
     // rysuje na mapie wszystko co jest dane w stops.txt oraz shapes.txt
     // dodaje rowniez podpisy do przystankow czy lini
     public void drawShapeMap(){
+       // svg = new SVG( svg.getFileName() + "_shape_map" );
+        
+        beginSVG();
+        
         drawShapesOnMap(); 
-        drawStopsOnMap();               
+        drawStopsOnMap();    
+        
+        endSVG();
     }
     
     
     // rysuje schematyczna mapke - czyli to o co w całym projekcie miało chodzic, ale ze jestesmy ambitni to robimy wieeeeecej
     public void drawSchemeMap(){
+        svg = new SVG( svg.getFileName() + "_schema" );
+        beginSVG();
         
+        endSVG();
     }
     
     
-    
+    // rysuje wszystkie mapy, jakie tylko moge wygenerowac :)
     public void drawAllMaps(){
         drawShapeMap();
-        drawSchemeMap();
+     //   drawSchemeMap();
+    }
+    
+    
+    // rysuje zadany graf do pliku svg
+    public void drawGraphOnMap( MapGraph graph, String svgname ){
+        svg.setFileName( svg.getFileName() + "_" + svgname );
+        beginSVG();
+        
+        
+        endSVG();
     }
 
    

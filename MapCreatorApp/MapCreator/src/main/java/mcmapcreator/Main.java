@@ -18,11 +18,9 @@ public class Main {
         g.testGraph();
         */
         
-        
-        DrawingModule dm = new DrawingModule( new SVG( 2000,2000,"Pierwsze rysowanie" ) );
-        dm.beginSVG();
+        DrawingModule dm = new DrawingModule( new SVG( 2000,2000,"Pierwsze rysowanie" ) );        
         dm.drawAllMaps();
-        dm.endSVG();
+        
         
         /*EventQueue.invokeLater(new Runnable(){            
          @Override

@@ -32,7 +32,7 @@ public class localGtfsDatabase {
         return s;
     }
 
-    //********************************************************** SECTION WITH EXTRACTING REQUIRED GTFS STRUCTURES
+    //********************************************************** SECTION WITH EXTRACTING REQUIRED GTFS DATA
     //   SHAPES
     // Shape to gtfs-struktura, dla ktorej id moze wystepowac w wielu liniach pliku, wiec zwracam wszystkie takie. Zwracam posortowane tak, aby odpowiadaly kolejnosci
     // wystepowania na lini, ktora dany shapes opisuje
@@ -62,6 +62,9 @@ public class localGtfsDatabase {
         sort(l, new ShapeSequenceComparator());
     }
     //END OF SHAPES SECTION
+    
+    
+    
     //   ROUTES SECTION
     // zwraca droge o zadanym id, jezeli takiego nie ma, zwraca null
     public static Route getRouteOfID(String id) {
@@ -77,6 +80,9 @@ public class localGtfsDatabase {
         return routes;
     }
     // END OF ROUTES SECTION
+    
+    
+    
     //   STOPS SECTION
     //zawra przystanek o zadanym id, jezeli takiego nie ma, zwraca null
     public static Stop getStopOfID(String id) {
@@ -92,6 +98,9 @@ public class localGtfsDatabase {
         return stops;
     }
     //END OF STOPS SECTION
+    
+    
+    
     //   TRIPS SECTION
     public static ArrayList<Trip> getAllTrips() {
         return trips;
@@ -99,11 +108,15 @@ public class localGtfsDatabase {
 
     //END OF TRIPS SECTION
     
+    
+    
+    
     //    STOP_TIMES SECTION
     public static ArrayList<StopTime> getAllStopTimes() {
         return stoptimes;
     }
 
+    // zwraca liste wszystkich StopTimes, dla ktorych trip_id = id. Zwraca w posortowanej kolejnosci - w takiej, w jakiej wystepuje naprawde w trasie
     public static ArrayList<StopTime> getAllStopTimesOfTripId(String id) {
         ArrayList<StopTime> res = new ArrayList<>();
         for (StopTime s : stoptimes) {
@@ -124,6 +137,10 @@ public class localGtfsDatabase {
         sort( l, new StopTimeSequenceComparator() );
     }
    //END OF STOP_TIMES SECTION
+    
+    
+    
+    
     private static String gtfsDirPath = (new File("").getAbsolutePath()) + "/GTFS/";
 
     private static ArrayList<Stop> stops = null;

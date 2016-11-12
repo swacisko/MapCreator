@@ -55,7 +55,4 @@ class StopTimeSequenceComparator implements Comparator{
         else if( f1 > f2 ) return 1;
         else return 0;        
     }
-    
-    
-    
 }

@@ -1,5 +1,7 @@
 package mcmapdrawing;
 
+import mcgraphs.MapNode;
+import mcgraphs.MapGraph;
 import mcgtfsstructures.Stop;
 import mcgtfsstructures.Shape;
 import mctemplates.Drawable;

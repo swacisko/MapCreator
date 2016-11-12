@@ -5,7 +5,7 @@
  */
 package mcalgorithms;
 
-import mcmapdrawing.MapGraph;
+import mcgraphs.MapGraph;
 import mcmapdrawing.SVG;
 
 /**
@@ -24,6 +24,8 @@ public class ForceAlgorithm {
     
     // glowna funkcja, zwraca dla wyznaczonego grafu graf wynikowy - czyli po zastosowaniu algorytmu siłowego
     public MapGraph convertGraph(){
+        
+        
         
         return resGraph;
     }

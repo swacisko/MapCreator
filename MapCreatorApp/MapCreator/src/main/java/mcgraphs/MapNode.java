@@ -4,7 +4,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mcmapdrawing;
+package mcgraphs;
 
 import mctemplates.Pair;
 import java.util.ArrayList;

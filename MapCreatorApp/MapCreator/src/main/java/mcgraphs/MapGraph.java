@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mcmapdrawing;
+package mcgraphs;
 
 import mctemplates.Pair;
 //import com.sun.management.jmx.Trace;
@@ -247,6 +247,12 @@ public class MapGraph {
     // funkcja usuwa id z unavailableIds
     public static void makeFreeID(int id) {
         unavailableIds.remove(id);
+    }
+    
+    public void clear(){
+        nodes = new ArrayList<>();
+        edges = new ArrayList<>();
+        unavailableIds = new HashSet<>();
     }
 
     //******************************************************* END OF STATIC BLOCK

@@ -5,7 +5,7 @@
  */
 package mcalgorithms;
 
-import mcmapdrawing.MapGraph;
+import mcgraphs.MapGraph;
 import mcmapdrawing.SVG;
 import mctemplates.Pair;
 

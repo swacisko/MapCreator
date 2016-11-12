@@ -5,6 +5,6 @@ rm *.html
 
 mvn package
 
-java -cp target/MapCreator-1.0-SNAPSHOT.jar inz.mapcreator.Main
+java -cp target/MapCreator-1.0-SNAPSHOT.jar mcmapcreator.Main
 
 

@@ -413,6 +413,56 @@ public class SVG {
 		writerHTML.println( "   <text x=\"" + x + "\" y=\"" + y + "\" fill=\"" + color + "\">" + text + "</text>" );
 	}
 	
+//OBRAZKI
+	
+	/* dodaje łącze do grafiki
+	 * x,y - współrzędne lewego górnego rogu obrazka
+	 * height,width - do jakich rozmiarów obrazek będzie rozciągnięty
+	 * link - ścieżka do obrazka (jeżeli w tym samym folderze co plik svg, to może być sama nazwa, np. "bus.jpg") */
+	public void addImageLink (int x, int y, int width, int height, String link) {
+		writerSVG.println("   <image x=\"" + x + "\" y=\"" + y + "\" width=\"" + width + "\" height=\"" + height + "\" xlink:href=\"" + link + "\" />");
+		writerHTML.println("   <image x=\"" + x + "\" y=\"" + y + "\" width=\"" + width + "\" height=\"" + height + "\" xlink:href=\"" + link + "\" />");
+
+	}
+	
+	/* dodaje łącze do grafiki
+	 * p - współrzędne lewego górnego rogu obrazka
+	 * height,width - do jakich rozmiarów obrazek będzie rozciągnięty
+	 * link - ścieżka do obrazka (jeżeli w tym samym folderze co plik svg, to może być sama nazwa, np. "bus.jpg") */
+	public void addImageLink (Point p, int width, int height, String link) {
+		addImageLink((int)p.getX(), (int)p.getY(), width, height, link);
+	}
+	
+	/* dodaje łącze do grafiki, która jest skalowana
+	 * x,y - współrzędne lewego górnego rogu obrazka
+	 * height,width - do jakich rozmiarów obrazek będzie rozciągnięty
+	 * link - ścieżka do obrazka (jeżeli w tym samym folderze co plik svg, to może być sama nazwa, np. "bus.jpg")
+	 * a,b - jak ma być przeskalowany rysunek (np. a = 1.5, b = 1.7 sprawią, że rysunek będzie odpowiednio większy)
+	 * a odpowiada za zwiększanie width, b za height */
+	public void addImageLink (int x, int y, int width, int height, String link, double a, double b) {
+		writerSVG.println("   <image x=\"" + x + "\" y=\"" + y + "\" width=\"" + width + "\" height=\"" + height + "\" xlink:href=\"" + link + "\" transform = \"scale(" + a + "," + b + ")\" />");
+		writerHTML.println("   <image x=\"" + x + "\" y=\"" + y + "\" width=\"" + width + "\" height=\"" + height + "\" xlink:href=\"" + link + "\" transform = \"scale(" + a + "," + b + ")\" />");
+
+	}
+	
+	/* dodaje łącze do grafiki, która jest skalowana
+	 * p - współrzędne lewego górnego rogu obrazka
+	 * height,width - do jakich rozmiarów obrazek będzie rozciągnięty
+	 * link - ścieżka do obrazka (jeżeli w tym samym folderze co plik svg, to może być sama nazwa, np. "bus.jpg")
+	 * a,b - jak ma być przeskalowany rysunek (np. a = 1.5, b = 1.7 sprawią, że rysunek będzie odpowiednio większy)
+	 * a odpowiada za zwiększanie width, b za height */
+	public void addImageLink (Point p, int width, int height, String link, double a, double b) {
+		addImageLink((int)p.getX(), (int)p.getY(), width, height, link, a, b);
+	}
+	
+	/* dodaje łącze do grafiki, która jest rozciągana do wymiarów pliku svg
+	 * link - ścieżka do obrazka (jeżeli w tym samym folderze co plik svg, to może być sama nazwa, np. "bus.jpg") */
+	public void addImageLink (String link) {
+		writerSVG.println("   <image x=\"0\" y=\"0\" width=\"" + width + "\" height=\"" + height + "\" xlink:href=\"" + link + "\" />");
+		writerHTML.println("   <image x=\"0\" y=\"0\" width=\"" + width + "\" height=\"" + height + "\" xlink:href=\"" + link + "\" />");
+
+	}
+	
 //SET
 	
 	public void setSize (int widthp, int heightp) {

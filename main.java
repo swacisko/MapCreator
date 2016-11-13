@@ -38,6 +38,7 @@ public class main {
 		graphic.addCircleStyle();
 		graphic.addRectangleStyle();
 		graphic.addEllipseStyle();
+		graphic.addImageLink("bus.jpg");
 		graphic.addLine(40, 300, 50, 400);
 		graphic.addCirclePlain(40, 300,4);
 		graphic.addCirclePlain(50, 400,4);

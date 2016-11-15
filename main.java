@@ -32,17 +32,28 @@ public class main {
 		points.add(point(280,280));
 		points.add(point(370,60));
 		
+		ArrayList<Point> points1 = new ArrayList<Point>();
+		points1.add(point(110,110));
+		points1.add(point(180,280));
+		points1.add(point(140,240));
+		points1.add(point(380,380));
+		points1.add(point(470,160));
+		
 		graphic = new SVG(800,500,"linia");
 		graphic.beginSVG();
 		graphic.addPolylineStyle();
 		graphic.addCircleStyle();
 		graphic.addRectangleStyle();
 		graphic.addEllipseStyle();
+		graphic.addPolylineStyleClass("myFirst");
+		graphic.setPolylineColor("brown");
+		graphic.addPolylineStyleClass("mySecond");
 		graphic.addImageLink("bus.jpg");
 		graphic.addLine(40, 300, 50, 400);
 		graphic.addCirclePlain(40, 300,4);
 		graphic.addCirclePlain(50, 400,4);
-		graphic.addPolylinePlain(points);
+		graphic.addPolylineWithClass(points, "myFirst");
+		graphic.addPolylineWithClass(points1, "mySecond");
 		for (int i=0;i<x.size();i++) graphic.addCirclePlain((int)x.get(i), (int)y.get(i),4);
 		graphic.addText(70, 30, "Rozkład jazdy");
 		graphic.addRectangleRoundPlain(200, 300, 20, 20, 100, 50);

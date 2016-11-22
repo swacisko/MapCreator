@@ -11,6 +11,10 @@ import java.util.ArrayList;
 
 import java.util.HashSet;
 import java.util.Set;
+import mcalgorithms.GraphGlueing;
+import mcalgorithms.MapGraphCreator;
+import mcgraphs.MapEdge;
+import mctemplates.UsefulFunctions;
 
 public class DrawingModule {
 
@@ -141,7 +145,7 @@ public class DrawingModule {
         return new Pair<>( LBC,RUC );
         
     }
-    
+        
     // funkcja tmczasowa - do zmiany, tylko do zaprezentowania dzialania
     public void drawShapesOnMap(){
         Set<String> set = new HashSet<String>();        
@@ -214,14 +218,46 @@ public class DrawingModule {
     public void drawAllMaps(){
         drawShapeMap();
      //   drawSchemeMap();
+        
+        graph = new MapGraphCreator().createMapGraphFromGtfsDatabase();
+        drawGraphOnMap( graph, "graph_not_glued");
+                
+        new GraphGlueing(graph).testGlueing();
+        //drawGraphOnMap( new GraphGlueing(graph).getGluedGraph(), "graph_glued");
     }
     
     
+    
+    private void drawGraphNodesOnMap( MapGraph graph ){
+        ArrayList<MapNode> nodes = graph.getNodes();
+        
+        int radius = 5;
+        for( MapNode n : nodes ){      
+            if( n.getColor() != null ) svg.setCircleFill( n.getColor().toString() );
+            svg.addCircle( UsefulFunctions.convertToPoint( normalizeCoordinates(LBC, RUC, n.getCoords() ) ), radius );            
+        }
+    }
+    
+    // JESZCZE NIE GOTOWE
+    private void drawGraphEdgesOnMap( MapGraph graph ){
+        ArrayList<MapEdge> edges = graph.getEdges();
+        
+        for( MapEdge e : edges ){
+            
+            
+        }
+        
+    }
+    
     // rysuje zadany graf do pliku svg
     public void drawGraphOnMap( MapGraph graph, String svgname ){
-        svg.setFileName( svg.getFileName() + "_" + svgname );
+        svg.setFileName( svg.getFileName() + "_" + svgname );    
+        createLBCandRUC(graph);
         beginSVG();
-        
+        svg.addImageLink( "background.jpg" );        
+                
+        drawGraphEdgesOnMap(graph);
+        drawGraphNodesOnMap(graph);        
         
         endSVG();
     }
@@ -229,7 +265,6 @@ public class DrawingModule {
    
 
     private SVG svg = null;
-   // private localGtfsDatabase database = new localGtfsDatabase(); // tego nie musi tutaj wogole byc poniewaz wszystko w lgdb jest statyczne
     private MapGraph graph = new MapGraph();
     
     private Pair<Float,Float> RUC = null; 

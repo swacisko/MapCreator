@@ -34,4 +34,9 @@ public class Pair<F, S> {
     public S getND() {
         return second;
     }
+    
+    @Override
+    public String toString(){
+        return "(" + getST() + "," + getND() + ")";
+    }
 }

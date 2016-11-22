@@ -5,6 +5,8 @@
  */
 package mctemplates;
 
+import java.awt.Point;
+
 /**
  *
  * @author swacisko
@@ -38,6 +40,10 @@ public class UsefulFunctions {
             res = -res;
         }
         return res;
+    }
+    
+    public static Point convertToPoint( Pair<Integer,Integer> p ){
+        return new Point( p.getST(), p.getND() );
     }
     
 }

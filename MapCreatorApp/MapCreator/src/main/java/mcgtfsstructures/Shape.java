@@ -39,10 +39,16 @@ public class Shape extends GtfsStructure implements Drawable{
 
     @Override
     public Pair<Float, Float> getCoords() {
-        float lat = Float.parseFloat( getShapePtLat() );
-        float lon = Float.parseFloat( getShapePtLon() );
-        return new Pair<>(lat,lon);
+        if( coords == null){
+            float lat = Float.parseFloat( getShapePtLat() );
+            float lon = Float.parseFloat( getShapePtLon() );
+            coords = new Pair<>( lat,lon );
+        }
+        
+        return coords;
     }
+    
+    private Pair<Float,Float> coords = null;
 
 }
 

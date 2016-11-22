@@ -8,12 +8,13 @@ package mcgraphs;
 
 import mctemplates.Pair;
 import java.util.ArrayList;
+import mctemplates.Drawable;
 
 /**
  *
  * @author swacisko
  */
-public class MapNode extends MapStructure {
+public class MapNode extends MapStructure implements Drawable {
 
     public MapNode() {
         super();
@@ -23,6 +24,7 @@ public class MapNode extends MapStructure {
         coords = p;
     }
 
+    @Override
     public Pair<Float, Float> getCoords() {
         return coords;
     }

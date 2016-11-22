@@ -49,4 +49,6 @@ public class MapNodeGlued extends MapNode {
     
     private ArrayList<String> containedStopsIds = new ArrayList<>(); // lista id przystankow, ktore sa zawarte w tym wierzcholku mapowym
     
+    
+    
 }

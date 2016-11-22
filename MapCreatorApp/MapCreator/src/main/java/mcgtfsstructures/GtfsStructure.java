@@ -5,6 +5,7 @@
  */
 package mcgtfsstructures;
 
+import java.awt.Color;
 import mctemplates.Drawable;
 import mctemplates.Pair;
 import java.util.Map;
@@ -35,4 +36,13 @@ public class GtfsStructure implements Drawable {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+    
+    private Color color = null;
 }

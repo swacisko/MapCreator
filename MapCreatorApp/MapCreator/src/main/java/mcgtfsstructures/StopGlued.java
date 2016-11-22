@@ -17,8 +17,14 @@ public class StopGlued extends Stop {
         super(d);
     }
     
+    public void setGluedMapNodeId(int gluedNodeId) {
+        this.gluedMapNodeId = gluedNodeId;
+    }
+
+    public int getGluedMapNodeId() {
+        return gluedMapNodeId;
+    }
     
-    
-    private int gluedNodeId = -1;
+    private int gluedMapNodeId = -1;
     
 }

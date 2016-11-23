@@ -155,12 +155,18 @@ public class GraphGlueing {
     }
 
     private boolean canBeGluedTogether(MapNode n1, MapNode n2) {
-        if (similarName(n1.getStructureName(), n2.getStructureName())) {
-            if (coordinatesRoughlyTheSame(n1.getCoords(), n2.getCoords(), 7f  )) {
+        
+        if (similarName(n1.getStructureName(), n2.getStructureName(),0.8f)) {
+            if (coordinatesRoughlyTheSame(n1.getCoords(), n2.getCoords(), 20f  )) { // bardzo podobne nazwy, wiec i odleglosc dosc duza - ponad kilkadziesiat metrow
                 return true;
             }
-        }
-        else if( coordinatesRoughlyTheSame(n1.getCoords(), n2.getCoords(), 3f  ) ){
+        } 
+        else if (similarName(n1.getStructureName(), n2.getStructureName(),0.4f)) { // cos wspolnego w nazwie maja i wzglednie blisko siebie - kilkadziescia metrow
+            if (coordinatesRoughlyTheSame(n1.getCoords(), n2.getCoords(), 10f  )) {
+                return true;
+            }
+        }        
+        else if( coordinatesRoughlyTheSame(n1.getCoords(), n2.getCoords(), 4f  ) ){ // rozne nazwy ale tuz obok siebie
             return true;
         }
 
@@ -171,7 +177,7 @@ public class GraphGlueing {
         ArrayList<MapNode> nodes = graph.getNodes();
         for (int i = 0; i < nodes.size(); i++) {
             for (int k = i + 1; k < nodes.size(); k++) {
-                if (similarName(nodes.get(i).getStructureName(), nodes.get(k).getStructureName())) {
+                if (similarName(nodes.get(i).getStructureName(), nodes.get(k).getStructureName(),0.4f)) {
                     System.out.println("Names   " + nodes.get(i).getStructureName() + "   and   " + nodes.get(k).getStructureName() + "   are similar!");
                     if (coordinatesRoughlyTheSame(nodes.get(i).getCoords(), nodes.get(k).getCoords(),2f)) {
                         System.out.println("\tFurtheremore, coordinates " + nodes.get(i).getCoords() + "   and   " + nodes.get(k).getCoords() + "  are similar!");
@@ -194,7 +200,7 @@ public class GraphGlueing {
 
         for (int i = 0; i < nodes.size(); i++) {
             for (int k = i + 1; k < nodes.size(); k++) {
-                if (similarName(nodes.get(i).getDescription(), nodes.get(k).getDescription())) {
+                if (similarName(nodes.get(i).getDescription(), nodes.get(k).getDescription(),0.4f)) {
                     System.out.println("Names   " + nodes.get(i).getDescription() + "   and   " + nodes.get(k).getDescription() + "   are similar!");
                 }
             }
@@ -202,23 +208,24 @@ public class GraphGlueing {
 
     }
 
-    private boolean similarName(String s1, String s2) {
+    // zwraca true jezeli nazwy sa podobne stosunkowo wiecej niz threshold (wartosc threshold to float od 0 do 1, 1 gdy stringi sa identyczne)
+    private boolean similarName(String s1, String s2, float threshold) {
         String lcs = LongestCommonSubstring.getLongestCommonSubstring(s1, s2);
         double ratio = (double) lcs.length();
         ratio /= (double) (s1.length() + s2.length());
         ratio *= 2;
-        return ratio >= 0.4;
+        return ratio >= threshold;
     }
 
     // ta funkcja dziala dobrze tylko dla wspolrzednych rzeczywistych, a nie dla wspolrzednych wierzcholka na mapie
-    private boolean coordinatesRoughlyTheSame(Pair<Float, Float> c1, Pair<Float, Float> c2, float ratio) {
+    private boolean coordinatesRoughlyTheSame(Pair<Float, Float> c1, Pair<Float, Float> c2, float threshold) {
         float f1x = 10000 * c1.getST();
         float f1y = 10000 * c1.getND();
 
         float f2x = 10000 * c2.getST();
         float f2y = 10000 * c2.getND();
 
-        return (Math.abs(f1x - f2x) + Math.abs(f1y - f2y)) < ratio;
+        return (Math.abs(f1x - f2x) + Math.abs(f1y - f2y)) < threshold;
     }
 
     private MapGraph resGraph = null;

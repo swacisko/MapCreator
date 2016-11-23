@@ -61,8 +61,15 @@ public class DrawingModule {
         LBC = LBCRUC.getST();
         RUC = LBCRUC.getND();
         
-        /*LBCRUC = getLBCandRUC( new ArrayList<Drawable>( localGtfsDatabase.getAllShapes()) );        // to mozna uzyc tylko wtedy gdy istnieje plik shapes
-        compareLBCRUC( LBCRUC );*/
+        modifyLBCandRUC();
+    }
+    
+    private void modifyLBCandRUC(){
+        float ratio = 0.0001f; // dziwne jest, ze nawet jak zmienie wartosci wzglednie o 1 tysieczna to i tak rysunek sie mocno wygina
+        LBC.setST( LBC.getST() - ratio*Math.abs( LBC.getST() ) );
+        LBC.setND(LBC.getND() - ratio*Math.abs( LBC.getND() ));
+        RUC.setST( RUC.getST() + 0.5f*ratio*Math.abs( RUC.getST() ) );
+        RUC.setND( RUC.getND() + 0.5f*ratio*Math.abs(RUC.getND()) );
     }
     
     private void createLBCandRUC( MapGraph graph ){
@@ -87,7 +94,9 @@ public class DrawingModule {
             if( p.getND() > RUC.getND() ){
                 RUC.setND( p.getND() );
             }            
-        }        
+        } 
+        
+        modifyLBCandRUC();        
     }
     
     
@@ -144,8 +153,7 @@ public class DrawingModule {
             }            
         }
         
-        return new Pair<>( LBC,RUC );
-        
+        return new Pair<>( LBC,RUC );        
     }
         
     // funkcja tmczasowa - do zmiany, tylko do zaprezentowania dzialania
@@ -240,7 +248,7 @@ public class DrawingModule {
         for( MapNode n : nodes ){
             
             if( n.getColor() != null ) svg.setCircleFill( n.getColor().toString() );
-            svg.addCircle( UsefulFunctions.convertToPoint( normalizeCoordinates(LBC, RUC, n.getCoords() ) ), 5 + 2*n.getContainedStopIds().size() );            
+            svg.addCircle( UsefulFunctions.convertToPoint( normalizeCoordinates(LBC, RUC, n.getCoords() ) ), 1 + 2*n.getContainedStopIds().size() );            
         }
     }
     

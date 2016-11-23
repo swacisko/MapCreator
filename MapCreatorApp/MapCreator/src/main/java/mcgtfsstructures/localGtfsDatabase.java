@@ -115,7 +115,8 @@ public class localGtfsDatabase {
          sortShapesBySequence(res);
          return res;
          }*/
-
+        
+        sortShapesBySequence( shapesMap.get(id) );
         return shapesMap.get(id);
 
     }
@@ -182,7 +183,7 @@ public class localGtfsDatabase {
             sortStopTimesByTripId(res);
             return res;
         }*/
-        
+        sortStopTimesByTripId( stoptimesMap.get(id) );
         return stoptimesMap.get(id);
     }
 

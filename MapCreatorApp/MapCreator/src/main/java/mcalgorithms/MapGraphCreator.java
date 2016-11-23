@@ -5,11 +5,14 @@
  */
 package mcalgorithms;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 import mcgraphs.*;
 import mcgtfsstructures.*;
+import mctemplates.Pair;
 
 /**
  *
@@ -35,8 +38,7 @@ public class MapGraphCreator {
         
      //   System.out.println( "Dodalem lacznie " + CNT + "  przystankow do narysowania, a wszystkich jest " + localGtfsDatabase.getAllStops().size() );
     }
-    
-    
+        
     private void addNodesToGraph(){
        // for( Stop s : localGtfsDatabase.getAllStops() ) consideredStops.add(s); // TO JEST TYLKO TYMCZASOWE I DO USUNIECIA POZNIEJ!
         
@@ -53,6 +55,19 @@ public class MapGraphCreator {
     }
     
     private void addEdgesToGraph(){
+        Set< Pair<Integer,Integer> > edgesToAdd = new HashSet<>(); // edgesToAdd to zbior par, z ktorych kazda okresla 2 id wierzcholkow, ktore chce polaczyc
+        
+        Map<String,Integer> nodeIdReversed = new HashMap<>();  // nodeIdReversed.get(key) to wartosc value taka, ze przystanek o id = key znajduje sie w wierzcholku grafu o id = value
+            
+        
+        
+        for( Trip t : localGtfsDatabase.getAllTrips() ){
+            ArrayList<StopTime> l = localGtfsDatabase.getAllStopTimesOfTripId( t.getTripId() );
+            for( int i=0; i<l.size(); i++ ){
+                
+            }
+            
+        }
         
     }
 

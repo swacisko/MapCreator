@@ -158,7 +158,7 @@ public class DrawingModule {
         
     // funkcja tmczasowa - do zmiany, tylko do zaprezentowania dzialania
     public void drawShapesOnMap(){
-        Set<String> set = new HashSet<String>();        
+        Set<String> set = new HashSet<>();        
         
         ArrayList<Shape> allShapes = localGtfsDatabase.getAllShapes();
         ArrayList<Shape> shapeById = null;

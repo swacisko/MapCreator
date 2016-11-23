@@ -18,5 +18,16 @@ public class Trip extends GtfsStructure{
         super(d);
     }
    
+    public String getTripId(){
+        return getData().get( "trip_id" );
+    }
+    
+    public String getRouteId(){
+        return getData().get( "route_id" );
+    }
+    
+    public String getServiceId(){
+        return getData().get( "service_id" );
+    }
 
 }

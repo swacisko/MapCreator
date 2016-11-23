@@ -57,7 +57,25 @@ public class MapNode extends MapStructure implements Drawable {
             }
         }
     }
-
+    
+    public boolean hasNeighbourOfId( int id ){
+        for( MapEdge e : edges ){
+            if( e.hasEndInMapNodeOfID( id ) ) return true;
+        }
+        return false;
+    }
+    
+    public void removeAllLoops(){
+       for( MapEdge e : edges ){
+           if( e.getEnds().getST().getID() == e.getEnds().getND().getID() ){
+               edges.remove( e );
+               removeAllLoops();
+               return;               
+           }
+       }
+        
+    }
+    
     // NIE MA SENSU PISAC FUNKCJI getNeighbourByID, poniewaz gdyby to ID bylo znane, to moznaby wziac tego sasiada prosto z grafu, a nie z 'listy sasiedztwa' wierzcholka
     // funkcja usuwa krawedz, ale nie usuwa tej krawedzi z listy krawdzi sasiada (ta funkcja powinna być wiec wywolywana tylko przez funkcje MapGraph.removeMapEdgeByID
     public void removeMapEdgeByID(int id) {
@@ -68,6 +86,14 @@ public class MapNode extends MapStructure implements Drawable {
             }
         }
         System.out.println("Nie ma krawedzi o ID = " + id + " w removeMapEdgeByID w MapNode");
+    }
+    
+    public ArrayList<MapEdge> getEdges() {
+        return edges;
+    }
+
+    public void setEdges(ArrayList<MapEdge> edges) {
+        this.edges = edges;
     }
 
     @Override
@@ -80,9 +106,36 @@ public class MapNode extends MapStructure implements Drawable {
         s += "\tcoords:\t" + coords;
         return s;
     }
+    
+     public ArrayList<String> getContainedStopIds() {
+        return containedStopIds;
+    }
+
+    public void setContainedStopIds(ArrayList<String> containedStopIds) {
+        this.containedStopIds = containedStopIds;
+    }
+
+    public void addContainedStopId( String id ){
+        containedStopIds.add(id);
+    }
+    
+    public boolean containsStopId( String id ){
+        return containedStopIds.contains( id );
+    }
+    
+    public void removeContainedStopById( String id ){
+        containedStopIds.remove( id );
+    }
+    
 
     private ArrayList<MapEdge> edges = new ArrayList<>(); // to sa krawedzie o jednym z konców w danym wierzcholku
-    private Pair<Float, Float> coords = new Pair<Float, Float>(new Float(0), new Float(0)); // to sa wspolrzedne danego wierzcholka na mapie, PRZED NORMALIZACJA!!! czyli po prostu wspolrzedne z GTFS
+    private Pair<Float, Float> coords = new Pair<>(new Float(0), new Float(0)); // to sa wspolrzedne danego wierzcholka na mapie, PRZED NORMALIZACJA!!! czyli po prostu wspolrzedne z GTFS
     // NORMALIZACJA WSPOLRZEDNYCH BEDZIE NASTEPOWALA TUZ PRZED WYPISYWANIEM GOTOWEJ STRUKTURY GRAFU DO SVG
+
+    private ArrayList<String> containedStopIds = new ArrayList<>();
+
+   
+    
+    
 
 }

@@ -14,15 +14,17 @@ import java.util.Set;
 import mcalgorithms.GraphGlueing;
 import mcalgorithms.MapGraphCreator;
 import mcgraphs.MapEdge;
+import mctemplates.MCConstants;
 import mctemplates.UsefulFunctions;
 
 public class DrawingModule {
 
     public DrawingModule(SVG s) {
         svg = s;
+        initialSVGFileName = svg.getFileName();
         localGtfsDatabase.init();  
         createLBCandRUC();
-                
+        
     }
     
     public void beginSVG(){
@@ -194,7 +196,7 @@ public class DrawingModule {
     // rysuje na mapie wszystko co jest dane w stops.txt oraz shapes.txt
     // dodaje rowniez podpisy do przystankow czy lini
     public void drawShapeMap(){
-       // svg = new SVG( svg.getFileName() + "_shape_map" );
+       svg.setFileName( initialSVGFileName + "_shape_map" );
         
         beginSVG();
         
@@ -207,7 +209,7 @@ public class DrawingModule {
     
     // rysuje schematyczna mapke - czyli to o co w całym projekcie miało chodzic, ale ze jestesmy ambitni to robimy wieeeeecej
     public void drawSchemeMap(){
-        svg = new SVG( svg.getFileName() + "_schema" );
+        svg.setFileName( initialSVGFileName + "_scheme" );
         beginSVG();
         
         endSVG();
@@ -217,13 +219,16 @@ public class DrawingModule {
     // rysuje wszystkie mapy, jakie tylko moge wygenerowac :)
     public void drawAllMaps(){
         drawShapeMap();
-     //   drawSchemeMap();
+      //  drawSchemeMap();
         
-        graph = new MapGraphCreator().createMapGraphFromGtfsDatabase();
+        graph = new MapGraphCreator().createMapGraphFromGtfsDatabase( MCConstants.ALL_TRANSPORT_MEASURES );
         drawGraphOnMap( graph, "graph_not_glued");
+        System.out.println( "Not glued graph has " + graph.size() + " nodes" );
                 
-        new GraphGlueing(graph).testGlueing();
-        //drawGraphOnMap( new GraphGlueing(graph).getGluedGraph(), "graph_glued");
+        //new GraphGlueing(graph).testGlueing();
+        MapGraph glGraph = new GraphGlueing(graph).getGluedGraph();
+        System.out.println( "GLUED graph has " + glGraph.size() + " nodes" );
+        drawGraphOnMap( glGraph, "graph_glued");
     }
     
     
@@ -232,9 +237,10 @@ public class DrawingModule {
         ArrayList<MapNode> nodes = graph.getNodes();
         
         int radius = 5;
-        for( MapNode n : nodes ){      
+        for( MapNode n : nodes ){
+            
             if( n.getColor() != null ) svg.setCircleFill( n.getColor().toString() );
-            svg.addCircle( UsefulFunctions.convertToPoint( normalizeCoordinates(LBC, RUC, n.getCoords() ) ), radius );            
+            svg.addCircle( UsefulFunctions.convertToPoint( normalizeCoordinates(LBC, RUC, n.getCoords() ) ), 5 + 2*n.getContainedStopIds().size() );            
         }
     }
     
@@ -251,7 +257,7 @@ public class DrawingModule {
     
     // rysuje zadany graf do pliku svg
     public void drawGraphOnMap( MapGraph graph, String svgname ){
-        svg.setFileName( svg.getFileName() + "_" + svgname );    
+        svg.setFileName( initialSVGFileName + "_" + svgname );    
         createLBCandRUC(graph);
         beginSVG();
         svg.addImageLink( "background.jpg" );        
@@ -263,7 +269,7 @@ public class DrawingModule {
     }
 
    
-
+    private String initialSVGFileName = "";
     private SVG svg = null;
     private MapGraph graph = new MapGraph();
     

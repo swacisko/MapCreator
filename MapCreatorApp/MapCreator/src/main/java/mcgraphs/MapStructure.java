@@ -6,6 +6,7 @@
 package mcgraphs;
 
 import java.awt.Color;
+import java.util.Objects;
 
 /**
  *
@@ -33,8 +34,18 @@ public class MapStructure {
         ID = id;
     }
 
-    public boolean equals(MapStructure oth) {
-        return ID == oth.ID;
+    @Override
+    public boolean equals(Object oth) {
+        if( !(oth instanceof MapStructure)) return false;
+        MapStructure oth2 = (MapStructure)oth;
+        return ID == oth2.ID;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 17;
+        hash = 97 * hash + this.ID;
+        return hash;
     }
     
     @Override
@@ -49,12 +60,21 @@ public class MapStructure {
     public void setDescription(String description) {
         this.description = description;
     }
+    
+    public String getStructureName() {
+        return structureName;
+    }
+
+    public void setStructureName(String structureName) {
+        this.structureName = structureName;
+    }
 
     private int ID = -1;
     private Color color = null;
     private String description = "";
+    private String structureName = "";
 
     
-
+    
 
 }

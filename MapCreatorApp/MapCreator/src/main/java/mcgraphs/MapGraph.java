@@ -254,6 +254,10 @@ public class MapGraph {
         edges = new ArrayList<>();
         unavailableIds = new HashSet<>();
     }
+    
+    public int size(){
+        return nodes.size();
+    }
 
     //******************************************************* END OF STATIC BLOCK
     private static Set<Integer> unavailableIds = new HashSet<>();

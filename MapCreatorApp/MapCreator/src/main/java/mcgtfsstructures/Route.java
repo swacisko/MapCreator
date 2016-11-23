@@ -5,6 +5,7 @@
  */
 package mcgtfsstructures;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -33,5 +34,31 @@ public class Route extends GtfsStructure {
     public String getRouteType() {
         return getData().get("route_type");
     }
+    
+    public ArrayList<String> getStopIds() {
+        return stopIds;
+    }
+
+    public void setStopIds(ArrayList<String> stopIds) {
+        this.stopIds = stopIds;
+    }
+    
+    
+    public void addStopId( String id ){
+        stopIds.add(id);
+    }
+    
+    public boolean containsStopOfId( String id ){
+        return stopIds.contains(id);
+    }
+    
+    public void removeStopOfId( String id ){
+        stopIds.remove( id );
+    }
+    
+    
+    private ArrayList<String> stopIds = new ArrayList<>(); // stopIds to lista wszystkich przystankow znajdujacych sie an danej trasie
+
+    
     
 }

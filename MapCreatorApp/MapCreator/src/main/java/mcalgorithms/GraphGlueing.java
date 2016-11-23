@@ -6,6 +6,11 @@
 package mcalgorithms;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import mcgraphs.MapEdge;
 import mcgraphs.MapGraph;
 import mcgraphs.MapNode;
 import mctemplates.LongestCommonSubstring;
@@ -18,13 +23,124 @@ import mctemplates.Pair;
  *
  */
 // ten algorytm skleja nam graf zadany poprzez wszystkie przystanki i polaczenia w graf, w ktorym te same przystanki sa ze soba utozsamiane
-public class GraphGlueing{
+public class GraphGlueing {
 
-    public GraphGlueing( MapGraph graph ) {
+    public GraphGlueing(MapGraph graph) {
         this.graph = graph;
+    }
+    
+    // zwraca dwuwymiarowa tablice - kazda lista w tej tablicy zawiera wszystkie ID wierzcholkow ktore maja zostac zlepione w jeden konkretny wierzcholek
+    private ArrayList< ArrayList<Integer> > getGlueingList(){
+        ArrayList< ArrayList<Integer> > glueingList = new ArrayList<>(); // glueingList.get(i) to lista id wierzcholkow, ktore maja zostac zlepione
+        Set<Integer> isGlued = new HashSet<>();
+        
+        ArrayList<MapNode> nodes = graph.getNodes();
+        for( int i=0; i<nodes.size();i++ ){
+            
+            if( isGlued.contains( i ) ) continue;
+            
+            ArrayList<Integer> l = new ArrayList<>();
+            l.add( nodes.get(i).getID() );
+            isGlued.add(i);            
+            
+            for( int k=i+1; k<nodes.size();k++ ){
+                if( isGlued.contains(k) ) continue;
+                
+                if( canBeGluedTogether( nodes.get(i), nodes.get(k) ) ){
+                    l.add( nodes.get(k).getID()  );
+                    isGlued.add( k );
+                }
+            }
+            
+            glueingList.add(l);
+            
+        }
+        
+        return glueingList;
+    }
+    
+    
+    // jako parametr przesylana jest tablica ID wierzcholkow jtore maja zostac zlepione
+    // jako wynik zwracana jest lista ID wszystkich sasiadow tychze wierzcholkow
+    private ArrayList<Integer> getListOfDifferentNeighbours( ArrayList<Integer> similarNeighbours ){                
+        ArrayList<MapEdge> edges = graph.getEdges();        
+        Set<Integer> zb = new HashSet<>();
+        
+        for( MapEdge e : edges ){
+            Pair<MapNode,MapNode> p = e.getEnds();
+            int id1 = p.getST().getID();
+            int id2 = p.getND().getID();
+            
+            if( similarNeighbours.contains( id1 ) ) zb.add(id2);
+            if( similarNeighbours.contains( id2 ) ) zb.add(id1);
+                        
+        }
+        
+        ArrayList<Integer> res = new ArrayList<>();
+        for( Integer g : zb ){
+            res.add(g);
+        }
+        
+        return res;
+    }
+    
+    // merguje wszystkie potrzebne dane ( description, structureName itp) do nowego wierzcholka
+    private void glueAllData( int gluedNodeId, ArrayList<Integer> oldNodesIds ){
+        MapNode n = resGraph.getMapNodeByID( gluedNodeId );
+        int cnt = 1;
+        for( Integer g : oldNodesIds ){
+            MapNode n2 = graph.getMapNodeByID( g );
+            n.setDescription( n.getDescription() ); // UWAGA - brany jest tylko ostatni opis pod uwage
+            if( n2.getColor() != null ) n.setColor( n2.getColor() ); // tutaj UWAGA - brany jest tylko  ostatni z wystepujacych kolorów!!!
+            n.setStructureName( n.getStructureName() ); // UWAGA - brany jest tylko ostatnia nazwa 
+            n.getContainedStopIds().addAll( n2.getContainedStopIds() ); // dodaje wszystkie przystanki, ktore powinienem polaczyc
+        }
     }
 
     public MapGraph getGluedGraph() {
+        if( graph == null ) return null;
+        
+        ArrayList< ArrayList<Integer> > glueingList = getGlueingList(); // glueingList.get(i) to lista id wierzcholkow, ktore maja zostac zlepione
+               
+     //   System.out.println( "GetGluedGraph:  glueingList:\n" + glueingList );
+        
+        resGraph = new MapGraph();
+        for( int i=0; i<glueingList.size(); i++ ){
+            MapNode n = new MapNode();
+            n.setCoords( graph.getMapNodeByID( glueingList.get(i).get(0) ).getCoords() ); // wspolrzedne pierwszego wierzcholka z listy zlepianych wierzcholkow
+            resGraph.addMapNode( n );
+        }
+        
+        for( int i=0; i<glueingList.size(); i++ ){
+            glueAllData( resGraph.getMapNode(i).getID(), glueingList.get(i) );
+        }
+        
+        System.out.println( "GetGluedGraph:  resGraph.size() = " + resGraph.size() );
+        
+        Map<Integer,Integer> idInGluedGraph = new HashMap<>(); // idInGluedGraph.get(key) zawiera wartosc value taka, ze wierzcholek o ID key w starym grafie ma miec ID = value w nowym grafie 
+        for( int i=0; i< glueingList.size(); i++ ){
+            for( Integer g : glueingList.get(i) ){
+                idInGluedGraph.put( g, resGraph.getMapNode(i).getID() );
+            }
+        }
+        
+        ArrayList< ArrayList<Integer> > differentNeighbours = new ArrayList<>(); // differentNeghbours.get(i) to lista ID wszystkich wierzcholkow, ktore maja byc sasiadem tego zlepionego wierzcholka ,ale UWAGA - wszystkie ID sa w starym grafie, po to jest teraz nam mapa idInGluedGraph
+        for( ArrayList<Integer> l : glueingList ){
+            differentNeighbours.add( getListOfDifferentNeighbours(l) );
+        }
+        
+     //   System.out.println( "GetGluedGraph: differentNeighbours = " + differentNeighbours  );
+        
+        for( int i=0; i<glueingList.size();i++ ){
+            MapNode n = resGraph.getMapNode(i);
+            int id1 = n.getID();
+            for( Integer g : differentNeighbours.get(i) ){                
+                int id2 = idInGluedGraph.get( g );
+                resGraph.addMapEdge( id1,id2 );
+            }
+            
+            n.removeAllLoops();
+        }
         
         
         return resGraph;
@@ -37,58 +153,76 @@ public class GraphGlueing{
     public MapGraph getGraph() {
         return graph;
     }
-    
-    
-    public void testGlueing(){
-        ArrayList<MapNode> nodes = graph.getNodes();
-        
-        for( int i=0; i<nodes.size(); i++ ){
-            for(int k=i+1; k<nodes.size(); k++){
-                if( similarName( nodes.get(i).getDescription(), nodes.get(k).getDescription() ) ){
-                    if( coordinatesRoughlyTheSame( nodes.get(i).getCoords(), nodes.get(k).getCoords() ) ) {
-                        System.out.println( "Names   " + nodes.get(i).getDescription()+ "   and   " + nodes.get(k).getDescription()+ "   are similar!"  );
-                        System.out.println( "\tFurtheremore, coordinates " + nodes.get(i).getCoords() + "   and   " + nodes.get(k).getCoords() + "  are similar!\n" );
-                    }
-                }
+
+    private boolean canBeGluedTogether(MapNode n1, MapNode n2) {
+        if (similarName(n1.getStructureName(), n2.getStructureName())) {
+            if (coordinatesRoughlyTheSame(n1.getCoords(), n2.getCoords(), 7f  )) {
+                return true;
             }
         }
-    }
-    
-    public void testSimilarNames(){
-        ArrayList<MapNode> nodes = graph.getNodes();
-        
-        for( int i=0; i<nodes.size(); i++ ){
-            for(int k=i+1; k<nodes.size(); k++){
-                if( similarName( nodes.get(i).getDescription(), nodes.get(k).getDescription() ) ){
-                    System.out.println( "Names   " + nodes.get(i).getDescription() + "   and   " + nodes.get(k).getDescription() + "   are similar!" );
-                }
-            }
-        }
-        
-    }
-    
-    private boolean similarName( String s1, String s2 ){
-        String lcs = LongestCommonSubstring.getLongestCommonSubstring(s1, s2);
-        double ratio = (double)lcs.length();
-        ratio /= (double) (s1.length() + s2.length());
-        ratio *= 2;
-        if( ratio >= 0.5 ){
+        else if( coordinatesRoughlyTheSame(n1.getCoords(), n2.getCoords(), 3f  ) ){
             return true;
         }
-        else return false;        
+
+        return false;
     }
-    
+
+    public void testGlueing() {
+        ArrayList<MapNode> nodes = graph.getNodes();
+        for (int i = 0; i < nodes.size(); i++) {
+            for (int k = i + 1; k < nodes.size(); k++) {
+                if (similarName(nodes.get(i).getStructureName(), nodes.get(k).getStructureName())) {
+                    System.out.println("Names   " + nodes.get(i).getStructureName() + "   and   " + nodes.get(k).getStructureName() + "   are similar!");
+                    if (coordinatesRoughlyTheSame(nodes.get(i).getCoords(), nodes.get(k).getCoords(),2f)) {
+                        System.out.println("\tFurtheremore, coordinates " + nodes.get(i).getCoords() + "   and   " + nodes.get(k).getCoords() + "  are similar!");
+                        System.out.println("\tCNT = " + CNT);
+                        CNT++;
+                    }
+                    System.out.println();
+                }
+                else if (coordinatesRoughlyTheSame(nodes.get(i).getCoords(), nodes.get(k).getCoords(),2f)) {
+                    System.out.println("Coordinates " + nodes.get(i).getCoords() + "   and   " + nodes.get(k).getCoords() + "  are almost the same!");
+                    System.out.println("\tCNT = " + CNT);
+                    CNT++;
+                }
+            }
+        }
+    }
+
+    public void testSimilarNames() {
+        ArrayList<MapNode> nodes = graph.getNodes();
+
+        for (int i = 0; i < nodes.size(); i++) {
+            for (int k = i + 1; k < nodes.size(); k++) {
+                if (similarName(nodes.get(i).getDescription(), nodes.get(k).getDescription())) {
+                    System.out.println("Names   " + nodes.get(i).getDescription() + "   and   " + nodes.get(k).getDescription() + "   are similar!");
+                }
+            }
+        }
+
+    }
+
+    private boolean similarName(String s1, String s2) {
+        String lcs = LongestCommonSubstring.getLongestCommonSubstring(s1, s2);
+        double ratio = (double) lcs.length();
+        ratio /= (double) (s1.length() + s2.length());
+        ratio *= 2;
+        return ratio >= 0.4;
+    }
+
     // ta funkcja dziala dobrze tylko dla wspolrzednych rzeczywistych, a nie dla wspolrzednych wierzcholka na mapie
-    private boolean coordinatesRoughlyTheSame( Pair<Float,Float> c1, Pair<Float,Float> c2 ){
+    private boolean coordinatesRoughlyTheSame(Pair<Float, Float> c1, Pair<Float, Float> c2, float ratio) {
         float f1x = 10000 * c1.getST();
         float f1y = 10000 * c1.getND();
-        
+
         float f2x = 10000 * c2.getST();
         float f2y = 10000 * c2.getND();
-        
-        return ( Math.abs( f1x - f2x ) + Math.abs( f1y - f2y ) ) < 1;        
+
+        return (Math.abs(f1x - f2x) + Math.abs(f1y - f2y)) < ratio;
     }
 
     private MapGraph resGraph = null;
     private MapGraph graph = null;
+
+    private int CNT = 0;
 }

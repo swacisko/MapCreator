@@ -15,32 +15,19 @@ import java.util.ArrayList;
 public class SVG {
 
 	public SVG () {
-		
+            
 	}
 	
 	//konstruktor ustawiający wymiary rysunku
 	public SVG (int widthp, int heightp) {
 		width = widthp;
-		height = heightp;
-		try {
-			writerSVG = new PrintWriter(fileName + ".svg");
-			writerHTML = new PrintWriter(fileName + ".html");		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-				
-			e.printStackTrace();
-		}
+		height = heightp;		
 	}
 
 	//konstruktor ustawiający nazwę plików
 	public SVG (String fileNamep) {
 		fileName = fileNamep;
-		try {
-			writerSVG = new PrintWriter(fileName + ".svg");
-			writerHTML = new PrintWriter(fileName + ".html");		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			
-			e.printStackTrace();
-		}
+		
 	}
 		
 	//konstruktor ustawiający wymiary rysunku i nazwę plików
@@ -48,18 +35,11 @@ public class SVG {
 		width = widthp;
 		height = heightp;
 		fileName = fileNamep;
-		try {
-			writerSVG = new PrintWriter(fileName + ".svg");
-			writerHTML = new PrintWriter(fileName + ".html");		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			
-			e.printStackTrace();
-		}
+		
 	}
 	
 	//wszystkie potrzebne rzeczy na początek plików
-	public void beginSVG () {
-            
+	public void beginSVG () {            
                 try {
 			writerSVG = new PrintWriter(fileName + ".svg");
 			writerHTML = new PrintWriter(fileName + ".html");

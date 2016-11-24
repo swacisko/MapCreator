@@ -38,5 +38,5 @@ public class MapEdge extends MapStructure {
     }
 
     private Pair<MapNode, MapNode> ends = new Pair<>(null, null);
-
+    
 }

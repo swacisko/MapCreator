@@ -94,6 +94,7 @@ public class GraphGlueing {
             if( n2.getColor() != null ) n.setColor( n2.getColor() ); // tutaj UWAGA - brany jest tylko  ostatni z wystepujacych kolorów!!!
             n.setStructureName( n.getStructureName() ); // UWAGA - brany jest tylko ostatnia nazwa 
             n.getContainedStopIds().addAll( n2.getContainedStopIds() ); // dodaje wszystkie przystanki, ktore powinienem polaczyc
+            n.setCoords( n2.getCoords() );
         }
     }
 
@@ -115,7 +116,7 @@ public class GraphGlueing {
             glueAllData( resGraph.getMapNode(i).getID(), glueingList.get(i) );
         }
         
-        System.out.println( "GetGluedGraph:  resGraph.size() = " + resGraph.size() );
+      //  System.out.println( "GetGluedGraph:  resGraph.size() = " + resGraph.size() );
         
         Map<Integer,Integer> idInGluedGraph = new HashMap<>(); // idInGluedGraph.get(key) zawiera wartosc value taka, ze wierzcholek o ID key w starym grafie ma miec ID = value w nowym grafie 
         for( int i=0; i< glueingList.size(); i++ ){
@@ -129,14 +130,22 @@ public class GraphGlueing {
             differentNeighbours.add( getListOfDifferentNeighbours(l) );
         }
         
-     //   System.out.println( "GetGluedGraph: differentNeighbours = " + differentNeighbours  );
+      //  System.out.println( "GetGluedGraph: differentNeighbours = " + differentNeighbours  );
         
+        Set< Pair<Integer,Integer> > edgesAdded = new HashSet<>(); // zeby sie nie powtarzaly krawedzie
         for( int i=0; i<glueingList.size();i++ ){
             MapNode n = resGraph.getMapNode(i);
             int id1 = n.getID();
             for( Integer g : differentNeighbours.get(i) ){                
                 int id2 = idInGluedGraph.get( g );
-                resGraph.addMapEdge( id1,id2 );
+                
+                int a = Math.min( id1,id2 );
+                int b = Math.max( id1,id2 );
+                
+                if( a != b && edgesAdded.contains( new Pair<>(a,b) ) == false ){
+                    edgesAdded.add( new Pair<>(a,b) );
+                    resGraph.addMapEdge( a,b );
+                }
             }
             
             n.removeAllLoops();
@@ -155,6 +164,12 @@ public class GraphGlueing {
     }
 
     private boolean canBeGluedTogether(MapNode n1, MapNode n2) {
+        /*boolean b = Math.random() < 0.35; // to jest potrzebne do testowania dla malych grafow
+        if( b ){
+            System.out.println( "Sklejam wierzcholki " + n1.getID() + " oraz " + n2.getID() );
+        }        
+        return b;*/
+        
         
         if (similarName(n1.getStructureName(), n2.getStructureName(),0.8f)) {
             if (coordinatesRoughlyTheSame(n1.getCoords(), n2.getCoords(), 20f  )) { // bardzo podobne nazwy, wiec i odleglosc dosc duza - ponad kilkadziesiat metrow

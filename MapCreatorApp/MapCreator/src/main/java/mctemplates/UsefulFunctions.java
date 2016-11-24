@@ -46,4 +46,8 @@ public class UsefulFunctions {
         return new Point( p.getST(), p.getND() );
     }
     
+    public static Point convertToPointFromFloat( Pair<Float,Float> p ){
+        return new Point( Math.round(p.getST()), Math.round(p.getND()) );
+    }
+    
 }

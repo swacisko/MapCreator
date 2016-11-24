@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import mcgraphs.*;
 import mcgtfsstructures.*;
+import mctemplates.MCConstants;
 import mctemplates.Pair;
 
 /**
@@ -28,7 +29,7 @@ public class MapGraphCreator {
         for( Route r : localGtfsDatabase.getAllRoutes() ){
             int routetype = Integer.parseInt( r.getRouteType() );
             if( (TRANSPORT_MEASURE & ( 1 << routetype )) != 0 ){
-                consideredRoutes.add( r );
+                consideredRoutes.add( r.getRouteId() );
                 for( String s : r.getStopIds() ){
                   //  if( consideredStops.contains( localGtfsDatabase.getStopOfID( s ) ) == false ) CNT++;
                     consideredStops.add( localGtfsDatabase.getStopOfID( s ) );                    
@@ -55,20 +56,46 @@ public class MapGraphCreator {
     }
     
     private void addEdgesToGraph(){
-        Set< Pair<Integer,Integer> > edgesToAdd = new HashSet<>(); // edgesToAdd to zbior par, z ktorych kazda okresla 2 id wierzcholkow, ktore chce polaczyc
+        Set< Pair<Integer,Integer> > edgesAdded = new HashSet<>(); // edgesAdded to zbior par, z ktorych kazda okresla 2 id wierzcholkow, ktore chce polaczyc
         
         Map<String,Integer> nodeIdReversed = new HashMap<>();  // nodeIdReversed.get(key) to wartosc value taka, ze przystanek o id = key znajduje sie w wierzcholku grafu o id = value
-            
         
-        
-        for( Trip t : localGtfsDatabase.getAllTrips() ){
-            ArrayList<StopTime> l = localGtfsDatabase.getAllStopTimesOfTripId( t.getTripId() );
-            for( int i=0; i<l.size(); i++ ){
+        for( MapNode n : resGraph.getNodes() ){
+            for( String s : n.getContainedStopIds() ){
+                nodeIdReversed.put( s,n.getID() );
+            }                        
+        }        
                 
+        int CNT = 0;
+        System.out.println( "Zaczynam dodawac krawedzie" );
+        for( Trip t : localGtfsDatabase.getAllTrips() ){
+            if( consideredRoutes.contains( t.getRouteId() )  ){ // jezeli typ danej drogi jet zgodny z TRANSPORT_MEASURE
+                int colormode = Integer.parseInt( localGtfsDatabase.getRouteOfID( t.getRouteId() ).getRouteType() );
+                
+                ArrayList<StopTime> l = localGtfsDatabase.getAllStopTimesOfTripId( t.getTripId() );
+                for( int i=0; i<l.size(); i++ ){
+                    if( i > 0 ){
+                        int id1 = nodeIdReversed.get( l.get(i-1).getStopId() );
+                        int id2 = nodeIdReversed.get( l.get(i).getStopId() );
+                        if( edgesAdded.contains( new Pair<>(id1,id2) ) == false ){
+                            edgesAdded.add( new Pair<>(id1,id2) );
+                            
+                            MapEdge e = new MapEdge();
+                            MapNode n1 = resGraph.getMapNodeByID(id1);
+                            MapNode n2 = resGraph.getMapNodeByID(id2);
+                            e.setEnds( new Pair<>(n1,n2) );                            
+                            e.setColor( MCConstants.getCorrespondingColor( colormode ) );
+                            resGraph.addMapEdge(e);   
+                            
+                            System.out.print("\rCNT:" + CNT++);
+                        }                      
+                    }                
+                }
             }
-            
-        }
+          
+        }    
         
+        System.out.println( "Skonczylem dodawac krawedzie" );
     }
 
     public MapGraph createMapGraphFromGtfsDatabase( int TRANSPORT_MEASURE ){
@@ -90,6 +117,6 @@ public class MapGraphCreator {
     
     private MapGraph resGraph = null;
     
-    private Set<Route> consideredRoutes = new HashSet<>();
-    private Set<Stop> consideredStops = new HashSet<>();
+    private Set<String> consideredRoutes = new HashSet<>(); // drogi przechowywane po route.id
+    private Set<Stop> consideredStops = new HashSet<>(); // przystanki przechowywane bezposrednio
 }

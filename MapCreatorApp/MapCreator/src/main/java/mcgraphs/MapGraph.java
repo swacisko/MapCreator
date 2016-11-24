@@ -8,9 +8,12 @@ package mcgraphs;
 import mctemplates.Pair;
 //import com.sun.management.jmx.Trace;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
+import mcalgorithms.GraphGlueing;
 
 /**
  *
@@ -21,6 +24,18 @@ public class MapGraph {
     public MapGraph() {
 
     }
+    
+    private void resetNodeMap(){
+        nodesMap = new HashMap<>();
+        for( MapNode n : nodes ) nodesMap.put( n.getID() , n);
+    }
+    
+    private void resetEdgeMap(){
+        edgesMap = new HashMap<>();
+        for( MapEdge e : edges ){
+            edgesMap.put( e.getID(),e );
+        }
+    }
 
     public ArrayList<MapNode> getNodes() {
         return nodes;
@@ -28,6 +43,7 @@ public class MapGraph {
 
     public void setNodes(ArrayList<MapNode> list) {
         nodes = list;
+        resetNodeMap();
     }
 
     public ArrayList<MapEdge> getEdges() {
@@ -36,6 +52,7 @@ public class MapGraph {
 
     public void setEdges(ArrayList<MapEdge> list) {
         edges = list;
+        resetEdgeMap();
     }
 
     // dodaje dana krawedz do grafu
@@ -44,20 +61,22 @@ public class MapGraph {
         Pair<MapNode, MapNode> p = e.getEnds();
         p.getST().addMapEdge(e);
         p.getND().addMapEdge(e);
+        edgesMap.put( e.getID() , e);
     }
 
     // dodaje krawedz, laczaca dwa wierzcholki o ID rownych ID1 oraz ID2
-    public void addMapEdge(int id1, int id2) {
-        MapEdge e = new MapEdge();
+    public void addMapEdge(int id1, int id2) {        
         MapNode n1 = getMapNodeByID(id1);
         MapNode n2 = getMapNodeByID(id2);
         if (n1 == null || n2 == null) {
             System.out.println("Nie ma wierzcholka o ID1 = " + id1 + "  lun id2 = " + id2 + "   --> w addMapEdge,  Nie dodaje krawedzi");
         } else {
+            MapEdge e = new MapEdge();
             e.setEnds(new Pair<>(n1, n2));
             n1.addMapEdge(e);
             n2.addMapEdge(e);
             edges.add(e);
+            edgesMap.put( e.getID(),e );
         }
     }
 
@@ -72,13 +91,15 @@ public class MapGraph {
     }
 
     public MapEdge getMapEdgeByID(int id) {
-        for (MapEdge e : edges) {
+        /*for (MapEdge e : edges) {
             if (e.getID() == id) {
                 return e;
             }
         }
         System.out.println("Nie ma MapEdge o ID = " + id + "   w funkcji getMapEdgeByID w MapGraph, zwracam null");
-        return null;
+        return null;*/
+        
+        return edgesMap.get( id );
     }
 
     public void removeMapEdge(int index) {
@@ -97,17 +118,20 @@ public class MapGraph {
                 p.getST().removeMapEdgeByID(id);
                 p.getND().removeMapEdgeByID(id);
 
-                edges.remove(i);
+                edges.remove(i);                
+                edgesMap.remove(id);
                 makeFreeID(id);
                 return;
             }
         }
+        
 
         System.out.println("Nie ma MapEdge o ID = " + id + ". Nic nie usuwam");
     }
 
     public void addMapNode(MapNode n) {
         nodes.add(n);
+        nodesMap.put( n.getID(),n );
     }
 
     // jezeli nie ma krawedzi o takim indeksie, to zwracam null
@@ -121,13 +145,14 @@ public class MapGraph {
     }
 
     public MapNode getMapNodeByID(int id) {
-        for (MapNode n : nodes) {
+        /*for (MapNode n : nodes) {
             if (n.getID() == id) {
                 return n;
             }
         }
         System.out.println("Nie ma MapNode o ID = " + id + "   w funkcji getMapNodeByID w MapGraph, zwracam null");
-        return null;
+        return null;*/
+        return nodesMap.get(id);
     }
 
     public void removeMapNode(int index) {
@@ -143,6 +168,7 @@ public class MapGraph {
         for (int i = 0; i < nodes.size(); i++) { // usuwam wierzcholek o danym id z listy wierzcholkow grafu
             if (nodes.get(i).getID() == id) {
                 nodes.remove(i);
+                nodesMap.remove( id );
                 makeFreeID(id);
                 break;
             }
@@ -176,12 +202,13 @@ public class MapGraph {
         }
         return s;
     }
-
+    
+    
     // funkcja pozwala testowac graf - dodawac i usuwac wierzcholki lub krawedzie
     public void testGraph() {
-
+        
         while (true) {
-            System.out.println("1. Dodaj wierzcholek\n2.Usun wierzcholek\n3.Dodaj krawedz\n4.Usun krawedz\n5.Wypisz graf\n9.Wyjdz");
+            System.out.println("1. Dodaj wierzcholek\n2.Usun wierzcholek\n3.Dodaj krawedz\n4.Usun krawedz\n5.Wypisz graf\n6. Graph glueing\n9.Wyjdz");
             Scanner in = new Scanner(System.in);
             int ans = in.nextInt();
 
@@ -219,6 +246,12 @@ public class MapGraph {
                 case 5: {
                     System.out.println(this);
 
+                    break;
+                }
+                case 6:{
+                    MapGraph glGraph = new GraphGlueing(this).getGluedGraph();
+                    System.out.println( "Glued graph:\n" + glGraph );
+                    
                     break;
                 }
                 case 9: {
@@ -264,5 +297,8 @@ public class MapGraph {
 
     private ArrayList<MapNode> nodes = new ArrayList<>();
     private ArrayList<MapEdge> edges = new ArrayList<>();
+    
+    private Map<Integer,MapNode> nodesMap = new HashMap<>();
+    private Map<Integer,MapEdge> edgesMap = new HashMap<>();
 
 }

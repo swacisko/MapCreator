@@ -13,11 +13,11 @@ import java.awt.Color;
  */
 public class MCConstants {
     
-    public static Color getCorrespondingColor( int mode ){
-        if( mode == TRAM ) return TRAM_COLOR;
-        else if( mode == METRO ) return METRO_COLOR;
-        else if( mode == RAIL ) return RAIL_COLOR;
-        else if( mode == BUS ) return BUS_COLOR;
+    public static Color getCorrespondingColor( int routetype ){
+        if( routetype == 0 ) return TRAM_COLOR;
+        else if( routetype == 1 ) return METRO_COLOR;
+        else if( routetype == 2 ) return RAIL_COLOR;
+        else if( routetype == 3 ) return BUS_COLOR;
         else return Color.WHITE;
     }
     

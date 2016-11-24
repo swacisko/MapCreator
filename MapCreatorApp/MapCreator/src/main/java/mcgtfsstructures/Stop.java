@@ -19,6 +19,20 @@ public class Stop extends GtfsStructure implements Drawable{
     public Stop(Map<String, String> d) {
         super(d);
     }
+    
+    @Override
+    public boolean equals( Object o ){
+        if( !(o instanceof Stop) ) return false;
+        Stop r = (Stop) o;
+        return getStopId().equals( r.getStopId() );
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 11;
+        hash = 91 * hash + getStopId().hashCode();
+        return hash;
+    }
 
     public String getStopId() {
         return getData().get("stop_id");

@@ -7,6 +7,7 @@ package mcgtfsstructures;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  *
@@ -17,6 +18,20 @@ public class Route extends GtfsStructure {
     
     public Route(Map<String, String> d) {
         super(d);
+    }
+    
+    @Override
+    public boolean equals( Object o ){
+        if( !(o instanceof Route) ) return false;
+        Route r = (Route) o;
+        return getRouteId().equals( r.getRouteId() );
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 71 * hash + getRouteId().hashCode();
+        return hash;
     }
 
     public String getRouteId() {

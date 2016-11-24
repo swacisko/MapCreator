@@ -6,7 +6,6 @@
 package mcgraphs;
 
 import java.awt.Color;
-import java.util.Objects;
 
 /**
  *
@@ -17,7 +16,7 @@ public class MapStructure {
     public MapStructure() {
         ID = MapGraph.getFreeID();
     }
-    
+
     public void setColor(Color c) {
         color = c;
     }
@@ -36,8 +35,10 @@ public class MapStructure {
 
     @Override
     public boolean equals(Object oth) {
-        if( !(oth instanceof MapStructure)) return false;
-        MapStructure oth2 = (MapStructure)oth;
+        if (!(oth instanceof MapStructure)) {
+            return false;
+        }
+        MapStructure oth2 = (MapStructure) oth;
         return ID == oth2.ID;
     }
 
@@ -47,12 +48,12 @@ public class MapStructure {
         hash = 97 * hash + this.ID;
         return hash;
     }
-    
+
     @Override
-    public String toString(){
+    public String toString() {
         return "ID = " + ID + "    color = " + color;
     }
-    
+
     public String getDescription() {
         return description;
     }
@@ -60,7 +61,7 @@ public class MapStructure {
     public void setDescription(String description) {
         this.description = description;
     }
-    
+
     public String getStructureName() {
         return structureName;
     }
@@ -69,12 +70,37 @@ public class MapStructure {
         this.structureName = structureName;
     }
 
+    public int getDrawingWidth() {
+        return drawingWidth;
+    }
+
+    public void setDrawingWidth(int drawingWidth) {
+        this.drawingWidth = drawingWidth;
+        this.hoverWidth = 1 + 2 * drawingWidth;
+    }
+
+    public int getHoverWidth() {
+        return hoverWidth;
+    }
+
+    public void setHoverWidth(int hoverWidth) {
+        this.hoverWidth = hoverWidth;
+    }
+
+    public Color getHoverColor() {
+        return hoverColor;
+    }
+
+    public void setHoverColor(Color hoverColor) {
+        this.hoverColor = hoverColor;
+    }
+
+    private Color hoverColor = Color.RED;
     private int ID = -1;
-    private Color color = null;
+    private Color color = Color.BLACK;
     private String description = "";
     private String structureName = "";
-
-    
-    
+    private int drawingWidth = 2;
+    private int hoverWidth = 4;
 
 }

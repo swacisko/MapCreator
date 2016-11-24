@@ -24,6 +24,7 @@ public class GtfsStructure implements Drawable {
     public String toString(){
         return data.toString();
     }
+    
      
     public Map<String,String> getData(){ return data; }
     

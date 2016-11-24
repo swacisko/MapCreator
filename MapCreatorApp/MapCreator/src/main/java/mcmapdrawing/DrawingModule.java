@@ -1,5 +1,6 @@
 package mcmapdrawing;
 
+import java.awt.Point;
 import mcgraphs.MapNode;
 import mcgraphs.MapGraph;
 import mcgtfsstructures.Stop;
@@ -231,36 +232,47 @@ public class DrawingModule {
         
         graph = new MapGraphCreator().createMapGraphFromGtfsDatabase( MCConstants.ALL_TRANSPORT_MEASURES );
         drawGraphOnMap( graph, "graph_not_glued");
-        System.out.println( "Not glued graph has " + graph.size() + " nodes" );
+        System.out.println( "Not glued graph has " + graph.size() + " nodes and " + graph.getEdges().size() + " edges" );
                 
         //new GraphGlueing(graph).testGlueing();
         MapGraph glGraph = new GraphGlueing(graph).getGluedGraph();
-        System.out.println( "GLUED graph has " + glGraph.size() + " nodes" );
+        System.out.println( "GLUED graph has " + glGraph.size() + " nodes and " + glGraph.getEdges().size() + " edges" );
         drawGraphOnMap( glGraph, "graph_glued");
     }
     
     
     
     private void drawGraphNodesOnMap( MapGraph graph ){
-        ArrayList<MapNode> nodes = graph.getNodes();
         
-        int radius = 5;
-        for( MapNode n : nodes ){
+        for( MapNode n : graph.getNodes() ){
             
             if( n.getColor() != null ) svg.setCircleFill( n.getColor().toString() );
-            svg.addCircle( UsefulFunctions.convertToPoint( normalizeCoordinates(LBC, RUC, n.getCoords() ) ), 1 + 2*n.getContainedStopIds().size() );            
+            svg.addCircle( UsefulFunctions.convertToPoint( normalizeCoordinates(LBC, RUC, n.getCoords() ) ), 1 + n.getContainedStopIds().size() );            
         }
     }
     
     // JESZCZE NIE GOTOWE
     private void drawGraphEdgesOnMap( MapGraph graph ){
-        ArrayList<MapEdge> edges = graph.getEdges();
+        ArrayList<Point> polyline = new ArrayList<>();
         
-        for( MapEdge e : edges ){
+        int CNT = 0;
+        for( MapEdge e : graph.getEdges() ){
+            polyline.clear();
+            MapNode n1 = e.getEnds().getST();
+            MapNode n2 = e.getEnds().getND();
+            polyline.add( UsefulFunctions.convertToPoint( normalizeCoordinates(LBC, RUC, n1.getCoords() ) ) );
+            polyline.add( UsefulFunctions.convertToPoint( normalizeCoordinates(LBC, RUC, n2.getCoords() ) ) );
             
-            
+            if( e.getHoverWidth() != 0 ) svg.setPolylineWidthHover( e.getHoverWidth() );
+            if( e.getDrawingWidth() != 0 ) svg.setPolylineWidth( e.getDrawingWidth() );
+            if( e.getColor()!=null ) svg.setPolylineColor( e.getColor().toString() );
+            if( e.getHoverColor() != null ) svg.setPolylineColorHover( e.getHoverColor().toString() );
+            svg.addPolylinePlain(polyline);       
+           // svg.addLine( polyline.get(0).x, polyline.get(0).y, polyline.get(1).x, polyline.get(1).y );
+            CNT++;
         }
         
+        System.out.println( "Dodalem " + CNT + " krawedzi do pliku svg" );
     }
     
     // rysuje zadany graf do pliku svg
@@ -268,7 +280,7 @@ public class DrawingModule {
         svg.setFileName( initialSVGFileName + "_" + svgname );    
         createLBCandRUC(graph);
         beginSVG();
-        svg.addImageLink( "background.jpg" );        
+       // svg.addImageLink( "background.jpg" );        
                 
         drawGraphEdgesOnMap(graph);
         drawGraphNodesOnMap(graph);        

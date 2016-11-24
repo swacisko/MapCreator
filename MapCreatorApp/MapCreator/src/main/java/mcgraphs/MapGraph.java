@@ -203,6 +203,32 @@ public class MapGraph {
         return s;
     }
     
+    private Pair< Pair<Float,Float>, Pair<Float,Float> > getLBCandRUC(){
+        Pair<Float,Float> LBC = new Pair<>( Float.MAX_VALUE, Float.MAX_VALUE );
+        Pair<Float,Float> RUC = new Pair<>( Float.MIN_VALUE, Float.MIN_VALUE );
+        
+        for( MapNode n : nodes ){
+            Pair<Float,Float> p = n.getCoords();
+            if( p.getST() < LBC.getST() ){
+                LBC.setST( p.getST() );
+            }
+            
+            if( p.getND() < LBC.getND() ){
+                LBC.setND( p.getND() );
+            }
+            
+            if( p.getST() > RUC.getST() ){
+                RUC.setST( p.getST() );
+            }
+            
+            if( p.getND() > RUC.getND() ){
+                RUC.setND( p.getND() );
+            }            
+        }
+        
+        return new Pair<>( LBC,RUC );
+    }
+    
     
     // funkcja pozwala testowac graf - dodawac i usuwac wierzcholki lub krawedzie
     public void testGraph() {

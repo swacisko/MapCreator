@@ -19,7 +19,7 @@ public class Main {
       //  g.testGraph();
         
         
-        DrawingModule dm = new DrawingModule( new SVG( 2000,2000,"Pierwsze rysowanie" ) );        
+        DrawingModule dm = new DrawingModule( new SVG( 3000,3000,"Pierwsze rysowanie" ) );        
         dm.drawAllMaps();
         
         

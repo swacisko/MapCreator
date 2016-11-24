@@ -101,6 +101,6 @@ public class MapStructure {
     private String description = "";
     private String structureName = "";
     private int drawingWidth = 2;
-    private int hoverWidth = 4;
+    private int hoverWidth = 5;
 
 }

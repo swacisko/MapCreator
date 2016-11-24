@@ -14,6 +14,7 @@ import mcgraphs.MapEdge;
 import mcgraphs.MapGraph;
 import mcgraphs.MapNode;
 import mctemplates.LongestCommonSubstring;
+import mctemplates.MCConstants;
 import mctemplates.Pair;
 
 /**
@@ -87,25 +88,20 @@ public class GraphGlueing {
     // merguje wszystkie potrzebne dane ( description, structureName itp) do nowego wierzcholka
     private void glueAllData( int gluedNodeId, ArrayList<Integer> oldNodesIds ){
         MapNode n = resGraph.getMapNodeByID( gluedNodeId );
-        int cnt = 1;
         for( Integer g : oldNodesIds ){
             MapNode n2 = graph.getMapNodeByID( g );
-            n.setDescription( n.getDescription() ); // UWAGA - brany jest tylko ostatni opis pod uwage
+            n.setDescription( n2.getDescription() ); // UWAGA - brany jest tylko ostatni opis pod uwage
             if( n2.getColor() != null ) n.setColor( n2.getColor() ); // tutaj UWAGA - brany jest tylko  ostatni z wystepujacych kolorów!!!
-            n.setStructureName( n.getStructureName() ); // UWAGA - brany jest tylko ostatnia nazwa 
+            n.setStructureName( n2.getStructureName() ); // UWAGA - brany jest tylko ostatnia nazwa 
             n.getContainedStopIds().addAll( n2.getContainedStopIds() ); // dodaje wszystkie przystanki, ktore powinienem polaczyc
             n.setCoords( n2.getCoords() );
         }
     }
 
-    public MapGraph getGluedGraph() {
-        if( graph == null ) return null;
-        
+    public void glueGraph(){        
         ArrayList< ArrayList<Integer> > glueingList = getGlueingList(); // glueingList.get(i) to lista id wierzcholkow, ktore maja zostac zlepione
                
      //   System.out.println( "GetGluedGraph:  glueingList:\n" + glueingList );
-        
-        resGraph = new MapGraph();
         for( int i=0; i<glueingList.size(); i++ ){
             MapNode n = new MapNode();
             n.setCoords( graph.getMapNodeByID( glueingList.get(i).get(0) ).getCoords() ); // wspolrzedne pierwszego wierzcholka z listy zlepianych wierzcholkow
@@ -151,6 +147,20 @@ public class GraphGlueing {
             n.removeAllLoops();
         }
         
+        
+    }
+    
+    public MapGraph getGluedGraph() {
+        if( graph == null ) return null;
+        resGraph = graph;
+        CNT = 0;
+        System.out.println( "Przed sklejaniem graf ma " + graph.size() + "  wierzcholkow" );
+        do{
+            graph = resGraph;
+            resGraph = new MapGraph();
+            glueGraph();   
+            System.out.println( "Po " + ++CNT +"-tym sklejaniu graf ma " + resGraph.size() + " wierzcholkow" );
+        }while( false /*resGraph.size() < graph.size()*/ ); // aby wielokrotnie sklejac graf, moge wywolac ten drugi warunek, ale to chyba nie bedzie mialo zbytnio sensu
         
         return resGraph;
     }
@@ -234,11 +244,12 @@ public class GraphGlueing {
 
     // ta funkcja dziala dobrze tylko dla wspolrzednych rzeczywistych, a nie dla wspolrzednych wierzcholka na mapie
     private boolean coordinatesRoughlyTheSame(Pair<Float, Float> c1, Pair<Float, Float> c2, float threshold) {
-        float f1x = 10000 * c1.getST();
-        float f1y = 10000 * c1.getND();
+        float FACT = MCConstants.COORDINATES_COMPARISON_PRECISION;
+        float f1x = FACT * c1.getST();
+        float f1y = FACT* c1.getND();
 
-        float f2x = 10000 * c2.getST();
-        float f2y = 10000 * c2.getND();
+        float f2x = FACT * c2.getST();
+        float f2y = FACT * c2.getND();
 
         return (Math.abs(f1x - f2x) + Math.abs(f1y - f2y)) < threshold;
     }

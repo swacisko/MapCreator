@@ -65,9 +65,10 @@ public class MapGraphCreator {
                 nodeIdReversed.put( s,n.getID() );
             }                        
         }        
-                
-        int CNT = 0;
+             
         System.out.println( "Zaczynam dodawac krawedzie" );
+        int CNT = 0;
+        
         for( Trip t : localGtfsDatabase.getAllTrips() ){
             if( consideredRoutes.contains( t.getRouteId() )  ){ // jezeli typ danej drogi jet zgodny z TRANSPORT_MEASURE
                 int colormode = Integer.parseInt( localGtfsDatabase.getRouteOfID( t.getRouteId() ).getRouteType() );
@@ -91,8 +92,7 @@ public class MapGraphCreator {
                         }                      
                     }                
                 }
-            }
-          
+            }          
         }    
         
         System.out.println( "Skonczylem dodawac krawedzie" );

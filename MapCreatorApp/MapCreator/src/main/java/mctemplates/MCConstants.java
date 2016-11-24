@@ -18,9 +18,8 @@ public class MCConstants {
         else if( routetype == 1 ) return METRO_COLOR;
         else if( routetype == 2 ) return RAIL_COLOR;
         else if( routetype == 3 ) return BUS_COLOR;
-        else return Color.WHITE;
+        else return Color.ORANGE;
     }
-    
     
     public static final int TRAM = 1;
     public static final int METRO = (1<<1);
@@ -37,5 +36,10 @@ public class MCConstants {
     public static final Color METRO_COLOR = Color.GRAY;
     public static final Color RAIL_COLOR = Color.BLACK;
     public static final Color BUS_COLOR = Color.BLUE;
+    
+    public static final float SPRING_COEF = 1;
+    public static final float COULOMB_COEF = 1;
+    
+    public static final float COORDINATES_COMPARISON_PRECISION = 10000;
     
 }

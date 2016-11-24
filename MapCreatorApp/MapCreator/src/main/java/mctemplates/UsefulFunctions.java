@@ -5,6 +5,7 @@
  */
 package mctemplates;
 
+import java.awt.Color;
 import java.awt.Point;
 
 /**
@@ -50,4 +51,19 @@ public class UsefulFunctions {
         return new Point( Math.round(p.getST()), Math.round(p.getND()) );
     }
     
+    public static String parseColor( Color c ){
+        if( c == null ) return "";
+        else if( c.equals( Color.RED ) ) return "red";
+        else if( c.equals( Color.BLUE ) ) return "blue";
+        else if( c.equals( Color.ORANGE ) ) return "orange";
+        else if( c.equals( Color.GREEN ) ) return "green";
+        else if( c.equals( Color.YELLOW ) ) return "yellow";
+        else if( c.equals( Color.BLACK ) ) return "black";
+        else if( c.equals( Color.GRAY ) ) return "gray";
+        else if( c.equals( Color.PINK ) ) return "pink";
+        else if( c.equals( Color.CYAN ) ) return "cyan";
+        else if( c.equals( Color.MAGENTA ) ) return "magenta";
+        else if( c.equals( Color.WHITE ) ) return "white";
+        else return "";
+    }
 }

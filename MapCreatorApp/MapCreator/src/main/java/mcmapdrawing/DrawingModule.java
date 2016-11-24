@@ -205,8 +205,9 @@ public class DrawingModule {
     // rysuje na mapie wszystko co jest dane w stops.txt oraz shapes.txt
     // dodaje rowniez podpisy do przystankow czy lini
     public void drawShapeMap(){
-       svg.setFileName( initialSVGFileName + "_shape_map" );
+        createLBCandRUC();
         
+        svg.setFileName( initialSVGFileName + "_shape_map" );        
         beginSVG();
         
         drawShapesOnMap(); 
@@ -240,14 +241,36 @@ public class DrawingModule {
         drawGraphOnMap( glGraph, "graph_glued");
     }
     
-    
-    
+        
     private void drawGraphNodesOnMap( MapGraph graph ){
         
         for( MapNode n : graph.getNodes() ){
+            if( n.getDrawingWidth() != 0 ) svg.setCircleStrokeWidth( n.getDrawingWidth() );
+            if( n.getHoverColor() != null ) {
+                svg.setCircleFillHover( UsefulFunctions.parseColor( n.getHoverColor() ));
+                svg.setCircleStrokeColorHover( UsefulFunctions.parseColor( n.getHoverColor() ) );
+            }
+            if( n.getColor() != null ) {
+                svg.setCircleFill( UsefulFunctions.parseColor( n.getColor()) );
+                svg.setCircleStrokeColor( UsefulFunctions.parseColor( n.getColor()) );
+            }
             
-            if( n.getColor() != null ) svg.setCircleFill( n.getColor().toString() );
-            svg.addCircle( UsefulFunctions.convertToPoint( normalizeCoordinates(LBC, RUC, n.getCoords() ) ), 1 + n.getContainedStopIds().size() );            
+            int drawingWidth = n.getDrawingWidth() - 1 + n.getContainedStopIds().size();     
+            
+            if( n.getContainedStopIds().size() >= 4 ){
+                svg.setTextColor( "red" );
+                svg.addText( UsefulFunctions.convertToPoint( normalizeCoordinates(LBC, RUC, n.getCoords() ) ), n.getStructureName() );
+                svg.setTextColor( "black" );
+                
+                svg.addEllipsePlain(UsefulFunctions.convertToPoint( normalizeCoordinates(LBC, RUC, n.getCoords() ) ), 3*drawingWidth/2, drawingWidth );
+            }
+            else if(n.getEdges().size() == 1){
+                svg.addText( UsefulFunctions.convertToPoint( normalizeCoordinates(LBC, RUC, n.getCoords() ) ), n.getStructureName() );
+                svg.addCircle( UsefulFunctions.convertToPoint( normalizeCoordinates(LBC, RUC, n.getCoords() ) ), drawingWidth );
+            }
+            else{
+                svg.addCirclePlain( UsefulFunctions.convertToPoint( normalizeCoordinates(LBC, RUC, n.getCoords() ) ) , drawingWidth);
+            }
         }
     }
     
@@ -265,8 +288,8 @@ public class DrawingModule {
             
             if( e.getHoverWidth() != 0 ) svg.setPolylineWidthHover( e.getHoverWidth() );
             if( e.getDrawingWidth() != 0 ) svg.setPolylineWidth( e.getDrawingWidth() );
-            if( e.getColor()!=null ) svg.setPolylineColor( e.getColor().toString() );
-            if( e.getHoverColor() != null ) svg.setPolylineColorHover( e.getHoverColor().toString() );
+            if( e.getColor() != null ) svg.setPolylineColor( UsefulFunctions.parseColor(e.getColor() ));
+            if( e.getHoverColor() != null ) svg.setPolylineColorHover( UsefulFunctions.parseColor(e.getHoverColor()) );
             svg.addPolylinePlain(polyline);       
            // svg.addLine( polyline.get(0).x, polyline.get(0).y, polyline.get(1).x, polyline.get(1).y );
             CNT++;
@@ -277,8 +300,9 @@ public class DrawingModule {
     
     // rysuje zadany graf do pliku svg
     public void drawGraphOnMap( MapGraph graph, String svgname ){
-        svg.setFileName( initialSVGFileName + "_" + svgname );    
         createLBCandRUC(graph);
+        
+        svg.setFileName( initialSVGFileName + "_" + svgname );       
         beginSVG();
        // svg.addImageLink( "background.jpg" );        
                 

@@ -54,5 +54,4 @@ public class MeshApplication {
     
     private MapGraph graph = null;
     private SVG svg = null;
-    private MapGraph resGraph = null; // to jest graf wynikowy - latwiej trzymac jako skladowa klasy niz przesylac do wzsystkich funkcji jako parametry
 }

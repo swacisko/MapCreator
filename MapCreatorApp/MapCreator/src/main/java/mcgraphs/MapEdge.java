@@ -5,6 +5,7 @@
  */
 package mcgraphs;
 
+import java.util.ArrayList;
 import mctemplates.Pair;
 
 /**
@@ -36,7 +37,33 @@ public class MapEdge extends MapStructure {
         s += "\tends:  ID1 = " + ends.getST().getID() + "   ID2 = " + ends.getND().getID();
         return s;
     }
+    
+    
+    //UWAGA - TO JESZCZE NIE DZIALA!
+    public float getLength(){
+        return -1;
+    }
+    
+    public ArrayList<String> getContainedStopsIds() {
+        return containedStopsIds;
+    }
+
+    public void setContainedStopsIds(ArrayList<String> containedStopsIds) {
+        this.containedStopsIds = containedStopsIds;
+    }
+    
+    public boolean containsStopOfId( String id ){
+        return containedStopsIds.contains( id );
+    }
+    
+    public void addContainedStopId( String id ){
+        containedStopsIds.add(id);
+    }
 
     private Pair<MapNode, MapNode> ends = new Pair<>(null, null);
     
+    private ArrayList<String> containedStopsIds = new ArrayList<>(); // lista zawierajaca wszystkie id przystankow, ktore zostały pominiete na mapie, w kolejnosci od ends.ST do ends.ND !! kolejnosc bardzi wazna!!!
+    // ta lista jest przydatna do wypisywania przystankow, ktore znajduja
+
+
 }

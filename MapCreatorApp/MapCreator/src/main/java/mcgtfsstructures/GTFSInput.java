@@ -21,8 +21,10 @@ public class GTFSInput {
     }
 
     public static ArrayList<String> processFile(String filename) {
-        try {
+        try {            
+            System.out.print( "Wczytuje dane z pliku " + filename + "..." );
             ArrayList<String> list = readFile(filename);
+            System.out.println( "Dane wczytane!" );
             return list;
         } catch (Exception e) {
             return null;
@@ -101,13 +103,9 @@ public class GTFSInput {
         return mapa;
     }
 
-    public static ArrayList< Map<String, String>> getDataMaps(String filename) {
-       // String pth = gtfsDirPath + filename;
+    public static ArrayList< Map<String, String>> getDataMaps(String filename) {       
         ArrayList<String> lista = processFile(filename);
         
-       // System.out.println( "mypth = " + pth + " ----------!" );
-        //System.out.println();
-
         ArrayList< Map<String, String>> res = new ArrayList<>();
 
         ArrayList<String> pattern = null;

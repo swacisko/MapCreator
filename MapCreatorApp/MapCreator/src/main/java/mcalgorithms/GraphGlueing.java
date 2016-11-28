@@ -89,17 +89,20 @@ public class GraphGlueing {
     // merguje wszystkie potrzebne dane ( description, structureName itp) do nowego wierzcholka
     private void glueAllData( int gluedNodeId, ArrayList<Integer> oldNodesIds ){
         MapNode n = resGraph.getMapNodeByID( gluedNodeId );
+        String structurename = graph.getMapNodeByID( oldNodesIds.get(0) ).getStructureName();
         for( Integer g : oldNodesIds ){
             MapNode n2 = graph.getMapNodeByID( g );
-            n.setDescription( n2.getDescription() ); // UWAGA - brany jest tylko ostatni opis pod uwage
+            n.setDescription( "Glued node" ); // UWAGA - brany jest tylko ostatni opis pod uwage
             if( n2.getColor() != null ) n.setColor( n2.getColor() ); // tutaj UWAGA - brany jest tylko  ostatni z wystepujacych kolorów!!!
-            n.setStructureName( n2.getStructureName() ); // UWAGA - brany jest tylko ostatnia nazwa 
-            n.getContainedStopIds().addAll( n2.getContainedStopIds() ); // dodaje wszystkie przystanki, ktore powinienem polaczyc
+            structurename = LongestCommonSubstring.getLongestCommonSubstring(structurename, n2.getStructureName() );
+            n.getContainedStopsIds().addAll( n2.getContainedStopsIds() ); // dodaje wszystkie przystanki, ktore powinienem polaczyc
             n.setCoords( n2.getCoords() );
+            n.setContractable( n.isContractable() && n2.isContractable() );
         }
+        n.setStructureName( structurename ); 
     }
 
-    public void glueGraph(){        
+    public void glueGraphOld(){        
         ArrayList< ArrayList<Integer> > glueingList = getGlueingList(); // glueingList.get(i) to lista id wierzcholkow, ktore maja zostac zlepione
                
      //   System.out.println( "GetGluedGraph:  glueingList:\n" + glueingList );
@@ -151,15 +154,20 @@ public class GraphGlueing {
         
     }
     
-    public MapGraph getGluedGraph() {
+    // tutaj sklejam graf poprzez zlepianie wierzcholkow w grafie, a nie calkowite tworzenie nowego grafu od poczatku
+    public void glueGraph(){
+        
+    }
+    
+    public MapGraph convertGraph() {
         if( graph == null ) return null;
         resGraph = graph;
         CNT = 0;
-        System.out.println( "Przed sklejaniem graf ma " + graph.size() + "  wierzcholkow" );
+        System.out.println( "Przed sklejaniem graf ma " + graph.size() + "  wierzcholkow i " + graph.getEdges().size() + " wierzcholkow" );
         do{
             graph = resGraph;
             resGraph = new MapGraph();
-            glueGraph();   
+            glueGraphOld();   
             //System.out.println( "Po " + ++CNT +"-tym sklejaniu graf ma " + resGraph.size() + " wierzcholkow" );
         }while( false /*resGraph.size() < graph.size()*/ ); // aby wielokrotnie sklejac graf, moge wywolac ten drugi warunek, ale to chyba nie bedzie mialo zbytnio sensu
         

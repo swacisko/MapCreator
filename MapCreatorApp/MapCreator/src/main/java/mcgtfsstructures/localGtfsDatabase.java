@@ -18,6 +18,7 @@ import java.util.Map;
 public class localGtfsDatabase {
 
     public static void init() {
+        System.out.println( "Inicjalizacja wewnetrznej bazy danych" );
         stops = GTFSInput.getAllStops();
         routes = GTFSInput.getAllRoutes(); // getAllStops musi byc pr
         shapes = GTFSInput.getAllShapes();
@@ -43,6 +44,7 @@ public class localGtfsDatabase {
 
     // tworzy wszystkie mapy (stopsMapByStopId, tripsMapByTripId,...)
     private static void initMaps() {
+        System.out.println( "Inicjalizacja map bazodanowych" );
         stopsMapByStopId = new HashMap<>();
         for (Stop s : stops) {
             stopsMapByStopId.put(s.getStopId(), s);

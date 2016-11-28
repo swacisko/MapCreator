@@ -107,36 +107,31 @@ public class MapNode extends MapStructure implements Drawable {
         return s;
     }
     
-     public ArrayList<String> getContainedStopIds() {
-        return containedStopIds;
-    }
-
-    public void setContainedStopIds(ArrayList<String> containedStopIds) {
-        this.containedStopIds = containedStopIds;
-    }
-
-    public void addContainedStopId( String id ){
-        containedStopIds.add(id);
-    }
-    
-    public boolean containsStopId( String id ){
-        return containedStopIds.contains( id );
-    }
-    
-    public void removeContainedStopById( String id ){
-        containedStopIds.remove( id );
-    }
-    
     public int countNeighbours(){
         return edges.size();
     }
     
+     public boolean isContractable() {
+        return contractable;
+    }
+
+    public void setContractable(boolean contractable) {
+        this.contractable = contractable;
+    }
+    
+    
+    private boolean contractable = true; 
+        
     private ArrayList<MapEdge> edges = new ArrayList<>(); // to sa krawedzie o jednym z konców w danym wierzcholku
     private Pair<Float, Float> coords = new Pair<>(new Float(0), new Float(0)); // to sa wspolrzedne danego wierzcholka na mapie, PRZED NORMALIZACJA!!! czyli po prostu wspolrzedne z GTFS
     // NORMALIZACJA WSPOLRZEDNYCH BEDZIE NASTEPOWALA TUZ PRZED WYPISYWANIEM GOTOWEJ STRUKTURY GRAFU DO SVG
 
-    private ArrayList<String> containedStopIds = new ArrayList<>();
+    
+    
 
+   
+
+    
    
     
     

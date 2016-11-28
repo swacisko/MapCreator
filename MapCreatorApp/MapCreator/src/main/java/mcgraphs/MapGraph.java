@@ -187,6 +187,10 @@ public class MapGraph {
             }
         }
         edges = copy;
+        edgesMap.clear();
+        for( MapEdge e : edges ){
+            edgesMap.put( e.getID(),e );
+        }
 
     }
 
@@ -275,7 +279,7 @@ public class MapGraph {
                     break;
                 }
                 case 6:{
-                    MapGraph glGraph = new GraphGlueing(this).getGluedGraph();
+                    MapGraph glGraph = new GraphGlueing(this).convertGraph();
                     System.out.println( "Glued graph:\n" + glGraph );
                     
                     break;

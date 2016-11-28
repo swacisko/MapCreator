@@ -25,7 +25,7 @@ public class MapGraphCreator {
 
     // wybiera wszystkie drogi, ktorych typ jest odpowiedni do tego przekazanego przez TRANSPORT_MEASURE
     private void createConsideredRoutesAndStops() {
-        //   int CNT = 0;
+        System.out.println( "Wybieram przystanki i drogi ktore maja zostac dodane do grafu" );
         for (Route r : localGtfsDatabase.getAllRoutes()) {
             int routetype = Integer.parseInt(r.getRouteType());
             if ((TRANSPORT_MEASURE & (1 << routetype)) != 0) {
@@ -34,42 +34,52 @@ public class MapGraphCreator {
                     //  if( consideredStops.contains( localGtfsDatabase.getStopOfID( s ) ) == false ) CNT++;
                     consideredStops.add(localGtfsDatabase.getStopOfID(s));
                 }
-            }
-        }
+                
+                ArrayList<Trip> trips = localGtfsDatabase.getAllTripsOfRouteId( r.getRouteId());
+                if( trips == null ) continue;            
+                for( Trip t : trips ){
+                    ArrayList<StopTime> l = localGtfsDatabase.getAllStopTimesOfTripId(t.getTripId());
+                    noncontractableNodes.add( l.get(0).getStopId() );
+                }
+            }          
+            
+        }        
 
-        //   System.out.println( "Dodalem lacznie " + CNT + "  przystankow do narysowania, a wszystkich jest " + localGtfsDatabase.getAllStops().size() );
     }
 
-    private void addNodesToGraph() {
-       // for( Stop s : localGtfsDatabase.getAllStops() ) consideredStops.add(s); // TO JEST TYLKO TYMCZASOWE I DO USUNIECIA POZNIEJ!
-
+    private void addNodesToGraph() {        
+        int CNT = 1;
         for (Stop s : consideredStops) {
+            System.out.print( "\rDodaje wierzcholek nr " + (CNT++) );
             MapNode node = new MapNode();
             node.setCoords(s.getCoords());
             node.setStructureName(s.getStopName());
             node.setDescription("Structure represents a STOP");
             node.setColor(s.getColor());
-            node.addContainedStopId(s.getStopId());
-
+            node.addContainedStopsId(s.getStopId());
+            if( noncontractableNodes.contains( s.getStopId() ) ){
+                node.setContractable( false );
+            }
+                
             resGraph.addMapNode(node);
         }
+        System.out.println();
     }
 
     // 
     private void addEdgesToGraph() {
+        System.out.println("Zaczynam dodawac krawedzie");
         Set< Pair<Integer, Integer>> edgesAdded = new HashSet<>(); // edgesAdded to zbior par, z ktorych kazda okresla 2 id wierzcholkow, ktore chce polaczyc
 
         Map<String, Integer> nodeIdReversed = new HashMap<>();  // nodeIdReversed.get(key) to wartosc value taka, ze przystanek o id = key znajduje sie w wierzcholku grafu o id = value
 
         for (MapNode n : resGraph.getNodes()) {
-            for (String s : n.getContainedStopIds()) {
+            for (String s : n.getContainedStopsIds()) {
                 nodeIdReversed.put(s, n.getID());
             }
         }
-
-        System.out.println("Zaczynam dodawac krawedzie");
+        
         int CNT = 0;
-
         for (Trip t : localGtfsDatabase.getAllTrips()) {
             if (consideredRoutes.contains(t.getRouteId())) { // jezeli typ danej drogi jet zgodny z TRANSPORT_MEASURE
                 int colormode = Integer.parseInt(localGtfsDatabase.getRouteOfID(t.getRouteId()).getRouteType());
@@ -95,14 +105,14 @@ public class MapGraphCreator {
                             e.setColor(MCConstants.getCorrespondingColor(colormode));
                             resGraph.addMapEdge(e);
 
-                            System.out.print("\rCNT:" + CNT++);
+                            System.out.print("\rDodaje krawedz nr: " + CNT++);
                         }
                     }
                 }
             }
         }
 
-        System.out.println("Skonczylem dodawac krawedzie");
+        System.out.println("\nSkonczylem dodawac krawedzie");
     }
 
     // funkcja dodaje krawedzie do grafu sortujac topologicznie wszystkie przystanki na danej drodze
@@ -112,7 +122,7 @@ public class MapGraphCreator {
         Map<String, Integer> nodeIdReversed = new HashMap<>();  // nodeIdReversed.get(key) to wartosc value taka, ze przystanek o id = key znajduje sie w wierzcholku grafu o id = value
 
         for (MapNode n : resGraph.getNodes()) {
-            for (String s : n.getContainedStopIds()) {
+            for (String s : n.getContainedStopsIds()) {
                 nodeIdReversed.put(s, n.getID());
             }
         }
@@ -353,7 +363,7 @@ public class MapGraphCreator {
         addNodesToGraph();
         addEdgesToGraph();
         //addEdgesToGraphTopoSort();
-        testStopsFrequenciesOnRoutes();
+        //testStopsFrequenciesOnRoutes();
         
 
         return resGraph;
@@ -365,4 +375,5 @@ public class MapGraphCreator {
 
     private Set<String> consideredRoutes = new HashSet<>(); // drogi przechowywane po route.id
     private Set<Stop> consideredStops = new HashSet<>(); // przystanki przechowywane bezposrednio
+    private Set<String> noncontractableNodes = new HashSet<>(); // zawiera id przystankow, ktore sa punktami koncowymi na pewnych tripach - wtedy nie mozna skrocic danych wierzcholkow
 }

@@ -6,6 +6,7 @@
 package mcgraphs;
 
 import java.awt.Color;
+import java.util.ArrayList;
 
 /**
  *
@@ -94,6 +95,26 @@ public class MapStructure {
     public void setHoverColor(Color hoverColor) {
         this.hoverColor = hoverColor;
     }
+    
+     public ArrayList<String> getContainedStopsIds() {
+        return containedStopsIds;
+    }
+
+    public void setContainedStopsIds(ArrayList<String> containedStopIds) {
+        this.containedStopsIds = containedStopIds;
+    }
+
+    public void addContainedStopsId( String id ){
+        containedStopsIds.add(id);
+    }
+    
+    public boolean containsStopOfId( String id ){
+        return containedStopsIds.contains( id );
+    }
+    
+    public void removeContainedStopById( String id ){
+        containedStopsIds.remove( id );
+    }
 
     private Color hoverColor = Color.RED;
     private int ID = -1;
@@ -103,4 +124,6 @@ public class MapStructure {
     private int drawingWidth = 2;
     private int hoverWidth = 5;
 
+    
+    private ArrayList<String> containedStopsIds = new ArrayList<>();
 }

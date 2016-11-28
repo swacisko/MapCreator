@@ -24,9 +24,10 @@ import mctemplates.Pair;
  *
  */
 // ten algorytm skleja nam graf zadany poprzez wszystkie przystanki i polaczenia w graf, w ktorym te same przystanki sa ze soba utozsamiane
+// zwraca nowy graf, nie modyfikuje tego przeslanego jako parametr
 public class GraphGlueing {
 
-    public GraphGlueing(MapGraph graph) {
+        public GraphGlueing(MapGraph graph) {
         this.graph = graph;
     }
     
@@ -159,18 +160,10 @@ public class GraphGlueing {
             graph = resGraph;
             resGraph = new MapGraph();
             glueGraph();   
-            System.out.println( "Po " + ++CNT +"-tym sklejaniu graf ma " + resGraph.size() + " wierzcholkow" );
+            //System.out.println( "Po " + ++CNT +"-tym sklejaniu graf ma " + resGraph.size() + " wierzcholkow" );
         }while( false /*resGraph.size() < graph.size()*/ ); // aby wielokrotnie sklejac graf, moge wywolac ten drugi warunek, ale to chyba nie bedzie mialo zbytnio sensu
         
         return resGraph;
-    }
-
-    public void setGraph(MapGraph graph) {
-        this.graph = graph;
-    }
-
-    public MapGraph getGraph() {
-        return graph;
     }
 
     private boolean canBeGluedTogether(MapNode n1, MapNode n2) {
@@ -182,18 +175,18 @@ public class GraphGlueing {
         
         
         if (similarName(n1.getStructureName(), n2.getStructureName(),0.8f)) {
-            if (coordinatesRoughlyTheSame(n1.getCoords(), n2.getCoords(), 20f  )) { // bardzo podobne nazwy, wiec i odleglosc dosc duza - ponad kilkadziesiat metrow
+            if (coordinatesRoughlyTheSame(n1.getCoords(), n2.getCoords(), 12f  )) { // bardzo podobne nazwy, wiec i odleglosc dosc duza - ponad kilkadziesiat metrow
                 return true;
             }
         } 
         else if (similarName(n1.getStructureName(), n2.getStructureName(),0.4f)) { // cos wspolnego w nazwie maja i wzglednie blisko siebie - kilkadziescia metrow
-            if (coordinatesRoughlyTheSame(n1.getCoords(), n2.getCoords(), 10f  )) {
+            if (coordinatesRoughlyTheSame(n1.getCoords(), n2.getCoords(), 6f  )) {
                 return true;
             }
         }        
-        else if( coordinatesRoughlyTheSame(n1.getCoords(), n2.getCoords(), 4f  ) ){ // rozne nazwy ale tuz obok siebie
+       /* else if( coordinatesRoughlyTheSame(n1.getCoords(), n2.getCoords(), 4f  ) ){ // rozne nazwy ale tuz obok siebie
             return true;
-        }
+        }*/
 
         return false;
     }

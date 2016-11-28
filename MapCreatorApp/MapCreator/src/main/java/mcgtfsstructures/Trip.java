@@ -11,6 +11,7 @@ import java.util.Map;
  *
  * @author swacisko
  */
+// klasa Trip opisuje pojedyncze linie pliku trips.txt
 public class Trip extends GtfsStructure{
 
     

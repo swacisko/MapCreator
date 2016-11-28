@@ -233,11 +233,11 @@ public class DrawingModule {
         
         graph = new MapGraphCreator().createMapGraphFromGtfsDatabase( MCConstants.ALL_TRANSPORT_MEASURES );
         drawGraphOnMap( graph, "graph_not_glued");
-        System.out.println( "Not glued graph has " + graph.size() + " nodes and " + graph.getEdges().size() + " edges" );
+        System.out.println( "Not glued graph ma " + graph.size() + " wierzcholkow i " + graph.getEdges().size() + " krawedzi" );
                 
         //new GraphGlueing(graph).testGlueing();
         MapGraph glGraph = new GraphGlueing(graph).getGluedGraph();
-        System.out.println( "GLUED graph has " + glGraph.size() + " nodes and " + glGraph.getEdges().size() + " edges" );
+        System.out.println( "GLUED graph ma " + glGraph.size() + " wierzcholkow i " + glGraph.getEdges().size() + " krawedzi" );
         drawGraphOnMap( glGraph, "graph_glued");
     }
     
@@ -259,13 +259,17 @@ public class DrawingModule {
             
             if( n.getContainedStopIds().size() >= 4 ){
                 svg.setTextColor( "red" );
-                svg.addText( UsefulFunctions.convertToPoint( normalizeCoordinates(LBC, RUC, n.getCoords() ) ), n.getStructureName() );
+                String s = "";
+                for( String sadd : n.getContainedStopIds() ) s += localGtfsDatabase.getStopOfID(sadd).getStopName() + " -- ";
+                svg.addText( UsefulFunctions.convertToPoint( normalizeCoordinates(LBC, RUC, n.getCoords() ) ), s );
                 svg.setTextColor( "black" );
                 
                 svg.addEllipsePlain(UsefulFunctions.convertToPoint( normalizeCoordinates(LBC, RUC, n.getCoords() ) ), 3*drawingWidth/2, drawingWidth );
             }
             else if(n.getEdges().size() == 1){
-                svg.addText( UsefulFunctions.convertToPoint( normalizeCoordinates(LBC, RUC, n.getCoords() ) ), n.getStructureName() );
+                String s = "";
+                for( String sadd : n.getContainedStopIds() ) s += localGtfsDatabase.getStopOfID(sadd).getStopName() + " -- ";
+                svg.addText( UsefulFunctions.convertToPoint( normalizeCoordinates(LBC, RUC, n.getCoords() ) ), s );
                 svg.addCircle( UsefulFunctions.convertToPoint( normalizeCoordinates(LBC, RUC, n.getCoords() ) ), drawingWidth );
             }
             else{

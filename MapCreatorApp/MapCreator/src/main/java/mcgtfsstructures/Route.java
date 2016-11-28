@@ -13,6 +13,8 @@ import java.util.Objects;
  *
  * @author swacisko
  */
+
+// klasa route opisuje poedyncze linie pliku routes.txt
 public class Route extends GtfsStructure {
 
     

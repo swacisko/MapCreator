@@ -127,6 +127,9 @@ public class MapNode extends MapStructure implements Drawable {
         containedStopIds.remove( id );
     }
     
+    public int countNeighbours(){
+        return edges.size();
+    }
     
     private ArrayList<MapEdge> edges = new ArrayList<>(); // to sa krawedzie o jednym z konców w danym wierzcholku
     private Pair<Float, Float> coords = new Pair<>(new Float(0), new Float(0)); // to sa wspolrzedne danego wierzcholka na mapie, PRZED NORMALIZACJA!!! czyli po prostu wspolrzedne z GTFS

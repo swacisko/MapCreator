@@ -66,4 +66,5 @@ public class UsefulFunctions {
         else if( c.equals( Color.WHITE ) ) return "white";
         else return "";
     }
+    
 }

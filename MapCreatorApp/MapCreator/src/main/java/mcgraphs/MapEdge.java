@@ -63,7 +63,8 @@ public class MapEdge extends MapStructure {
     private Pair<MapNode, MapNode> ends = new Pair<>(null, null);
     
     private ArrayList<String> containedStopsIds = new ArrayList<>(); // lista zawierajaca wszystkie id przystankow, ktore zostały pominiete na mapie, w kolejnosci od ends.ST do ends.ND !! kolejnosc bardzi wazna!!!
-    // ta lista jest przydatna do wypisywania przystankow, ktore znajduja
+    // ta lista jest przydatna do wypisywania przystankow, ktore znajduja sie na danym odcinku drogi
+    
 
 
 }

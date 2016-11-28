@@ -12,6 +12,7 @@ import java.util.Map;
  *
  * @author swacisko
  */
+// klasa StopTime opisuje pojedyncze linie pliku stoptimes.txt
 public class StopTime extends GtfsStructure {
     
     public StopTime( Map<String,String> d ){

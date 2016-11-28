@@ -41,37 +41,47 @@ public class localGtfsDatabase {
         }
     }
 
-    // tworzy wszystkie mapy (stopsMap, tripsMap,...)
+    // tworzy wszystkie mapy (stopsMapByStopId, tripsMapByTripId,...)
     private static void initMaps() {
-        stopsMap = new HashMap<>();
+        stopsMapByStopId = new HashMap<>();
         for (Stop s : stops) {
-            stopsMap.put(s.getStopId(), s);
+            stopsMapByStopId.put(s.getStopId(), s);
         }
 
-        routesMap = new HashMap<>();
+        routesMapByRouteId = new HashMap<>();
         for (Route r : routes) {
-            routesMap.put(r.getRouteId(), r);
+            routesMapByRouteId.put(r.getRouteId(), r);
         }
 
-        tripsMap = new HashMap<>();
+        tripsMapByTripId = new HashMap<>();
         for (Trip t : trips) {
-            tripsMap.put(t.getTripId(), t);
+            tripsMapByTripId.put(t.getTripId(), t);
         }
 
-        shapesMap = new HashMap<>();
+        shapesMapByShapeId = new HashMap<>();
         for (Shape sh : shapes) {
-            if (shapesMap.containsKey(sh.getShapeId()) == false) {
-                shapesMap.put(sh.getShapeId(), new ArrayList<Shape>());
+            if (shapesMapByShapeId.containsKey(sh.getShapeId()) == false) {
+                shapesMapByShapeId.put(sh.getShapeId(), new ArrayList<Shape>());
             }
-            shapesMap.get(sh.getShapeId()).add(sh);
+            shapesMapByShapeId.get(sh.getShapeId()).add(sh);
         }
 
-        stoptimesMap = new HashMap<>();
+        stoptimesMapByTripId = new HashMap<>();
         for (StopTime st : stoptimes) {
-            if (stoptimesMap.containsKey(st.getTripId()) == false) {
-                stoptimesMap.put( st.getTripId(), new ArrayList<StopTime>() );
+            if (stoptimesMapByTripId.containsKey(st.getTripId()) == false) {
+                stoptimesMapByTripId.put(st.getTripId(), new ArrayList<StopTime>());
             }
-            stoptimesMap.get( st.getTripId() ).add( st );
+            stoptimesMapByTripId.get(st.getTripId()).add(st);
+        }
+
+        tripsMapByRouteId = new HashMap<>();
+        for (Trip t : trips) {
+            if (tripsMapByRouteId.containsKey(t.getRouteId()) == false) {
+                tripsMapByRouteId.put(t.getRouteId(), new ArrayList<Trip>());
+            }
+
+            tripsMapByRouteId.get(t.getRouteId()).add(t);
+
         }
     }
 
@@ -79,8 +89,8 @@ public class localGtfsDatabase {
     private static void assignStopsToRoutes() {
         for (StopTime st : stoptimes) {
             String stopid = st.getStopId();
-            Trip t = tripsMap.get(st.getTripId());
-            Route r = routesMap.get(t.getRouteId());
+            Trip t = tripsMapByTripId.get(st.getTripId());
+            Route r = routesMapByRouteId.get(t.getRouteId());
             if (r.containsStopOfId(stopid) == false) {
                 r.addStopId(stopid);
             }
@@ -115,9 +125,9 @@ public class localGtfsDatabase {
          sortShapesBySequence(res);
          return res;
          }*/
-        
-        sortShapesBySequence( shapesMap.get(id) );
-        return shapesMap.get(id);
+
+        sortShapesBySequence(shapesMapByShapeId.get(id));
+        return shapesMapByShapeId.get(id);
 
     }
 
@@ -134,7 +144,7 @@ public class localGtfsDatabase {
     //   ROUTES SECTION
     // zwraca droge o zadanym id, jezeli takiego nie ma, zwraca null
     public static Route getRouteOfID(String id) {
-        return routesMap.get(id);
+        return routesMapByRouteId.get(id);
     }
 
     public static ArrayList<Route> getAllRoutes() {
@@ -145,7 +155,7 @@ public class localGtfsDatabase {
     //   STOPS SECTION
     //zawra przystanek o zadanym id, jezeli takiego nie ma, zwraca null
     public static Stop getStopOfID(String id) {
-        return stopsMap.get(id);
+        return stopsMapByStopId.get(id);
     }
 
     public static ArrayList<Stop> getAllStops() {
@@ -159,7 +169,11 @@ public class localGtfsDatabase {
     }
 
     public static Trip getTripOfId(String id) {
-        return tripsMap.get(id);
+        return tripsMapByTripId.get(id);
+    }
+
+    public static ArrayList<Trip> getAllTripsOfRouteId(String id) {
+        return tripsMapByRouteId.get(id);
     }
 
     //END OF TRIPS SECTION
@@ -171,20 +185,20 @@ public class localGtfsDatabase {
     // zwraca liste wszystkich StopTimes, dla ktorych trip_id = id. Zwraca w posortowanej kolejnosci - w takiej, w jakiej wystepuje naprawde w trasie
     public static ArrayList<StopTime> getAllStopTimesOfTripId(String id) {
         /*ArrayList<StopTime> res = new ArrayList<>();
-        for (StopTime s : stoptimes) {
-            if (s.getTripId().equals(id)) {
-                res.add(s);
-            }
-        }
+         for (StopTime s : stoptimes) {
+         if (s.getTripId().equals(id)) {
+         res.add(s);
+         }
+         }
 
-        if (res.isEmpty()) {
-            return null;
-        } else {
-            sortStopTimesByTripId(res);
-            return res;
-        }*/
-        sortStopTimesByTripId( stoptimesMap.get(id) );
-        return stoptimesMap.get(id);
+         if (res.isEmpty()) {
+         return null;
+         } else {
+         sortStopTimesByTripId(res);
+         return res;
+         }*/
+        sortStopTimesByTripId(stoptimesMapByTripId.get(id));
+        return stoptimesMapByTripId.get(id);
     }
 
     private static void sortStopTimesByTripId(ArrayList<StopTime> l) {
@@ -201,10 +215,11 @@ public class localGtfsDatabase {
     private static ArrayList< StopTime> stoptimes = null;
 
     // poniższe mapy przechowuja dane struktur po ich ID - zeby moc zdecydowanie szybciej wyszukiwac potrzebne nam informacje
-    private static Map<String, Stop> stopsMap = null; // mapowane po stop.id
-    private static Map<String, Route> routesMap = null; // mapowane po route.id
-    private static Map<String, Trip> tripsMap = null; // mapowane po trip.id
-    private static Map<String, ArrayList<Shape>> shapesMap = null; // mapowane po shape.id
-    private static Map<String, ArrayList<StopTime>> stoptimesMap = null; // mapowane po stoptime.getTripId();
+    private static Map<String, Stop> stopsMapByStopId = null; // mapowane po stop.id
+    private static Map<String, Route> routesMapByRouteId = null; // mapowane po route.id
+    private static Map<String, Trip> tripsMapByTripId = null; // mapowane po trip.id
+    private static Map<String, ArrayList<Shape>> shapesMapByShapeId = null; // mapowane po shape.id
+    private static Map<String, ArrayList<StopTime>> stoptimesMapByTripId = null; // mapowane po stoptime.getTripId();
+    private static Map<String, ArrayList<Trip>> tripsMapByRouteId = null;
 
 }

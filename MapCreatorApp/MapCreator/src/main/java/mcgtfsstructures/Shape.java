@@ -14,6 +14,8 @@ import java.util.Map;
  *
  * @author swacisko
  */
+
+// klasa Shape opisuje pojedyncze linie pliku shapes.txt
 public class Shape extends GtfsStructure implements Drawable{
 
     

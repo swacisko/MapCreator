@@ -13,6 +13,7 @@ import java.util.Map;
  *
  * @author swacisko
  */
+// klasa Stop opisuje pojedyncze linie tekstu stops.txt
 public class Stop extends GtfsStructure implements Drawable{
 
     

@@ -26,6 +26,10 @@ public class MapGraphCreator {
     // wybiera wszystkie drogi, ktorych typ jest odpowiedni do tego przekazanego przez TRANSPORT_MEASURE
     private void createConsideredRoutesAndStops() {
         System.out.println( "Wybieram przystanki i drogi ktore maja zostac dodane do grafu" );
+        consideredRoutes.clear();
+        consideredStops.clear();
+        noncontractableNodes.clear();
+        
         for (Route r : localGtfsDatabase.getAllRoutes()) {
             int routetype = Integer.parseInt(r.getRouteType());
             if ((TRANSPORT_MEASURE & (1 << routetype)) != 0) {
@@ -55,7 +59,7 @@ public class MapGraphCreator {
             node.setCoords(s.getCoords());
             node.setStructureName(s.getStopName());
             node.setDescription("Structure represents a STOP");
-            node.setColor(s.getColor());
+            if( s.getColor() != null ) node.setColor(s.getColor());
             node.addContainedStopsId(s.getStopId());
             if( noncontractableNodes.contains( s.getStopId() ) ){
                 node.setContractable( false );

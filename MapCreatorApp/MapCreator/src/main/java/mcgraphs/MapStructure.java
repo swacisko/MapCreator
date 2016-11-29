@@ -52,7 +52,7 @@ public class MapStructure {
 
     @Override
     public String toString() {
-        return "ID = " + ID + "    color = " + color;
+        return "ID = " + ID;
     }
 
     public String getDescription() {
@@ -96,25 +96,7 @@ public class MapStructure {
         this.hoverColor = hoverColor;
     }
     
-     public ArrayList<String> getContainedStopsIds() {
-        return containedStopsIds;
-    }
-
-    public void setContainedStopsIds(ArrayList<String> containedStopIds) {
-        this.containedStopsIds = containedStopIds;
-    }
-
-    public void addContainedStopsId( String id ){
-        containedStopsIds.add(id);
-    }
-    
-    public boolean containsStopOfId( String id ){
-        return containedStopsIds.contains( id );
-    }
-    
-    public void removeContainedStopById( String id ){
-        containedStopsIds.remove( id );
-    }
+     
 
     private Color hoverColor = Color.RED;
     private int ID = -1;
@@ -125,5 +107,5 @@ public class MapStructure {
     private int hoverWidth = 5;
 
     
-    private ArrayList<String> containedStopsIds = new ArrayList<>();
+    
 }

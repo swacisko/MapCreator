@@ -104,8 +104,7 @@ public class MapGraph {
 
     public void removeMapEdge(int index) {
         if (index >= edges.size()) {
-            System.out.println("Zle indeksowanie w funkcji removeMapEdge() w MapGraph, nic nie usuwam");
-            return;
+            System.out.println("Zle indeksowanie w funkcji removeMapEdge() w MapGraph, nic nie usuwam");           
         } else {
             removeMapEdgeByID(edges.get(index).getID());
         }

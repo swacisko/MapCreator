@@ -8,7 +8,10 @@ package mcgraphs;
 
 import mctemplates.Pair;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import mctemplates.Drawable;
+import mctemplates.MCConstants;
 
 /**
  *
@@ -18,6 +21,10 @@ public class MapNode extends MapStructure implements Drawable {
 
     public MapNode() {
         super();
+        setColor( MCConstants.getINITIAL_NODE_COLOR() );
+        setHoverColor( MCConstants.getINITIAL_NODE_HOVER_COLOR() );
+        setDrawingWidth( MCConstants.getINITIAL_NODE_WIDTH() );
+        setHoverWidth( MCConstants.getINITIAL_NODE_HOVER_WIDTH() );
     }
 
     public void setCoords(Pair<Float, Float> p) {
@@ -107,11 +114,37 @@ public class MapNode extends MapStructure implements Drawable {
         return s;
     }
     
-    public int countNeighbours(){
+    // funkcja zwraca liczbe krawedzi
+    public int countEdges(){
         return edges.size();
     }
     
-     public boolean isContractable() {
+    // funkcja zwraca liczbe sasiadow - liczba ta moze byc rozna od liczby krawedzi, jezeli wystepuja multikrawedzie
+    public int countNeighbours(){
+        ArrayList<MapNode> neigh = getNeighbours();
+        Set<Integer> diffNeigh = new HashSet<>();
+        for( MapNode n : neigh ){
+            diffNeigh.add( n.getID() );
+        }
+        return diffNeigh.size();
+    }
+    
+    // zwraca liste sasiadow danego wierzcholka. Ten sam sasiad moze wystepowac na tej liscie wiecej niz raz jezeli w grafie sa multikrawedzie
+    public ArrayList<MapNode> getNeighbours(){
+        ArrayList<MapNode> neigh = new ArrayList<>();
+        for( MapEdge e : edges ){
+            Pair<MapNode,MapNode> ends = e.getEnds();
+            if( ends.getST().equals(this) == true ){
+                neigh.add( ends.getND() );
+            }
+            else{
+                neigh.add( ends.getST() );
+            }
+        }
+        return neigh;
+    }
+    
+    public boolean isContractable() {
         return contractable;
     }
 
@@ -119,15 +152,33 @@ public class MapNode extends MapStructure implements Drawable {
         this.contractable = contractable;
     }
     
+    public ArrayList<String> getContainedStopsIds() {
+        return containedStopsIds;
+    }
+
+    public void setContainedStopsIds(ArrayList<String> containedStopIds) {
+        this.containedStopsIds = containedStopIds;
+    }
+
+    public void addContainedStopsId( String id ){
+        containedStopsIds.add(id);
+    }
     
-    private boolean contractable = true; 
-        
+    public boolean containsStopOfId( String id ){
+        return containedStopsIds.contains( id );
+    }
+    
+    public void removeContainedStopById( String id ){
+        containedStopsIds.remove( id );
+    }
+    
+    private boolean contractable = true;         
     private ArrayList<MapEdge> edges = new ArrayList<>(); // to sa krawedzie o jednym z konców w danym wierzcholku
     private Pair<Float, Float> coords = new Pair<>(new Float(0), new Float(0)); // to sa wspolrzedne danego wierzcholka na mapie, PRZED NORMALIZACJA!!! czyli po prostu wspolrzedne z GTFS
     // NORMALIZACJA WSPOLRZEDNYCH BEDZIE NASTEPOWALA TUZ PRZED WYPISYWANIEM GOTOWEJ STRUKTURY GRAFU DO SVG
 
     
-    
+    private ArrayList<String> containedStopsIds = new ArrayList<>();
 
    
 

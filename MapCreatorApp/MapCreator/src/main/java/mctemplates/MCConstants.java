@@ -49,10 +49,29 @@ public class MCConstants {
     private static int INITIAL_EDGE_WIDTH = 4;
     private static int INITIAL_EDGE_HOVER_WIDTH = 8;
     
-    private static Color INITIAL_NODE_COLOR = Color.GREEN;        
+    private static Color INITIAL_NODE_COLOR = Color.ORANGE;        
     private static Color INITIAL_NODE_HOVER_COLOR = INITIAL_HOVER_COLOR;
-    private static int INITIAL_NODE_WIDTH = 3;
-    private static int INITIAL_NODE_HOVER_WIDTH = 6;
+    private static int INITIAL_NODE_WIDTH = 4;
+    private static int INITIAL_NODE_HOVER_WIDTH = 12;
+    
+    private static int INITIAL_SVG_WIDTH = 3000;
+    private static int INITIAL_SVG_HEIGHT = 3000;
+
+    public static int getINITIAL_SVG_WIDTH() {
+        return INITIAL_SVG_WIDTH;
+    }
+
+    public static void setINITIAL_SVG_WIDTH(int INITIAL_SVG_WIDTH) {
+        MCConstants.INITIAL_SVG_WIDTH = INITIAL_SVG_WIDTH;
+    }
+
+    public static int getINITIAL_SVG_HEIGHT() {
+        return INITIAL_SVG_HEIGHT;
+    }
+
+    public static void setINITIAL_SVG_HEIGHT(int INITIAL_SVG_HEIGHT) {
+        MCConstants.INITIAL_SVG_HEIGHT = INITIAL_SVG_HEIGHT;
+    }
 
     public static int getINITIAL_EDGE_HOVER_WIDTH() {
         return INITIAL_EDGE_HOVER_WIDTH;

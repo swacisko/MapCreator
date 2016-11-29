@@ -11,6 +11,7 @@ import mcgtfsstructures.localGtfsDatabase;
 import java.util.ArrayList;
 
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 import mcalgorithms.EdgeContraction;
 import mcalgorithms.GraphGlueing;
@@ -228,7 +229,7 @@ public class DrawingModule {
         System.out.println("Zaczynam tworzyc podstawowy graf z danych GTFS");
         graph = new MapGraphCreator().createMapGraphFromGtfsDatabase(MCConstants.ALL_TRANSPORT_MEASURES);
         System.out.println("Ukonczylem tworzenie grafu z danych GTFS");
-        System.out.println("Basic graph ma " + graph.size() + " wierzcholkow i " + graph.getEdges().size() + " krawedzi");
+        System.out.println("Basic graph ma " + graph.countNodes() + " wierzcholkow i " + graph.countEdges() + " krawedzi");
 
         System.out.println("Rozpoczynam rysowanie podstawowego grafu");
         drawGraphOnMap(graph, "basic");        
@@ -240,7 +241,7 @@ public class DrawingModule {
         //new GraphGlueing(graph).testGlueing();        
         graph = new GraphGlueing(graph).convertGraph();
         System.out.println("Skonczylem procedure sklejania grafu");
-        System.out.println("GLUED graph ma " + graph.size() + " wierzcholkow i " + graph.getEdges().size() + " krawedzi");
+        System.out.println("GLUED graph ma " + graph.countNodes() + " wierzcholkow i " + graph.countEdges() + " krawedzi");
 
         System.out.println("Rozpoczynam rysowanie sklejonego grafu");
         drawGraphOnMap(graph, "glued");        
@@ -251,7 +252,7 @@ public class DrawingModule {
         System.out.println("Zaczynam procedure kontrakcji krawedzi");
         graph = new EdgeContraction(graph).convertGraph();
         System.out.println("Skonczylem procedure kontrakcji krawedzi");
-        System.out.println("Edgecontracted graph ma " + graph.size() + " wierzcholkow i " + graph.getEdges().size() + " krawedzi");
+        System.out.println("Edgecontracted graph ma " + graph.countNodes() + " wierzcholkow i " + graph.countEdges() + " krawedzi");
         
         drawGraphOnMap(graph, "edgecontracted");
         System.out.println("Rozpoczynam rysowanie grafu z kontrakcja krawedzi");        
@@ -269,45 +270,66 @@ public class DrawingModule {
     }
 
     private void setDrawingNodeParameters(MapNode n) {
-
+            if (n.getDrawingWidth() != 0) {
+                svg.setCircleStrokeWidth(n.getDrawingWidth());
+                
+             //   svg.setEllipseStrokeWidth( n.getDrawingWidth() );
+            }
+            if( n.getHoverWidth() != 0 ){
+                svg.setCircleStrokeWidthHover( n.getHoverWidth() );
+                
+             //   svg.setEllipseStrokeWidthHover( n.getHoverWidth() );
+            }
+            if (n.getHoverColor() != null) {
+                svg.setCircleFillHover(UsefulFunctions.parseColor(n.getHoverColor()));
+                svg.setCircleStrokeColorHover(UsefulFunctions.parseColor(n.getHoverColor()));
+                
+             //   svg.setEllipseColorHover( UsefulFunctions.parseColor( n.getHoverColor() ) );
+             //   svg.setEllipseStrokeColorHover( UsefulFunctions.parseColor( n.getHoverColor() ) );
+            }
+            if (n.getColor() != null) {
+                svg.setCircleFill(UsefulFunctions.parseColor(n.getColor()));
+                svg.setCircleStrokeColor(UsefulFunctions.parseColor(n.getColor()));
+                
+               // svg.setEllipseColor( UsefulFunctions.parseColor(n.getColor()) );
+             //   svg.setEllipseStrokeColor( UsefulFunctions.parseColor(n.getColor()) );
+            }
     }
 
     private void drawGraphNodesOnMap(MapGraph graph) {
 
         for (MapNode n : graph.getNodes()) {
-            if (n.getDrawingWidth() != 0) {
-                svg.setCircleStrokeWidth(n.getDrawingWidth());
-            }
-            if (n.getHoverColor() != null) {
-                svg.setCircleFillHover(UsefulFunctions.parseColor(n.getHoverColor()));
-                svg.setCircleStrokeColorHover(UsefulFunctions.parseColor(n.getHoverColor()));
-            }
-            if (n.getColor() != null) {
-                svg.setCircleFill(UsefulFunctions.parseColor(n.getColor()));
-                svg.setCircleStrokeColor(UsefulFunctions.parseColor(n.getColor()));
-            }
-
+            setDrawingNodeParameters(n);
+            
             int drawingWidth = n.getDrawingWidth() - 1 + n.getContainedStopsIds().size();
-
+            
+            /*svg.setCircleFill( UsefulFunctions.parseColor( UsefulFunctions.getRandomColor() ) ); // to jest tylko do sprawdzenia dzialania funkcji addCricle() i innych
+            svg.setCircleStrokeColor(UsefulFunctions.parseColor( UsefulFunctions.getRandomColor() ) );
+            svg.setCircleFillHover(UsefulFunctions.parseColor( UsefulFunctions.getRandomColor() ) );   
+            svg.setCircleStrokeColorHover(UsefulFunctions.parseColor( UsefulFunctions.getRandomColor() ) ); 
+            svg.setCircleStrokeWidth( 2 + new Random().nextInt(15) );
+            svg.setCircleStrokeWidthHover(2 + new Random().nextInt(15));
+            drawingWidth =  2 + new Random().nextInt(15); */
+            
+            
             if (n.getContainedStopsIds().size() >= 4) {
                 svg.setTextColor("red");
                 String s = n.getStructureName() + " --- ";
                 /*for (String sadd : n.getContainedStopsIds()) {
                     s += localGtfsDatabase.getStopOfID(sadd).getStopName() + " - ";
                 }*/
+                svg.addEllipse(UsefulFunctions.convertToPoint(normalizeCoordinates(LBC, RUC, n.getCoords())), 3 * drawingWidth, drawingWidth);
                 svg.addText(UsefulFunctions.convertToPoint(normalizeCoordinates(LBC, RUC, n.getCoords())), s);
-                svg.setTextColor("black");
-
-                svg.addEllipsePlain(UsefulFunctions.convertToPoint(normalizeCoordinates(LBC, RUC, n.getCoords())), 3 * drawingWidth / 2, drawingWidth);
-            } else if (n.getEdges().size() == 1) {
+                svg.setTextColor("black");               
+            } else if (n.countEdges() == 1 || ( n.countEdges() < 4 && n.isContractable() == false ) ) {
                 String s = "";
                 /*for (String sadd : n.getContainedStopsIds()) {
                     s += localGtfsDatabase.getStopOfID(sadd).getStopName() + " -- ";
                 }*/
-                svg.addText(UsefulFunctions.convertToPoint(normalizeCoordinates(LBC, RUC, n.getCoords())), s);
                 svg.addCircle(UsefulFunctions.convertToPoint(normalizeCoordinates(LBC, RUC, n.getCoords())), drawingWidth);
+                svg.addText(UsefulFunctions.convertToPoint(normalizeCoordinates(LBC, RUC, n.getCoords())), s);                
             } else {
-                svg.addCirclePlain(UsefulFunctions.convertToPoint(normalizeCoordinates(LBC, RUC, n.getCoords())), drawingWidth);
+                svg.addCircle(UsefulFunctions.convertToPoint(normalizeCoordinates(LBC, RUC, n.getCoords())), drawingWidth);
             }
         }
     }

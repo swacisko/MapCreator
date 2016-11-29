@@ -28,7 +28,8 @@ public class localGtfsDatabase {
         initMaps();
 
         assignStopsToRoutes();
-
+        
+        System.out.println();
     }
 
     private void checkAssignedStopsToRoutes() {
@@ -44,7 +45,7 @@ public class localGtfsDatabase {
 
     // tworzy wszystkie mapy (stopsMapByStopId, tripsMapByTripId,...)
     private static void initMaps() {
-        System.out.println( "Inicjalizacja map bazodanowych" );
+        System.out.println( "\nInicjalizacja map bazodanowych" );
         stopsMapByStopId = new HashMap<>();
         for (Stop s : stops) {
             stopsMapByStopId.put(s.getStopId(), s);

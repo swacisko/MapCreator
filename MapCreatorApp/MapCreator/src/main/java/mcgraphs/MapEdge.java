@@ -57,10 +57,18 @@ public class MapEdge extends MapStructure {
         return s;
     }
     
-    
-    //UWAGA - TO JESZCZE NIE DZIALA!
+    // funkcja getLength jest przydatna do obliczania dlugosci krawedzi w ForceAlgorithm
     public float getLength(){
-        return -1;
+        MapNode n1 = ends.getST();
+        MapNode n2 = ends.getND();
+        Pair<Float,Float> p1 = n2.getCoords();
+        Pair<Float,Float> p2 = n2.getCoords();
+                
+        float diffx = Math.abs( p1.getST() - p2.getST() );
+        float diffy = Math.abs( p1.getND() - p2.getND() );
+        
+        float res = (float)Math.sqrt( diffx*diffx + diffy*diffy );
+        return res;        
     }    
     
     public ArrayList<String> getContainedForwardStopsIds() {

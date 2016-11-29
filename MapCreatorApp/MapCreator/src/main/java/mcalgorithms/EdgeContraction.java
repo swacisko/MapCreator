@@ -131,9 +131,11 @@ public class EdgeContraction {
     
     // scala mi dwie krawedzie w jedna i usuwa druga (ta juz niepotrzebna oczywiscie)
     private void mergeParallelEdges( MapEdge e1, MapEdge e2 ){
-        
-        
-        
+        if( e1.getEnds().getST().getID() != e2.getEnds().getST().getID() ){
+            e1.swapEnds();
+        }
+        e1.setContainedBackwardStopsIds( e2.getContainedForwardStopsIds() );        
+        graph.removeMapEdgeByID( e2.getID() );       // to tylko do sprawdzenia liczby usunietych par        
     }
     
     // moze sie zdarzyc, ze miedzy dwoma przystankami po kontrakcji sa dwie krawedzie - jedna dla przystankow w jedna strone, druga dla przystankow w druga strone
@@ -141,25 +143,84 @@ public class EdgeContraction {
     // usuwam krawedzie rownolegle tylko wtedy, gdy sa dokladnie dwie rownolegle, gdy sa trzy lub wiecej to ich nie ruszam, bo to oznacza, ze 
     // zupelnie inna droga (a nie ta sama w dwie strony) mogla zostac sciagnieta do tej krawedzi
     private void removeParallelEdges(){
+        System.out.println("Wybieram rownolegle krawedzie");
         createParallelEdges();
         
-        for( Map.Entry< Pair<Integer,Integer>, ArrayList<MapEdge> > entry : parallelEdges.entrySet() ){
+        int CNT = 1;
+        int greaterThan2 = 0;
+        for( Map.Entry< Pair<Integer,Integer>, ArrayList<MapEdge> > entry : parallelEdges.entrySet() ){            
             ArrayList<MapEdge> l = entry.getValue();
             if( l.size() == 2  ){
+                System.out.print( "\rScalam " + (CNT++) + "-ta pare krawedzi" );
                 mergeParallelEdges( l.get(0), l.get(1) );
-            }            
-        }        
+            }else if( l.size() > 2 ){
+                greaterThan2++;
+            }         
+        }
+     //   System.out.println( "\nW grafie jest " + greaterThan2 + " rownoleglych zbiorow krawedzi mocy wiekszej lub rownej 3" ); // dla szczecina jest tylko jedna taka para
+        System.out.println();
     }
     
+    // po pierwszym scalaniu krawedzi sprawdza, czy listy Forward i Backward sa takie same tylko w odrwoconej kolejnosci
+    private void testForwardAndBackwardLists(){
+        System.out.println( "\nTestuje poprawnosc forward i backward lists" );
+        int CNT = 1;
+        int diff = 0;
+        for( MapEdge e : graph.getEdges() ){
+            System.out.print( "\rSprawdzam krawedz nr" + (CNT++) );
+            ArrayList<String> forward = e.getContainedForwardStopsIds();
+            ArrayList<String> backward = e.getContainedBackwardStopsIds();
+            
+            if( forward.size() != backward.size() ){
+                System.out.println( "Rozne rozmiary list!   forward.size() = " + forward.size() + "   backwards.size() = " + backward.size() );
+                System.out.println( "Forward:\t" + forward );
+                System.out.println( "Backward:'t" + backward );                       
+                        
+                return;
+            }
+            else{
+                if( forward.size() > 0 ) diff++;
+                int p = 0;
+                while( p < forward.size() ){
+                    if( forward.get(p).equals( backward.get( backward.size()-1-p ) ) == false ){
+                        System.out.println( "Takie same rozmiary, ale rozne przystanki lub rozna kolejnosc" );
+                        
+                        System.out.println( "Forward:\t" + forward );
+                        System.out.println( "Backward:'t" + backward ); 
+                        return;
+                    }
+                    
+                    p++;
+                }
+            }            
+        }
+        System.out.println( "Skonczylem sprawdzac krawedzie - zgadza sie!  Bylo dokladnie " + diff + " niepustych list forward sposrod " + graph.countEdges() + " wszystkich krawedzi" );
+    }
+    
+    // nie ma sensu wykonywac wiecej niz 1 'petli' postaci removeDeg2NodeFromGraph()->removeparallelEdges()->removeDeg2NodeFromGraph(), dla szczecina zmniejszy rozmiar grafu o 1 wierzcholek :)
     public MapGraph convertGraph(){
         createDeg2Vertices();
-        
+                
         int CNT = 1;
         for( MapNode n : deg2Nodes ){
             System.out.print( "\rDokonuje kontrakcji na wierzcholku nr " + (CNT++) );
             removeDeg2NodeFromGraph(n);
         }
-        System.out.println();
+        System.out.println("\nGraph ma teraz " + graph.countNodes() + " wierzcholkow oraz " + graph.countEdges() + " krawedzi");
+        
+        // testForwardAndBackwardLists();
+        // UWAGA - po pierwszej petli dla wszystkich wierzcholkow w listach containedForwardStopsIds i containedBackwardStopsIds powinny byc te same elementy
+        // ale w odwroconej kolejnosci.
+        
+        removeParallelEdges();       
+        /*CNT = 1;
+        createDeg2Vertices();
+        for( MapNode n : deg2Nodes ){
+            System.out.print( "\rDokonuje ponownej kontrakcji na wierzcholku nr " + (CNT++) );
+            removeDeg2NodeFromGraph(n);
+        }        
+        System.out.println("\nGraph ma teraz " + graph.countNodes() + " wierzcholkow oraz " + graph.getEdges().countNodes() + " krawedzi");
+        */  
         
         return graph;
     }

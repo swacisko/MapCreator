@@ -317,8 +317,12 @@ public class MapGraph {
         unavailableIds = new HashSet<>();
     }
     
-    public int size(){
+    public int countNodes(){
         return nodes.size();
+    }
+    
+    public int countEdges(){
+        return edges.size();
     }
 
     //******************************************************* END OF STATIC BLOCK

@@ -7,6 +7,7 @@ package mctemplates;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.util.Random;
 
 /**
  *
@@ -65,6 +66,16 @@ public class UsefulFunctions {
         else if( c.equals( Color.MAGENTA ) ) return "magenta";
         else if( c.equals( Color.WHITE ) ) return "white";
         else return "";
+    }
+    
+    
+    public static Color getRandomColor(){
+        Color[] colors = {
+            Color.RED, Color.BLACK, Color.YELLOW, Color.BLUE, Color.GREEN, Color.ORANGE, Color.WHITE, Color.GRAY, Color.MAGENTA, Color.CYAN,
+            Color.PINK
+        };
+        Random rand = new Random();
+        return colors[ rand.nextInt( colors.length ) ];       
     }
     
 }

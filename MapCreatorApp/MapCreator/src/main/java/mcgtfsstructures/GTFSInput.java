@@ -22,9 +22,7 @@ public class GTFSInput {
 
     public static ArrayList<String> processFile(String filename) {
         try {            
-            System.out.print( "Wczytuje dane z pliku " + filename + "..." );
             ArrayList<String> list = readFile(filename);
-            System.out.println( "Dane wczytane!" );
             return list;
         } catch (Exception e) {
             return null;
@@ -122,58 +120,63 @@ public class GTFSInput {
     }
 
     public static ArrayList< Stop> getAllStops() {
+        System.out.print( "Wczytuje dane z pliku stops.txt... " );
         ArrayList<Stop> res = new ArrayList<>();
         ArrayList< Map<String,String> > dataMaps = getDataMaps( "stops.txt" );
         for( Map<String,String> m : dataMaps ){
             Stop stp = new Stop( m );
             res.add( stp );
-        }
+        }        
+        System.out.println( "Dane wczytane!" );
         return res;
     }
 
     public static ArrayList< Route> getAllRoutes() {
+        System.out.print( "Wczytuje dane z pliku routest.txt... " );
         ArrayList< Route> res = new ArrayList<>();
         ArrayList< Map<String,String> > dataMaps = getDataMaps( "routes.txt" );
         for( Map<String,String> m : dataMaps ){
             Route stp = new Route( m );
             res.add( stp );
         }
+        System.out.println( "Dane wczytane!" );
         return res;
     }
 
     public static ArrayList< Shape > getAllShapes() {
+        System.out.print( "Wczytuje dane z pliku shapes.txt... " );
         ArrayList< Shape> res = new ArrayList<>();
         ArrayList< Map<String,String> > dataMaps = getDataMaps( "shapes.txt" );
-        
-        
-        
         
         for( Map<String,String> m : dataMaps ){
             Shape stp = new Shape( m );
             res.add( stp );
         }
+        System.out.println( "Dane wczytane!" );
         return res;
     }
 
     public static ArrayList< Trip> getAllTrips() {
+        System.out.print( "Wczytuje dane z pliku trips.txt... " );
         ArrayList< Trip> res = new ArrayList<>();
         ArrayList< Map<String,String> > dataMaps = getDataMaps( "trips.txt" );
         for( Map<String,String> m : dataMaps ){
             Trip stp = new Trip( m );
             res.add( stp );
         }
-        
+        System.out.println( "Dane wczytane!" );
         return res;
     }
 
     public static ArrayList< StopTime> getAllStopTimes(){
+        System.out.print( "Wczytuje dane z pliku stoptimes.txt... " );
         ArrayList< StopTime> res = new ArrayList<>();
         ArrayList< Map<String,String> > dataMaps = getDataMaps( "stop_times.txt" );
         for( Map<String,String> m : dataMaps ){
             StopTime stp = new StopTime( m );
             res.add( stp );
         }
-        
+        System.out.println( "Dane wczytane!" );
         return res;
     }
     

@@ -3,6 +3,7 @@ package mcmapcreator;
 import mcgraphs.MapGraph;
 import mcmapdrawing.SVG;
 import mcmapdrawing.DrawingModule;
+import mctemplates.MCConstants;
 
 public class Main {
 
@@ -19,7 +20,7 @@ public class Main {
       //  g.testGraph();
         
         
-        DrawingModule dm = new DrawingModule( new SVG( 3000,3000,"Pierwsze rysowanie" ) );        
+        DrawingModule dm = new DrawingModule( new SVG( MCConstants.getINITIAL_SVG_WIDTH(),MCConstants.getINITIAL_SVG_HEIGHT(),"Pierwsze rysowanie" ) );        
         dm.drawAllMaps();
         
         

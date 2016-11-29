@@ -116,7 +116,7 @@ public class GraphGlueing {
             glueAllData( resGraph.getMapNode(i).getID(), glueingList.get(i) );
         }
         
-      //  System.out.println( "GetGluedGraph:  resGraph.size() = " + resGraph.size() );
+      //  System.out.println( "GetGluedGraph:  resGraph.countNodes() = " + resGraph.countNodes() );
         
         Map<Integer,Integer> idInGluedGraph = new HashMap<>(); // idInGluedGraph.get(key) zawiera wartosc value taka, ze wierzcholek o ID key w starym grafie ma miec ID = value w nowym grafie 
         for( int i=0; i< glueingList.size(); i++ ){
@@ -163,13 +163,13 @@ public class GraphGlueing {
         if( graph == null ) return null;
         resGraph = graph;
         CNT = 0;
-        System.out.println( "Przed sklejaniem graf ma " + graph.size() + "  wierzcholkow i " + graph.getEdges().size() + " wierzcholkow" );
+        System.out.println( "Przed sklejaniem graf ma " + graph.countNodes() + "  wierzcholkow i " + graph.countEdges() + " wierzcholkow" );
         do{
             graph = resGraph;
             resGraph = new MapGraph();
             glueGraphOld();   
-            //System.out.println( "Po " + ++CNT +"-tym sklejaniu graf ma " + resGraph.size() + " wierzcholkow" );
-        }while( false /*resGraph.size() < graph.size()*/ ); // aby wielokrotnie sklejac graf, moge wywolac ten drugi warunek, ale to chyba nie bedzie mialo zbytnio sensu
+            //System.out.println( "Po " + ++CNT +"-tym sklejaniu graf ma " + resGraph.countNodes() + " wierzcholkow" );
+        }while( false /*resGraph.countNodes() < graph.countNodes()*/ ); // aby wielokrotnie sklejac graf, moge wywolac ten drugi warunek, ale to chyba nie bedzie mialo zbytnio sensu
         
         return resGraph;
     }

@@ -1,6 +1,7 @@
 package mcmapcreator;
 
 import mcgraphs.MapGraph;
+import mcgtfsstructures.localGtfsDatabase;
 import mcmapdrawing.SVG;
 import mcmapdrawing.DrawingModule;
 import mctemplates.MCConstants;
@@ -12,15 +13,14 @@ public class Main {
      //  TEST_SVG t = new TEST_SVG();
      //  t.test();
         
-        //localGtfsDatabase.init();
-        //System.out.println( localGtfsDatabase.write() );
         
         
-      //  MapGraph g = new MapGraph();
-      //  g.testGraph();
+        localGtfsDatabase.init(); // na samym poczatku musze zainicjalizowac baze danych
         
+       // MapGraph g = new MapGraph();
+       // g.testGraph();        
         
-        DrawingModule dm = new DrawingModule( new SVG( MCConstants.getINITIAL_SVG_WIDTH(),MCConstants.getINITIAL_SVG_HEIGHT(),"Pierwsze rysowanie" ) );        
+        DrawingModule dm = new DrawingModule( new SVG( MCConstants.getINITIAL_SVG_WIDTH(),MCConstants.getINITIAL_SVG_HEIGHT(),"Rysowanie" ) );        
         dm.drawAllMaps();
         
         

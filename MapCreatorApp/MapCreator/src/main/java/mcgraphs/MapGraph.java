@@ -13,7 +13,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
+import mcalgorithms.ForceAlgorithm;
 import mcalgorithms.GraphGlueing;
+import mcmapdrawing.DrawingModule;
+import mcmapdrawing.SVG;
 
 /**
  *
@@ -235,13 +238,20 @@ public class MapGraph {
     
     // funkcja pozwala testowac graf - dodawac i usuwac wierzcholki lub krawedzie
     public void testGraph() {
+        System.out.println("0. Wypisz opcje\n1. Dodaj wierzcholek\n2. Usun wierzcholek\n3. Dodaj krawedz\n4. Usun krawedz\n5. Wypisz graf\n6. Graph glueing"
+                    + "\n7. Ustalenie wspolrzednych wierzcholka\n8. Algorytm silowy\n9. Wyjdz");
         
         while (true) {
-            System.out.println("1. Dodaj wierzcholek\n2.Usun wierzcholek\n3.Dodaj krawedz\n4.Usun krawedz\n5.Wypisz graf\n6. Graph glueing\n9.Wyjdz");
+            
             Scanner in = new Scanner(System.in);
             int ans = in.nextInt();
 
             switch (ans) {
+                case 0:{
+                    System.out.println("0. Wypisz opcje\n1. Dodaj wierzcholek\n2. Usun wierzcholek\n3. Dodaj krawedz\n4. Usun krawedz\n5. Wypisz graf\n6. Graph glueing"
+                    + "\n7. Ustalenie wspolrzednych wierzcholka\n8. Algorytm silowy\n9. Wyjdz");
+                    break;
+                }
                 case 1: {
                     MapNode n = new MapNode();
                     addMapNode(n);
@@ -261,7 +271,7 @@ public class MapGraph {
                     int a = in.nextInt();
                     int b = in.nextInt();
                     addMapEdge(a, b);
-                    System.out.println("Wykonalem prosbe dodania krawedz pomiedzy wierzcholkami o id rownych " + a + " oraz " + b);
+                    System.out.println("Wykonalem prosbe dodania krawedzi pomiedzy wierzcholkami o id rownych " + a + " oraz " + b);
                     break;
                 }
                 case 4: {
@@ -274,12 +284,35 @@ public class MapGraph {
                 }
                 case 5: {
                     System.out.println(this);
-
                     break;
                 }
                 case 6:{
                     MapGraph glGraph = new GraphGlueing(this).convertGraph();
                     System.out.println( "Glued graph:\n" + glGraph );
+                    
+                    break;
+                }
+                case 7:{
+                    System.out.println( "Podaj id wierzcholka a nastepnie jego dwie wsporlzedne:" );
+                    int id = in.nextInt();
+                    float a = in.nextFloat();
+                    float b = in.nextFloat();
+                    getMapNodeByID(id).setCoords( new Pair<>(a,b) );
+                    System.out.println( "Ustawilem wspolrzedne" );
+                    break;
+                }
+                case 8:{
+                    DrawingModule dm = new DrawingModule( new SVG(1000,1000,"Przed algorytmem silowym") );
+                    dm.drawGraphOnMap( this,"" );
+                    
+                    new ForceAlgorithm(this, new SVG(1000,1000)).convertGraph();
+                    System.out.println( "Ukonczylem algrytm silowy, oto wspolrzedne wierzcholkow:" );
+                    for( MapNode n : nodes ){
+                        System.out.println( "ID = " + n.getID() + "   coords = " + n.getCoords() );
+                    }
+                    
+                    dm = new DrawingModule( new SVG(1000,1000,"Po algorytmie silowym") );
+                    dm.drawGraphOnMap( this,"" );
                     
                     break;
                 }

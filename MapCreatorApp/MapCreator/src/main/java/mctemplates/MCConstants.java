@@ -37,8 +37,12 @@ public class MCConstants {
     private static Color RAIL_COLOR = Color.YELLOW;
     private static Color BUS_COLOR = Color.BLUE;
     
-    public static final float SPRING_COEF = 1;
-    public static final float COULOMB_COEF = 1;
+    private static float SPRING_COEF = 1; // ta wartosc powinna byc dodatnia, poniewaz wierzcholki powinny sie przyciagac - chyba ze dlugosc krawedzi jest za mala
+    private static float COULOMB_COEF = -1* (1e6f); // uwaga - ta wartosc musi byc ujemna poniewaz wierzcholki powinny sie odpychac!!
+    private static float INITIAL_NODE_CHARGE = 1f; // ladunek poczatkowy dla kazdego wierzcholka. Rzeczywisty ladunek wierzcholka jest ta wartoscia powiekszona o liczbe jego przystankow
+    private static float STOP_THRESHOLD = 5f;
+    private static float FORCE_UPPER_BOUND_PER_TURN = 1.5f; // to jest maksymalna wartosc o jaka moze sie w danej turze zmienic polozenie wierzcholka - jezeli getMaxForceValue() bedzie wieksze niz ta wartosc to wszystkie sily beda skalowane tak, aby getMaxForceValue() bylo rowne tej wartosci
+    
     
     public static final float COORDINATES_COMPARISON_PRECISION = 10000; // tego uzywam w GraphGlueing.coordinatestRoughlyTheSame    
     
@@ -56,6 +60,47 @@ public class MCConstants {
     
     private static int INITIAL_SVG_WIDTH = 3000;
     private static int INITIAL_SVG_HEIGHT = 3000;
+    
+    public static float getFORCE_UPPER_BOUND_PER_TURN() {
+        return FORCE_UPPER_BOUND_PER_TURN;
+    }
+
+    public static void setFORCE_UPPER_BOUND_PER_TURN(float FORCE_UPPER_BOUND_PER_TURN) {
+        MCConstants.FORCE_UPPER_BOUND_PER_TURN = FORCE_UPPER_BOUND_PER_TURN;
+    }
+    
+    public static float getSTOP_THRESHOLD() {
+        return STOP_THRESHOLD;
+    }
+
+    public static void setSTOP_THRESHOLD(float STOP_THRESHOLD) {
+        MCConstants.STOP_THRESHOLD = STOP_THRESHOLD;
+    }
+    
+    public static float getSPRING_COEF() {
+        return SPRING_COEF;
+    }
+
+    public static void setSPRING_COEF(float SPRING_COEF) {
+        MCConstants.SPRING_COEF = SPRING_COEF;
+    }
+
+    public static float getCOULOMB_COEF() {
+        return COULOMB_COEF;
+    }
+
+    public static void setCOULOMB_COEF(float COULOMB_COEF) {
+        MCConstants.COULOMB_COEF = COULOMB_COEF;
+    }
+
+    public static float getINITIAL_NODE_CHARGE() {
+        return INITIAL_NODE_CHARGE;
+    }
+
+    public static void setINITIAL_NODE_CHARGE(float INITIAL_NODE_CHARGE) {
+        MCConstants.INITIAL_NODE_CHARGE = INITIAL_NODE_CHARGE;
+    }
+    
 
     public static int getINITIAL_SVG_WIDTH() {
         return INITIAL_SVG_WIDTH;

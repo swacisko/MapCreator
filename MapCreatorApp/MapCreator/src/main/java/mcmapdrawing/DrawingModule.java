@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 import mcalgorithms.EdgeContraction;
+import mcalgorithms.ForceAlgorithm;
 import mcalgorithms.GraphGlueing;
 import mcalgorithms.MapGraphCreator;
 import mcgraphs.MapEdge;
@@ -24,10 +25,8 @@ public class DrawingModule {
 
     public DrawingModule(SVG s) {
         svg = s;
-        initialSVGFileName = svg.getFileName();
-        localGtfsDatabase.init();
+        initialSVGFileName = svg.getFileName();        
         createLBCandRUC();
-
     }
 
     public void beginSVG() {
@@ -227,7 +226,7 @@ public class DrawingModule {
 
     public void drawDatabaseGraph() {
         System.out.println("Zaczynam tworzyc podstawowy graf z danych GTFS");
-        graph = new MapGraphCreator().createMapGraphFromGtfsDatabase(MCConstants.ALL_TRANSPORT_MEASURES);
+        graph = new MapGraphCreator().createMapGraphFromGtfsDatabase(MCConstants.TRAM);
         System.out.println("Ukonczylem tworzenie grafu z danych GTFS");
         System.out.println("Basic graph ma " + graph.countNodes() + " wierzcholkow i " + graph.countEdges() + " krawedzi");
 
@@ -254,9 +253,21 @@ public class DrawingModule {
         System.out.println("Skonczylem procedure kontrakcji krawedzi");
         System.out.println("Edgecontracted graph ma " + graph.countNodes() + " wierzcholkow i " + graph.countEdges() + " krawedzi");
         
-        drawGraphOnMap(graph, "edgecontracted");
-        System.out.println("Rozpoczynam rysowanie grafu z kontrakcja krawedzi");        
+        System.out.println("Rozpoczynam rysowanie grafu z kontrakcja krawedzi"); 
+        drawGraphOnMap(graph, "edgecontracted");               
         System.out.println("Skonczylem rysowanie grafu z kontrakcja krawedzi\n\n");
+    }
+    
+    private void drawForceSpacedGraph(){
+        System.out.println( "Zaczynam algorytm siłowy" );
+        System.out.println( "" );
+        new ForceAlgorithm( graph,svg ).convertGraph();
+        System.out.println( "Zakonczylem dzialanie algorytmu silowego" );
+        System.out.println("Force-spaced graph ma " + graph.countNodes() + " wierzcholkow i " + graph.countEdges() + " krawedzi");
+        
+        System.out.println("Rozpoczynam rysowanie grafu force-spaced"); 
+        drawGraphOnMap(graph, "force-spaced");               
+        System.out.println("Skonczylem rysowanie grafu force-spaced\n\n");
     }
 
     // rysuje wszystkie mapy, jakie tylko moge wygenerowac :)
@@ -267,6 +278,7 @@ public class DrawingModule {
         drawDatabaseGraph(); // UWAGA - to rysowanie musi byc w takiej kolejnosci!
         drawGluedGraph();
         drawEdgeContractedGraph();
+        drawForceSpacedGraph();
     }
 
     private void setDrawingNodeParameters(MapNode n) {

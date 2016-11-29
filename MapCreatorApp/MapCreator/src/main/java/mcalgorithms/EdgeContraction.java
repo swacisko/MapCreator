@@ -135,7 +135,7 @@ public class EdgeContraction {
             e1.swapEnds();
         }
         e1.setContainedBackwardStopsIds( e2.getContainedForwardStopsIds() );        
-        graph.removeMapEdgeByID( e2.getID() );       // to tylko do sprawdzenia liczby usunietych par        
+        graph.removeMapEdgeByID( e2.getID() );     
     }
     
     // moze sie zdarzyc, ze miedzy dwoma przystankami po kontrakcji sa dwie krawedzie - jedna dla przystankow w jedna strone, druga dla przystankow w druga strone

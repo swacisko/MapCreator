@@ -1,6 +1,10 @@
 package mcmapdrawing;
 
 import java.awt.Point;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import mcgraphs.MapNode;
 import mcgraphs.MapGraph;
 import mcgtfsstructures.Stop;
@@ -11,7 +15,6 @@ import mcgtfsstructures.localGtfsDatabase;
 import java.util.ArrayList;
 
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
 import mcalgorithms.EdgeContraction;
 import mcalgorithms.ForceAlgorithm;
@@ -25,7 +28,7 @@ public class DrawingModule {
 
     public DrawingModule(SVG s) {
         svg = s;
-        initialSVGFileName = svg.getFileName();        
+        initialSVGFileName = "./DrawingFolder/" + svg.getFileName();        
         createLBCandRUC();
     }
 
@@ -62,15 +65,19 @@ public class DrawingModule {
         LBC = LBCRUC.getST();
         RUC = LBCRUC.getND();
 
-        modifyLBCandRUC();
+        scaleSVG();
+        modifyLBCandRUC();        
     }
 
     private void modifyLBCandRUC() {
-        float ratio = 0.0001f; // dziwne jest, ze nawet jak zmienie wartosci wzglednie o 1 tysieczna to i tak rysunek sie mocno wygina
-        LBC.setST(LBC.getST() - ratio * Math.abs(LBC.getST()));
-        LBC.setND(LBC.getND() - ratio * Math.abs(LBC.getND()));
-        RUC.setST(RUC.getST() + 0.5f * ratio * Math.abs(RUC.getST()));
-        RUC.setND(RUC.getND() + 0.5f * ratio * Math.abs(RUC.getND()));
+        float ratio = 0.01f; // dziwne jest, ze nawet jak zmienie wartosci wzglednie o 1 tysieczna to i tak rysunek sie mocno wygina
+        float dW = RUC.getST() - LBC.getST();
+        float dH = RUC.getND() - LBC.getND();
+        
+        LBC.setST(LBC.getST() - ratio * dW);
+        LBC.setND(LBC.getND() - ratio * dH);
+        RUC.setST(RUC.getST() + ratio * dW);
+        RUC.setND(RUC.getND() + ratio * dH);
     }
 
     private void createLBCandRUC(MapGraph graph) {
@@ -96,12 +103,33 @@ public class DrawingModule {
                 RUC.setND(p.getND());
             }
         }
-
+        
+        scaleSVG();
         modifyLBCandRUC();
     }
+    
+    /**
+     * Function scales SVG. As LBC and RUC are set, this function changes svg.width, so that the proportions of image are adequate
+     */
+    private void scaleSVG(){
+        float dW = RUC.getST() - LBC.getST();
+        float dH = RUC.getND() - LBC.getND();
+        
+        if( dH <= 0 ) dH = 0.00001f;
+        
+        System.out.println( "dW = " + dW + "   dH = " + dH );
+        
+        svg.setWidth( (int) ((float)svg.getHeight() * ( dW / dH ) ));
+        System.out.println( "width = " + svg.getWidth() + "   height = " + svg.getHeight() );
+    }
 
-    // jako parametry - LBC - left bottom corner, RUC right upper corner i coords - wspolrzedne do znormalizowania
-    // LBC i RUC to wspolrzedne najbardziej wysunietych struktur grafu z malym dodatkiem (np +- 10)
+    /**
+     * 
+     * @param LBC Left Bottom Corner of our graph
+     * @param RUC Right Upper Corner of our graph
+     * @param coords Coordinates of a point we want to locate on the map
+     * @return returns svg-coordinates corresponding to coords
+     */
     private Pair<Integer, Integer> normalizeCoordinates(Pair<Float, Float> LBC, Pair<Float, Float> RUC, Pair<Float, Float> coords) {
         float x = coords.getST();
         float y = coords.getND();
@@ -125,7 +153,7 @@ public class DrawingModule {
         float H = (float) svg.getHeight();
 
         int x2 = Math.round((W * x) / dW);
-        int y2 = Math.round((W * y) / dH);
+        int y2 = Math.round((H * y) / dH);
 
         return new Pair<>(x2, y2);
     }
@@ -192,21 +220,26 @@ public class DrawingModule {
         ArrayList<Stop> stops = localGtfsDatabase.getAllStops();
 
         for (Stop s : stops) {
-            float x = Float.parseFloat(s.getStopLat());
-            float y = Float.parseFloat(s.getStopLon());
+            float x = Float.parseFloat(s.getStopLon());
+            float y = Float.parseFloat(s.getStopLat());
             Pair<Integer, Integer> p = normalizeCoordinates(LBC, RUC, new Pair<>(x, y));
             svg.addCirclePlain(p.getST(), p.getND(), 3);
          //   System.out.println( "Dodalem przystanek o id = " + s.getStopId() + "   x = " + p.getST() + "  y = " + p.getND() );
-
         }
     }
 
     // jedna z mapek, ktora tworzy nasz program
     // rysuje na mapie wszystko co jest dane w stops.txt oraz shapes.txt
     // dodaje rowniez podpisy do przystankow czy lini
-    public void drawShapeMap() {
+    public void drawShapeMap(){
+        
+        String path = (new File("").getAbsolutePath()) + "/GTFS/" + "shapes.txt";
+        if( UsefulFunctions.existsFile(path) ) { 
+            System.out.println( "No shapes.txt file" );
+            return;
+        }
+        
         createLBCandRUC();
-
         svg.setFileName(initialSVGFileName + "_shape_map");
         beginSVG();
 
@@ -224,9 +257,9 @@ public class DrawingModule {
         endSVG();
     }
 
-    public void drawDatabaseGraph() {
+    public void drawDatabaseGraph() {        
         System.out.println("Zaczynam tworzyc podstawowy graf z danych GTFS");
-        graph = new MapGraphCreator().createMapGraphFromGtfsDatabase(MCConstants.TRAM);
+        graph = new MapGraphCreator().createMapGraphFromGtfsDatabase( MCConstants.getDRAWING_ROUTE_TYPE() );        
         System.out.println("Ukonczylem tworzenie grafu z danych GTFS");
         System.out.println("Basic graph ma " + graph.countNodes() + " wierzcholkow i " + graph.countEdges() + " krawedzi");
 
@@ -235,10 +268,12 @@ public class DrawingModule {
         System.out.println("Skonczylem rysowac podstawowy graf\n\n");
     }
 
+    /**
+     * Function drawGluedGraph draws glued graph. Earlier drawDatabaseGraph function must be called
+     */
     private void drawGluedGraph() {
         System.out.println("Zaczynam procedure sklejania grafu");
-        //new GraphGlueing(graph).testGlueing();        
-        graph = new GraphGlueing(graph).convertGraph();
+        new GraphGlueing(graph).convertGraph();
         System.out.println("Skonczylem procedure sklejania grafu");
         System.out.println("GLUED graph ma " + graph.countNodes() + " wierzcholkow i " + graph.countEdges() + " krawedzi");
 
@@ -247,9 +282,12 @@ public class DrawingModule {
         System.out.println("Skonczylem rysowanie sklejonego grafu\n\n");
     }
 
+    /**
+     * Function drawEdgeContractedGraph draws edge-contracted graph. Earlier functions drawDatabaseGraph and drawGluedGraph must be called
+     */
     private void drawEdgeContractedGraph() {
         System.out.println("Zaczynam procedure kontrakcji krawedzi");
-        graph = new EdgeContraction(graph).convertGraph();
+        new EdgeContraction(graph).convertGraph();
         System.out.println("Skonczylem procedure kontrakcji krawedzi");
         System.out.println("Edgecontracted graph ma " + graph.countNodes() + " wierzcholkow i " + graph.countEdges() + " krawedzi");
         
@@ -270,7 +308,9 @@ public class DrawingModule {
         System.out.println("Skonczylem rysowanie grafu force-spaced\n\n");
     }
 
-    // rysuje wszystkie mapy, jakie tylko moge wygenerowac :)
+    /**
+     * Draws all maps that can be generated
+     */
     public void drawAllMaps() {
         drawShapeMap();
       //  drawSchemeMap();
@@ -281,33 +321,41 @@ public class DrawingModule {
         drawForceSpacedGraph();
     }
 
+    private void drawNodeText( MapNode n ){
+        
+    }
+    
     private void setDrawingNodeParameters(MapNode n) {
             if (n.getDrawingWidth() != 0) {
                 svg.setCircleStrokeWidth(n.getDrawingWidth());
                 
-             //   svg.setEllipseStrokeWidth( n.getDrawingWidth() );
+                svg.setEllipseStrokeWidth( n.getDrawingWidth() );
             }
             if( n.getHoverWidth() != 0 ){
                 svg.setCircleStrokeWidthHover( n.getHoverWidth() );
                 
-             //   svg.setEllipseStrokeWidthHover( n.getHoverWidth() );
+                svg.setEllipseStrokeWidthHover( n.getHoverWidth() );
             }
             if (n.getHoverColor() != null) {
                 svg.setCircleFillHover(UsefulFunctions.parseColor(n.getHoverColor()));
                 svg.setCircleStrokeColorHover(UsefulFunctions.parseColor(n.getHoverColor()));
                 
-             //   svg.setEllipseColorHover( UsefulFunctions.parseColor( n.getHoverColor() ) );
-             //   svg.setEllipseStrokeColorHover( UsefulFunctions.parseColor( n.getHoverColor() ) );
+                svg.setEllipseColorHover( UsefulFunctions.parseColor( n.getHoverColor() ) );
+                svg.setEllipseStrokeColorHover( UsefulFunctions.parseColor( n.getHoverColor() ) );
             }
             if (n.getColor() != null) {
                 svg.setCircleFill(UsefulFunctions.parseColor(n.getColor()));
                 svg.setCircleStrokeColor(UsefulFunctions.parseColor(n.getColor()));
                 
-               // svg.setEllipseColor( UsefulFunctions.parseColor(n.getColor()) );
+              //  svg.setEllipseColor( UsefulFunctions.parseColor(n.getColor()) );
              //   svg.setEllipseStrokeColor( UsefulFunctions.parseColor(n.getColor()) );
             }
     }
 
+    /**
+     * Draws a graph to using SVG
+     * @param graph This is the graph to be drawn
+     */
     private void drawGraphNodesOnMap(MapGraph graph) {
 
         for (MapNode n : graph.getNodes()) {
@@ -324,9 +372,10 @@ public class DrawingModule {
             drawingWidth =  2 + new Random().nextInt(15); */
             
             
-            if (n.getContainedStopsIds().size() >= 4) {
+            if (n.getContainedStopsIds().size() >= 2) {
                 svg.setTextColor("red");
                 String s = n.getStructureName() + " --- ";
+                s += "stops: " + n.getContainedStopsIds().size() +  " n:" + n.countNeighbours() + " e:" + n.countEdges() + " contr:" + n.isContractable();
                 /*for (String sadd : n.getContainedStopsIds()) {
                     s += localGtfsDatabase.getStopOfID(sadd).getStopName() + " - ";
                 }*/
@@ -346,7 +395,11 @@ public class DrawingModule {
         }
     }
 
-    private void drawTextOverEdge(MapEdge edge) {
+    /**
+     * Writes every information we want to write, concerned with the edge 
+     * @param edge Writes for given MapEdge
+     */
+    private void drawEdgeText(MapEdge edge) {
 
     }
 
@@ -379,7 +432,7 @@ public class DrawingModule {
 
             svg.addPolylinePlain(polyline);
 
-            drawTextOverEdge(e);
+            drawEdgeText(e);
         }
 
     }

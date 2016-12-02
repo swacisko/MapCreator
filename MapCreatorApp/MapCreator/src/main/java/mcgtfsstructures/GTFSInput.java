@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import mctemplates.UsefulFunctions;
 
 public class GTFSInput {
 
@@ -20,12 +21,15 @@ public class GTFSInput {
         gtfsDirPath = path;
     }
 
+    
     public static ArrayList<String> processFile(String filename) {
         try {            
             ArrayList<String> list = readFile(filename);
             return list;
         } catch (Exception e) {
-            return null;
+          //  e.printStackTrace();
+            System.out.println( "Wyjatek przy wczytywaniu z pliku " + filename );
+            return new ArrayList<>();
         }
     }
 
@@ -34,7 +38,9 @@ public class GTFSInput {
         //String path = "/home/swacisko/NetBeansProjects/Inzynierka/GTFS/" + filename;
         String path = (new File("").getAbsolutePath()) + "/GTFS/" + filename;
 
-     //   System.out.println("tutajpath = " + path);
+        if( UsefulFunctions.existsFile(path) == false ) { 
+            throw new FileNotFoundException();
+        }
 
         ArrayList<String> data = new ArrayList<>();
 

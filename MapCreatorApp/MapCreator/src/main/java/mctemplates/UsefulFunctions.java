@@ -7,6 +7,7 @@ package mctemplates;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.io.File;
 import java.util.Random;
 
 /**
@@ -68,6 +69,14 @@ public class UsefulFunctions {
         else return "";
     }
     
+    public static Pair<Float,Float> centerOfGravity( Pair<Float,Float> p1, Pair<Float,Float> p2 ){
+        float x = p1.getST() + p2.getST();
+        x /= 2;
+        float y = p1.getND() + p2.getND();
+        y /= 2;
+        return new Pair<>(x,y);
+    }
+    
     
     public static Color getRandomColor(){
         Color[] colors = {
@@ -76,6 +85,20 @@ public class UsefulFunctions {
         };
         Random rand = new Random();
         return colors[ rand.nextInt( colors.length ) ];       
+    }
+    
+    /**
+     * Checks whether a file with given path exists
+     * @param path It is the path (preferably exact path) of the file
+     * @return returns true if such file exists, otherwise returns false
+     */
+    public static boolean existsFile( String path ){
+        File f = new File(path);
+        if( (f.exists()==false) || ( f.isDirectory() ) ) { 
+            System.out.println( "File " + path + " does not exist or is a directory" );
+            return false;
+        }
+        return true;
     }
     
 }

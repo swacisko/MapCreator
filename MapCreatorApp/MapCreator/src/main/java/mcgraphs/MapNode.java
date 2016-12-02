@@ -10,6 +10,7 @@ import mctemplates.Pair;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import mcalgorithms.GraphGlueing;
 import mctemplates.Drawable;
 import mctemplates.MCConstants;
 
@@ -106,11 +107,11 @@ public class MapNode extends MapStructure implements Drawable {
     @Override
     public String toString() {
         String s = super.toString();
-        s += "\tedges:\t";
-        for (int i = 0; i < edges.size(); i++) {
-            s += edges.get(i).getID() + " ";
-        }
-        s += "\tcoords:\t" + coords;
+        s += "\tneighbours:\t";
+        for( MapNode n : getNeighbours() ){
+            s += n.getID() + " ";
+        }       
+      //  s += "\tcoords:\t" + coords;
         return s;
     }
     
@@ -119,7 +120,10 @@ public class MapNode extends MapStructure implements Drawable {
         return edges.size();
     }
     
-    // funkcja zwraca liczbe sasiadow - liczba ta moze byc rozna od liczby krawedzi, jezeli wystepuja multikrawedzie
+    /**
+     * 
+     * @return returns number of neighbours of given node. This number may vary from the number of its edge if graph is a multigraph.
+     */
     public int countNeighbours(){
         ArrayList<MapNode> neigh = getNeighbours();
         Set<Integer> diffNeigh = new HashSet<>();
@@ -129,7 +133,10 @@ public class MapNode extends MapStructure implements Drawable {
         return diffNeigh.size();
     }
     
-    // zwraca liste sasiadow danego wierzcholka. Ten sam sasiad moze wystepowac na tej liscie wiecej niz raz jezeli w grafie sa multikrawedzie
+    /**
+     * 
+     * @return returns the list of neighbours of given node. Fixed naighbour may occur many times on that list if a graph is a multigraph
+     */
     public ArrayList<MapNode> getNeighbours(){
         ArrayList<MapNode> neigh = new ArrayList<>();
         for( MapEdge e : edges ){
@@ -145,6 +152,7 @@ public class MapNode extends MapStructure implements Drawable {
     }
     
     public boolean isContractable() {
+      //  return (countNeighbours() == 2 ) && (containedStopsIds.size() < 4);
         return contractable;
     }
 
@@ -179,6 +187,10 @@ public class MapNode extends MapStructure implements Drawable {
         return charge;
     }
     
+    
+    /**
+     * variable contractable is used to either allow or disable {@link GraphGlueing#glueGraphOld() } function to glue this node with other nodes 
+     */
     private boolean contractable = true;         
     private ArrayList<MapEdge> edges = new ArrayList<>(); // to sa krawedzie o jednym z konców w danym wierzcholku
     private Pair<Float, Float> coords = new Pair<>(new Float(0), new Float(0)); // to sa wspolrzedne danego wierzcholka na mapie, PRZED NORMALIZACJA!!! czyli po prostu wspolrzedne z GTFS

@@ -76,7 +76,7 @@ public class ForceAlgorithm {
         float H = (float) svg.getHeight();
 
         int x2 = Math.round((W * x) / dW);
-        int y2 = Math.round((W * y) / dH);
+        int y2 = Math.round((H * y) / dH);
 
         return new Pair<>(x2, y2);
     }

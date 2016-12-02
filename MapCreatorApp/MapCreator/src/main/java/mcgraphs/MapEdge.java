@@ -88,7 +88,17 @@ public class MapEdge extends MapStructure {
         this.containedBackwardStopsIds = containedBackwardStopsIds;
     }
     
-    
+    /**
+     * Functions returns an edge, which, apart from ID, is identical with this
+     * @return 
+     */
+    public MapEdge getMapEdgeCopy(){
+        MapEdge e = new MapEdge();
+        e.setEnds(ends);
+        e.setContainedForwardStopsIds(containedForwardStopsIds);
+        e.setContainedBackwardStopsIds(containedBackwardStopsIds);
+        return e;
+    }
            
     private Pair<MapNode, MapNode> ends = new Pair<>(null, null);    
     private ArrayList<String> containedForwardStopsIds = new ArrayList<>(); // lista zawierajaca wszystkie id przystankow, ktore zostały pominiete na mapie, w kolejnosci od ends.ST do ends.ND !! kolejnosc bardzi wazna!!!

@@ -50,7 +50,8 @@ public class MapGraph {
     }
 
     public ArrayList<MapEdge> getEdges() {
-        return edges;
+        //return new ArrayList<>( edgesMap.values() );
+       return edges;
     }
 
     public void setEdges(ArrayList<MapEdge> list) {
@@ -166,6 +167,10 @@ public class MapGraph {
         }
     }
 
+    /**
+     * Removes a vertex from graph with given id. Works in O(E) time, where E is the number of edges in graph. 
+     * @param id Id of node we want to remove 
+     */
     public void removeMapNodeByID(int id) {
         for (int i = 0; i < nodes.size(); i++) { // usuwam wierzcholek o danym id z listy wierzcholkow grafu
             if (nodes.get(i).getID() == id) {

@@ -100,7 +100,7 @@ public class EdgeContraction {
         newEdge.setEnds( new Pair<>( leftNode, rightNode ) );
         
         newEdge.setDescription( "Contracted edge" );
-        
+                      
         graph.removeMapNodeByID( node.getID() );
         graph.addMapEdge( newEdge );
     }
@@ -116,7 +116,7 @@ public class EdgeContraction {
             if( id1 > id2 ){
                 int temp = id1;
                 id1 = id2;
-                id2 = id1;
+                id2 = temp;
             }
             
             Pair<Integer,Integer> p = new Pair<>(id1,id2);
@@ -138,26 +138,24 @@ public class EdgeContraction {
         graph.removeMapEdgeByID( e2.getID() );     
     }
     
-    // moze sie zdarzyc, ze miedzy dwoma przystankami po kontrakcji sa dwie krawedzie - jedna dla przystankow w jedna strone, druga dla przystankow w druga strone
-    // w takim przypadku zamieniam te dwie krawedzie na jedna krawedz
-    // usuwam krawedzie rownolegle tylko wtedy, gdy sa dokladnie dwie rownolegle, gdy sa trzy lub wiecej to ich nie ruszam, bo to oznacza, ze 
-    // zupelnie inna droga (a nie ta sama w dwie strony) mogla zostac sciagnieta do tej krawedzi
+   
+    /**
+     * It may happen, that between two nodes there are multiple edges. I remove one of them, assigning the edges contents to the others data.
+     * I remove and edge only if there are exactly two parallel edges
+     */
     private void removeParallelEdges(){
         System.out.println("Wybieram rownolegle krawedzie");
         createParallelEdges();
-        
+                        
         int CNT = 1;
-        int greaterThan2 = 0;
         for( Map.Entry< Pair<Integer,Integer>, ArrayList<MapEdge> > entry : parallelEdges.entrySet() ){            
             ArrayList<MapEdge> l = entry.getValue();
             if( l.size() == 2  ){
-                System.out.print( "\rScalam " + (CNT++) + "-ta pare krawedzi" );
+                System.out.print( "\rScalam " + (CNT++) + "-ta pare krawedzi" );                
                 mergeParallelEdges( l.get(0), l.get(1) );
-            }else if( l.size() > 2 ){
-                greaterThan2++;
-            }         
+            }      
         }
-     //   System.out.println( "\nW grafie jest " + greaterThan2 + " rownoleglych zbiorow krawedzi mocy wiekszej lub rownej 3" ); // dla szczecina jest tylko jedna taka para
+    
         System.out.println();
     }
     
@@ -197,8 +195,10 @@ public class EdgeContraction {
         System.out.println( "Skonczylem sprawdzac krawedzie - zgadza sie!  Bylo dokladnie " + diff + " niepustych list forward sposrod " + graph.countEdges() + " wszystkich krawedzi" );
     }
     
-    // nie ma sensu wykonywac wiecej niz 1 'petli' postaci removeDeg2NodeFromGraph()->removeparallelEdges()->removeDeg2NodeFromGraph(), dla szczecina zmniejszy rozmiar grafu o 1 wierzcholek :)
-    public MapGraph convertGraph(){
+    /**
+     * Function converts graph using edge-contraction
+     */
+    public void convertGraph(){
         createDeg2Vertices();
                 
         int CNT = 1;
@@ -206,13 +206,13 @@ public class EdgeContraction {
             System.out.print( "\rDokonuje kontrakcji na wierzcholku nr " + (CNT++) );
             removeDeg2NodeFromGraph(n);
         }
-        System.out.println("\nGraph ma teraz " + graph.countNodes() + " wierzcholkow oraz " + graph.countEdges() + " krawedzi");
-        
+                
         // testForwardAndBackwardLists();
         // UWAGA - po pierwszej petli dla wszystkich wierzcholkow w listach containedForwardStopsIds i containedBackwardStopsIds powinny byc te same elementy
         // ale w odwroconej kolejnosci.
         
-        removeParallelEdges();       
+        removeParallelEdges();   
+        System.out.println("\nGraph ma teraz " + graph.countNodes() + " wierzcholkow oraz " + graph.countEdges() + " krawedzi");
         /*CNT = 1;
         createDeg2Vertices();
         for( MapNode n : deg2Nodes ){
@@ -220,9 +220,7 @@ public class EdgeContraction {
             removeDeg2NodeFromGraph(n);
         }        
         System.out.println("\nGraph ma teraz " + graph.countNodes() + " wierzcholkow oraz " + graph.getEdges().countNodes() + " krawedzi");
-        */  
-        
-        return graph;
+        */          
     }
     
     

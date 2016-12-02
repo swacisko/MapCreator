@@ -51,6 +51,9 @@ public class MapGraphCreator {
 
     }
 
+    /**
+     * Adds all nodes from localGtfsDatabase to graph, with respect to routes with type {@link MapGraphCreator#TRANSPORT_MEASURE}.
+     */
     private void addNodesToGraph() {        
         int CNT = 1;
         for (Stop s : consideredStops) {

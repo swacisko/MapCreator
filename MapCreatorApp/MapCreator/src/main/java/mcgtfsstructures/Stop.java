@@ -56,7 +56,7 @@ public class Stop extends GtfsStructure implements Drawable{
         if( coords == null ){
             float lat = Float.parseFloat( getStopLat() );
             float lon = Float.parseFloat( getStopLon() );
-            coords = new Pair<>(lat,lon);
+            coords = new Pair<>(lon,lat);
         }
         return coords;
     }

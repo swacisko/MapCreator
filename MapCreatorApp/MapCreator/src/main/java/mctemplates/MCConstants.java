@@ -31,6 +31,7 @@ public class MCConstants {
     public static final int FUNICULAR = (1<<7);
     public static final int ALL_TRANSPORT_MEASURES = (1<<8)-1;
     
+    private static int DRAWING_ROUTE_TYPE = TRAM;
     
     private static Color TRAM_COLOR = Color.YELLOW;
     private static Color METRO_COLOR = Color.GRAY;
@@ -38,7 +39,7 @@ public class MCConstants {
     private static Color BUS_COLOR = Color.BLUE;
     
     private static float SPRING_COEF = 1; // ta wartosc powinna byc dodatnia, poniewaz wierzcholki powinny sie przyciagac - chyba ze dlugosc krawedzi jest za mala
-    private static float COULOMB_COEF = -1* (1e6f); // uwaga - ta wartosc musi byc ujemna poniewaz wierzcholki powinny sie odpychac!!
+    private static float COULOMB_COEF = -1* (1e3f); // uwaga - ta wartosc musi byc ujemna poniewaz wierzcholki powinny sie odpychac!!
     private static float INITIAL_NODE_CHARGE = 1f; // ladunek poczatkowy dla kazdego wierzcholka. Rzeczywisty ladunek wierzcholka jest ta wartoscia powiekszona o liczbe jego przystankow
     private static float STOP_THRESHOLD = 5f;
     private static float FORCE_UPPER_BOUND_PER_TURN = 1.5f; // to jest maksymalna wartosc o jaka moze sie w danej turze zmienic polozenie wierzcholka - jezeli getMaxForceValue() bedzie wieksze niz ta wartosc to wszystkie sily beda skalowane tak, aby getMaxForceValue() bylo rowne tej wartosci
@@ -58,8 +59,42 @@ public class MCConstants {
     private static int INITIAL_NODE_WIDTH = 4;
     private static int INITIAL_NODE_HOVER_WIDTH = 12;
     
-    private static int INITIAL_SVG_WIDTH = 3000;
-    private static int INITIAL_SVG_HEIGHT = 3000;
+    /**
+     * Initial width is useless - width of svg is changed so that it's shape is kept
+     */
+    private static int INITIAL_SVG_WIDTH = 2000;
+    /**
+     * This is the initial value of height of our svg
+     */
+    private static int INITIAL_SVG_HEIGHT = 2000;
+    
+    private static float FIRST_GLUEING_DISTANCE_PARAMETER = 8;
+     private static float SECOND_GLUEING_DISTANCE_PARAMTER = 70;
+
+    public static float getFIRST_GLUEING_DISTANCE_PARAMETER() {
+        return FIRST_GLUEING_DISTANCE_PARAMETER;
+    }
+
+    public static void setFIRST_GLUEING_DISTANCE_PARAMETER(float FIRST_GLUEING_DISTANCE_PARAMETER) {
+        MCConstants.FIRST_GLUEING_DISTANCE_PARAMETER = FIRST_GLUEING_DISTANCE_PARAMETER;
+    }
+
+    public static float getSECOND_GLUEING_DISTANCE_PARAMTER() {
+        return SECOND_GLUEING_DISTANCE_PARAMTER;
+    }
+
+    public static void setSECOND_GLUEING_DISTANCE_PARAMTER(float SECOND_GLUEING_DISTANCE_PARAMTER) {
+        MCConstants.SECOND_GLUEING_DISTANCE_PARAMTER = SECOND_GLUEING_DISTANCE_PARAMTER;
+    }
+       
+    
+    public static int getDRAWING_ROUTE_TYPE() {
+        return DRAWING_ROUTE_TYPE;
+    }
+
+    public static void setDRAWING_ROUTE_TYPE(int DRAWING_ROUTE_TYPE) {
+        MCConstants.DRAWING_ROUTE_TYPE = DRAWING_ROUTE_TYPE;
+    }
     
     public static float getFORCE_UPPER_BOUND_PER_TURN() {
         return FORCE_UPPER_BOUND_PER_TURN;

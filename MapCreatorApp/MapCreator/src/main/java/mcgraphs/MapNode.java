@@ -187,6 +187,10 @@ public class MapNode extends MapStructure implements Drawable {
         return charge;
     }
     
+    public int calculateMapNodeDrawingRadius(){
+        return Math.min(20, getDrawingWidth() - 1 + containedStopsIds.size() );
+    }
+    
     
     /**
      * variable contractable is used to either allow or disable {@link GraphGlueing#glueGraphOld() } function to glue this node with other nodes 

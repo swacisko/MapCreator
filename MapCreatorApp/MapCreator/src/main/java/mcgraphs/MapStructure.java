@@ -55,6 +55,10 @@ public class MapStructure {
         return "ID = " + ID;
     }
 
+    /**
+     * 
+     * @return return description of the structure - e.g. "edge is contracted"
+     */
     public String getDescription() {
         return description;
     }
@@ -63,6 +67,10 @@ public class MapStructure {
         this.description = description;
     }
 
+    /**
+     * 
+     * @return return the name of structure - in case of nodes it returns the name of the most significant place in the vicinity of the node
+     */
     public String getStructureName() {
         return structureName;
     }

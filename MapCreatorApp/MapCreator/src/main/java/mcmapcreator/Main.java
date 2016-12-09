@@ -20,6 +20,10 @@ public class Main {
        // MapGraph g = new MapGraph();
        // g.testGraph();        
         
+        MCConstants.addRouteToHighlight( "1" );
+        MCConstants.addRouteToHighlight( "101" );
+        MCConstants.addRouteToHighlight( "106" );
+        MCConstants.addRouteToHighlight( "521" );
         DrawingModule dm = new DrawingModule( new SVG( MCConstants.getINITIAL_SVG_WIDTH(),MCConstants.getINITIAL_SVG_HEIGHT(),"Rysowanie" ) );        
         dm.drawAllMaps();
         

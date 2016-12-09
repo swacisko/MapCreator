@@ -53,6 +53,11 @@ public class UsefulFunctions {
         return new Point( Math.round(p.getST()), Math.round(p.getND()) );
     }
     
+    /**
+     * 
+     * @param c Color to be parsed to String
+     * @return returns String corresponding to given color c
+     */
     public static String parseColor( Color c ){
         if( c == null ) return "";
         else if( c.equals( Color.RED ) ) return "red";
@@ -69,6 +74,12 @@ public class UsefulFunctions {
         else return "";
     }
     
+    /**
+     * Calculates the center of gravity of two points
+     * @param p1 First coordinates
+     * @param p2 Second coordinates
+     * @return Coordinates of the center of gravity
+     */
     public static Pair<Float,Float> centerOfGravity( Pair<Float,Float> p1, Pair<Float,Float> p2 ){
         float x = p1.getST() + p2.getST();
         x /= 2;
@@ -77,15 +88,26 @@ public class UsefulFunctions {
         return new Pair<>(x,y);
     }
     
-    
-    public static Color getRandomColor(){
-        Color[] colors = {
-            Color.RED, Color.BLACK, Color.YELLOW, Color.BLUE, Color.GREEN, Color.ORANGE, Color.WHITE, Color.GRAY, Color.MAGENTA, Color.CYAN,
-            Color.PINK
-        };
+    /**
+     * 
+     * @return Returns one of 11 random colors
+     */
+    public static Color getRandomColor(){        
         Random rand = new Random();
         return colors[ rand.nextInt( colors.length ) ];       
     }
+    
+    /**
+     * If we want to draw multiple lines on a map, we would better not use two or three colors, but a different color for each of these lines
+     * @return Returns next Color in sequence
+     */
+    public static Color getNextColor(){
+        Color c = colors[ currentColor ];
+        currentColor++;
+        currentColor %= colors.length;
+        return c;
+    }
+        
     
     /**
      * Checks whether a file with given path exists
@@ -100,5 +122,11 @@ public class UsefulFunctions {
         }
         return true;
     }
+    
+    private static int currentColor = 0;
+    private static Color[] colors = {
+            Color.RED, Color.BLACK, Color.YELLOW, Color.BLUE, Color.GREEN, Color.ORANGE, Color.WHITE, Color.GRAY, Color.MAGENTA, Color.CYAN,
+            Color.PINK
+        };
     
 }

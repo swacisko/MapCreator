@@ -100,9 +100,6 @@ public class MCDatabase {
         }
     }
 
-    public static void setGtfsDirPath(String path) {
-        gtfsDirPath = path;
-    }
 
     public static String writeDatabase() {
         String s = stops.toString() + routes.toString() + shapes.toString() + trips.toString();

@@ -271,7 +271,8 @@ public class SVG {
 		
 		writerHTML.print( "   <polyline points=\"" + points.get(0).getX() + "," + points.get(0).getY() );
 		for (int i=1;i<s;i++) writerHTML.print( " " + points.get(i).getX() + "," + points.get(i).getY() );
-		writerHTML.print( "\" />\n" );
+		//writerHTML.print( "\" />\n" );
+                writerHTML.print( "\" style=\"fill:none;stroke:" + polylineColor + ";stroke-width:" + polylineWidth + "\" />\n" );
 	}
 	
 	/*dodaje łamaną
@@ -298,7 +299,9 @@ public class SVG {
 		
 		writerHTML.print( "   <polyline points=\"" + x.get(0) + "," + y.get(0) );
 		for (int i=1;i<s;i++) writerHTML.print( " " + x.get(i) + "," + y.get(i) );
-		writerHTML.print( "\" />\n" );
+		//writerHTML.print( "\" />\n" );
+                
+                writerHTML.print( "\" style=\"fill:none;stroke:" + polylineColor + ";stroke-width:2\" />\n" );
 	}
 	
 	//jako parametr przyjmuje listę punktów na płaszczyźnie

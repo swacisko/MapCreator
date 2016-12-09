@@ -23,7 +23,19 @@ import mctemplates.Pair;
 // TWORZY GRAF Z DANYCH GTFS
 public class MapGraphCreator {
 
-    // wybiera wszystkie drogi, ktorych typ jest odpowiedni do tego przekazanego przez TRANSPORT_MEASURE
+    
+    private boolean addRouteCondition( Route r ){
+        int routetype = Integer.parseInt(r.getRouteType());
+        if( ( (MCConstants.isFullSchemeBackground() || MCConstants.getRoutesToHighlight().isEmpty()  ) &&  (TRANSPORT_MEASURE & (1 << routetype)) != 0 )||
+                (  MCConstants.getRoutesToHighlight().contains( r.getRouteId() ) )  ){
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Prepares data i want to be drawn on the graph.
+     */
     private void createConsideredRoutesAndStops() {
         System.out.println( "Wybieram przystanki i drogi ktore maja zostac dodane do grafu" );
         consideredRoutes.clear();
@@ -31,8 +43,8 @@ public class MapGraphCreator {
         noncontractableNodes.clear();
         
         for (Route r : MCDatabase.getAllRoutes()) {
-            int routetype = Integer.parseInt(r.getRouteType());
-            if ((TRANSPORT_MEASURE & (1 << routetype)) != 0) {
+            
+            if ( addRouteCondition(r) ) {
                 consideredRoutes.add(r.getRouteId());
                 for (String s : r.getStopIds()) {
                     //  if( consideredStops.contains( MCDatabase.getStopOfID( s ) ) == false ) CNT++;
@@ -44,6 +56,7 @@ public class MapGraphCreator {
                 for( Trip t : trips ){
                     ArrayList<StopTime> l = MCDatabase.getAllStopTimesOfTripId(t.getTripId());
                     noncontractableNodes.add( l.get(0).getStopId() );
+                    noncontractableNodes.add( l.get( l.size()-1 ).getStopId() );
                 }
             }          
             

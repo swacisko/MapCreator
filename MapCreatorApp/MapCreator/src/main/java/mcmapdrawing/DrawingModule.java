@@ -1,10 +1,8 @@
 package mcmapdrawing;
 
+import java.awt.Color;
 import java.awt.Point;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import mcgraphs.MapNode;
 import mcgraphs.MapGraph;
 import mcgtfsstructures.Stop;
@@ -15,11 +13,15 @@ import mcgtfsstructures.MCDatabase;
 import java.util.ArrayList;
 
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import mcalgorithms.EdgeContraction;
 import mcalgorithms.ForceAlgorithm;
 import mcalgorithms.GraphGlueing;
 import mcalgorithms.MapGraphCreator;
+import mcalgorithms.RoutePathCreator;
+import mcgraphs.GraphPath;
 import mcgraphs.MapEdge;
 import mctemplates.MCConstants;
 import mctemplates.UsefulFunctions;
@@ -207,10 +209,12 @@ public class DrawingModule {
                     x.add(norm.getST());
                     y.add(norm.getND());
                 }
-
+                
+                svg.setPolylineWidth(3);
+                svg.setPolylineColor( UsefulFunctions.parseColor( UsefulFunctions.getNextColor() ));
                 svg.addPolylinePlain(x, y);
 
-             //   System.out.println( "Narysowalem linie dla " + s.getShapeId() );
+              //  System.out.println( "Narysowalem linie dla " + s.getShapeId() );
             }
         }
 
@@ -223,7 +227,7 @@ public class DrawingModule {
             float x = Float.parseFloat(s.getStopLon());
             float y = Float.parseFloat(s.getStopLat());
             Pair<Integer, Integer> p = normalizeCoordinates(LBC, RUC, new Pair<>(x, y));
-            svg.addCirclePlain(p.getST(), p.getND(), 3);
+            svg.addCircle(p.getST(), p.getND(), 3);
          //   System.out.println( "Dodalem przystanek o id = " + s.getStopId() + "   x = " + p.getST() + "  y = " + p.getND() );
         }
     }
@@ -361,7 +365,7 @@ public class DrawingModule {
         for (MapNode n : graph.getNodes()) {
             setDrawingNodeParameters(n);
             
-            int drawingWidth = n.getDrawingWidth() - 1 + n.getContainedStopsIds().size();
+            int drawingWidth = n.calculateMapNodeDrawingRadius();
             
             /*svg.setCircleFill( UsefulFunctions.parseColor( UsefulFunctions.getRandomColor() ) ); // to jest tylko do sprawdzenia dzialania funkcji addCricle() i innych
             svg.setCircleStrokeColor(UsefulFunctions.parseColor( UsefulFunctions.getRandomColor() ) );
@@ -379,7 +383,7 @@ public class DrawingModule {
                 /*for (String sadd : n.getContainedStopsIds()) {
                     s += MCDatabase.getStopOfID(sadd).getStopName() + " - ";
                 }*/
-                svg.addEllipse(UsefulFunctions.convertToPoint(normalizeCoordinates(LBC, RUC, n.getCoords())), 3 * drawingWidth, drawingWidth);
+                svg.addEllipse(UsefulFunctions.convertToPoint(normalizeCoordinates(LBC, RUC, n.getCoords())), 3 * drawingWidth, 2*drawingWidth);
                 svg.addText(UsefulFunctions.convertToPoint(normalizeCoordinates(LBC, RUC, n.getCoords())), s);
                 svg.setTextColor("black");               
             } else if (n.countEdges() == 1 || ( n.countEdges() < 4 && n.isContractable() == false ) ) {
@@ -445,10 +449,45 @@ public class DrawingModule {
         beginSVG();
        // svg.addImageLink( "background.jpg" );        
 
-        drawGraphEdgesOnMap(graph);
+     //   drawGraphEdgesOnMap(graph);
+        drawRoutesToHighlightOnGraph(graph);
         drawGraphNodesOnMap(graph);
 
         endSVG();
+    }
+    
+    public void drawRoutesToHighlightOnGraph( MapGraph graph ){
+        ArrayList<String> routes = MCConstants.getRoutesToHighlight();
+        Map<String, ArrayList<GraphPath> > paths = new RoutePathCreator(graph).createRoutePaths();
+        
+        for( Map.Entry<String, ArrayList<GraphPath> > entry : paths.entrySet() ){
+            System.out.println( "\n\nROUTE: " + entry.getKey() );
+            for( GraphPath gp : entry.getValue() ){
+                ArrayList<Point> polyline = new ArrayList<>();
+                System.out.print( "Start drawing a GraphPath:  " + gp );
+                for( Integer d : gp.getPathSequence() ){                    
+                    // na razie tylko sprawdzam czy dziala tworzenie sciezek dla dancyh drog, a nie przejmuje sie rysowaniem
+                    MapNode n = graph.getMapNodeByID( d );
+                    Pair<Integer,Integer> coords = normalizeCoordinates(LBC, RUC, n.getCoords() );
+                    int randVal = new Random().nextInt(30) - 15;
+                    coords.setST( coords.getST() + randVal );
+                    coords.setND( coords.getND() + randVal );
+                    Point p = UsefulFunctions.convertToPoint( coords );
+                    polyline.add(p);
+                    
+                }
+                
+                Color c = UsefulFunctions.getNextColor();
+                if( c.equals(Color.WHITE) ) c = Color.BLACK;
+                svg.setPolylineWidth(8);
+                svg.setPolylineColorHover( UsefulFunctions.parseColor( UsefulFunctions.getNextColor() ) );
+                svg.setPolylineWidthHover(15);
+                svg.setPolylineColor( UsefulFunctions.parseColor( c ) );
+                svg.addPolylinePlain(polyline);
+                
+                System.out.println();
+            }
+        }
     }
 
     private String initialSVGFileName = "";

@@ -94,7 +94,7 @@ public class UsefulFunctions {
      */
     public static boolean existsFile( String path ){
         File f = new File(path);
-        if( (f.exists()==false) || ( f.isDirectory() ) ) { 
+        if( f.exists()==false ) { 
             System.out.println( "File " + path + " does not exist or is a directory" );
             return false;
         }

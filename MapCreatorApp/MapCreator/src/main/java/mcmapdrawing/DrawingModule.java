@@ -11,7 +11,7 @@ import mcgtfsstructures.Stop;
 import mcgtfsstructures.Shape;
 import mctemplates.Drawable;
 import mctemplates.Pair;
-import mcgtfsstructures.localGtfsDatabase;
+import mcgtfsstructures.MCDatabase;
 import java.util.ArrayList;
 
 import java.util.HashSet;
@@ -61,7 +61,7 @@ public class DrawingModule {
     }
 
     private void createLBCandRUC() {
-        Pair< Pair<Float, Float>, Pair<Float, Float>> LBCRUC = getLBCandRUC(new ArrayList<Drawable>(localGtfsDatabase.getAllStops())); // TUTAJ NIE MOZE BYC
+        Pair< Pair<Float, Float>, Pair<Float, Float>> LBCRUC = getLBCandRUC(new ArrayList<Drawable>(MCDatabase.getAllStops())); // TUTAJ NIE MOZE BYC
         LBC = LBCRUC.getST();
         RUC = LBCRUC.getND();
 
@@ -117,10 +117,10 @@ public class DrawingModule {
         
         if( dH <= 0 ) dH = 0.00001f;
         
-        System.out.println( "dW = " + dW + "   dH = " + dH );
+      //  System.out.println( "dW = " + dW + "   dH = " + dH );
         
         svg.setWidth( (int) ((float)svg.getHeight() * ( dW / dH ) ));
-        System.out.println( "width = " + svg.getWidth() + "   height = " + svg.getHeight() );
+     //   System.out.println( "width = " + svg.getWidth() + "   height = " + svg.getHeight() );
     }
 
     /**
@@ -191,13 +191,13 @@ public class DrawingModule {
     public void drawShapesOnMap() {
         Set<String> set = new HashSet<>();
 
-        ArrayList<Shape> allShapes = localGtfsDatabase.getAllShapes();
+        ArrayList<Shape> allShapes = MCDatabase.getAllShapes();
         ArrayList<Shape> shapeById = null;
 
         for (Shape s : allShapes) {
             if (!set.contains(s.getShapeId())) {
                 set.add(s.getShapeId());
-                shapeById = localGtfsDatabase.getAllShapesOfId(s.getShapeId());
+                shapeById = MCDatabase.getAllShapesOfId(s.getShapeId());
 
                 ArrayList<Integer> x = new ArrayList<>();
                 ArrayList<Integer> y = new ArrayList<>(); // tego nie powinno byc - bedzie do czasu gdy Asia zrobic funkcje dodawania lini dla par
@@ -217,7 +217,7 @@ public class DrawingModule {
     }
 
     public void drawStopsOnMap() {
-        ArrayList<Stop> stops = localGtfsDatabase.getAllStops();
+        ArrayList<Stop> stops = MCDatabase.getAllStops();
 
         for (Stop s : stops) {
             float x = Float.parseFloat(s.getStopLon());
@@ -234,8 +234,8 @@ public class DrawingModule {
     public void drawShapeMap(){
         
         String path = (new File("").getAbsolutePath()) + "/GTFS/" + "shapes.txt";
-        if( UsefulFunctions.existsFile(path) ) { 
-            System.out.println( "No shapes.txt file" );
+        if( UsefulFunctions.existsFile(path) == false ) { 
+            System.out.println( "No shapes.txt file,   path = " + path );
             return;
         }
         
@@ -377,7 +377,7 @@ public class DrawingModule {
                 String s = n.getStructureName() + " --- ";
                 s += "stops: " + n.getContainedStopsIds().size() +  " n:" + n.countNeighbours() + " e:" + n.countEdges() + " contr:" + n.isContractable();
                 /*for (String sadd : n.getContainedStopsIds()) {
-                    s += localGtfsDatabase.getStopOfID(sadd).getStopName() + " - ";
+                    s += MCDatabase.getStopOfID(sadd).getStopName() + " - ";
                 }*/
                 svg.addEllipse(UsefulFunctions.convertToPoint(normalizeCoordinates(LBC, RUC, n.getCoords())), 3 * drawingWidth, drawingWidth);
                 svg.addText(UsefulFunctions.convertToPoint(normalizeCoordinates(LBC, RUC, n.getCoords())), s);
@@ -385,7 +385,7 @@ public class DrawingModule {
             } else if (n.countEdges() == 1 || ( n.countEdges() < 4 && n.isContractable() == false ) ) {
                 String s = "";
                 /*for (String sadd : n.getContainedStopsIds()) {
-                    s += localGtfsDatabase.getStopOfID(sadd).getStopName() + " -- ";
+                    s += MCDatabase.getStopOfID(sadd).getStopName() + " -- ";
                 }*/
                 svg.addCircle(UsefulFunctions.convertToPoint(normalizeCoordinates(LBC, RUC, n.getCoords())), drawingWidth);
                 svg.addText(UsefulFunctions.convertToPoint(normalizeCoordinates(LBC, RUC, n.getCoords())), s);                

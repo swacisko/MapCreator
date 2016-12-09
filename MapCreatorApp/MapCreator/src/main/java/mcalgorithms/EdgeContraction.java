@@ -219,8 +219,8 @@ public class EdgeContraction {
             System.out.print( "\rDokonuje ponownej kontrakcji na wierzcholku nr " + (CNT++) );
             removeDeg2NodeFromGraph(n);
         }        
-        System.out.println("\nGraph ma teraz " + graph.countNodes() + " wierzcholkow oraz " + graph.getEdges().countNodes() + " krawedzi");
-        */          
+        System.out.println("\nGraph ma teraz " + graph.countNodes() + " wierzcholkow oraz " + graph.countEdges()+ " krawedzi");
+          */       
     }
     
     

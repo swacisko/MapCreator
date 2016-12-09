@@ -6,6 +6,7 @@
 package mctemplates;
 
 import java.awt.Color;
+import java.io.File;
 
 /**
  *
@@ -68,8 +69,10 @@ public class MCConstants {
      */
     private static int INITIAL_SVG_HEIGHT = 2000;
     
-    private static float FIRST_GLUEING_DISTANCE_PARAMETER = 8;
-     private static float SECOND_GLUEING_DISTANCE_PARAMTER = 70;
+    private static float FIRST_GLUEING_DISTANCE_PARAMETER = 10;
+    private static float SECOND_GLUEING_DISTANCE_PARAMTER = 50;
+     
+    private static String gtfsDirectoryPath = new File("").getAbsolutePath();
 
     public static float getFIRST_GLUEING_DISTANCE_PARAMETER() {
         return FIRST_GLUEING_DISTANCE_PARAMETER;

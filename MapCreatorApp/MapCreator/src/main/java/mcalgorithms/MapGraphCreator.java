@@ -30,19 +30,19 @@ public class MapGraphCreator {
         consideredStops.clear();
         noncontractableNodes.clear();
         
-        for (Route r : localGtfsDatabase.getAllRoutes()) {
+        for (Route r : MCDatabase.getAllRoutes()) {
             int routetype = Integer.parseInt(r.getRouteType());
             if ((TRANSPORT_MEASURE & (1 << routetype)) != 0) {
                 consideredRoutes.add(r.getRouteId());
                 for (String s : r.getStopIds()) {
-                    //  if( consideredStops.contains( localGtfsDatabase.getStopOfID( s ) ) == false ) CNT++;
-                    consideredStops.add(localGtfsDatabase.getStopOfID(s));
+                    //  if( consideredStops.contains( MCDatabase.getStopOfID( s ) ) == false ) CNT++;
+                    consideredStops.add(MCDatabase.getStopOfID(s));
                 }
                 
-                ArrayList<Trip> trips = localGtfsDatabase.getAllTripsOfRouteId( r.getRouteId());
+                ArrayList<Trip> trips = MCDatabase.getAllTripsOfRouteId( r.getRouteId());
                 if( trips == null ) continue;            
                 for( Trip t : trips ){
-                    ArrayList<StopTime> l = localGtfsDatabase.getAllStopTimesOfTripId(t.getTripId());
+                    ArrayList<StopTime> l = MCDatabase.getAllStopTimesOfTripId(t.getTripId());
                     noncontractableNodes.add( l.get(0).getStopId() );
                 }
             }          
@@ -52,7 +52,7 @@ public class MapGraphCreator {
     }
 
     /**
-     * Adds all nodes from localGtfsDatabase to graph, with respect to routes with type {@link MapGraphCreator#TRANSPORT_MEASURE}.
+     * Adds all nodes from MCDatabase to graph, with respect to routes with type {@link MapGraphCreator#TRANSPORT_MEASURE}.
      */
     private void addNodesToGraph() {        
         int CNT = 1;
@@ -87,11 +87,11 @@ public class MapGraphCreator {
         }
         
         int CNT = 0;
-        for (Trip t : localGtfsDatabase.getAllTrips()) {
+        for (Trip t : MCDatabase.getAllTrips()) {
             if (consideredRoutes.contains(t.getRouteId())) { // jezeli typ danej drogi jet zgodny z TRANSPORT_MEASURE
-                int colormode = Integer.parseInt(localGtfsDatabase.getRouteOfID(t.getRouteId()).getRouteType());
+                int colormode = Integer.parseInt(MCDatabase.getRouteOfID(t.getRouteId()).getRouteType());
 
-                ArrayList<StopTime> l = localGtfsDatabase.getAllStopTimesOfTripId(t.getTripId());
+                ArrayList<StopTime> l = MCDatabase.getAllStopTimesOfTripId(t.getTripId());
                 for (int i = 0; i < l.size(); i++) {
                     if (i > 0) {
                         int id1 = nodeIdReversed.get(l.get(i - 1).getStopId());
@@ -152,8 +152,8 @@ public class MapGraphCreator {
         for (String s : consideredRoutes) {
             System.out.print( "\rZaczynam sortowanie drogi " + s + "   nr " + (CNT++) );
             
-            ArrayList<Trip> triplist = localGtfsDatabase.getAllTripsOfRouteId(s); // biore wszystkie tripy dla danej drogi route
-            int colormode = Integer.parseInt(localGtfsDatabase.getRouteOfID(s).getRouteType());
+            ArrayList<Trip> triplist = MCDatabase.getAllTripsOfRouteId(s); // biore wszystkie tripy dla danej drogi route
+            int colormode = Integer.parseInt(MCDatabase.getRouteOfID(s).getRouteType());
             
             mustBeBefore.clear();
             isOnRoute.clear();
@@ -167,7 +167,7 @@ public class MapGraphCreator {
             }
 
             for (Trip t : triplist) { // biore wszystkie przystanki dla danej przejazdzki
-                ArrayList<StopTime> stoptimeslist = localGtfsDatabase.getAllStopTimesOfTripId(t.getTripId());
+                ArrayList<StopTime> stoptimeslist = MCDatabase.getAllStopTimesOfTripId(t.getTripId());
                 if (BEGID == null || ( stoptimeslist.get( stoptimeslist.size()-1 ).getStopId().equals( BEGID ) == false && 
                         stoptimeslist.get(0).getStopId().equals( BEGID ) == false ) ){
                     BEGID = stoptimeslist.get(0).getStopId();
@@ -270,8 +270,8 @@ public class MapGraphCreator {
         
         for (String s : consideredRoutes) {
             
-            ArrayList<Trip> triplist = localGtfsDatabase.getAllTripsOfRouteId(s); // biore wszystkie tripy dla danej drogi route
-            int colormode = Integer.parseInt(localGtfsDatabase.getRouteOfID(s).getRouteType());
+            ArrayList<Trip> triplist = MCDatabase.getAllTripsOfRouteId(s); // biore wszystkie tripy dla danej drogi route
+            int colormode = Integer.parseInt(MCDatabase.getRouteOfID(s).getRouteType());
                         
             if( triplist == null ){
                 System.out.println( "Cos tu jest nie tak, nie ma tripu o id drogi  " + s );
@@ -283,7 +283,7 @@ public class MapGraphCreator {
             Map<String,Integer> freq = new HashMap<>();
 
             for (Trip t : triplist) { // biore wszystkie przystanki dla danej przejazdzki
-                ArrayList<StopTime> l = localGtfsDatabase.getAllStopTimesOfTripId(t.getTripId());
+                ArrayList<StopTime> l = MCDatabase.getAllStopTimesOfTripId(t.getTripId());
                 
                 if( freq.containsKey( l.get( l.size()-1 ).getStopId() ) == false ){
                     freq.put( l.get(l.size()-1).getStopId(), 1 );
@@ -328,7 +328,7 @@ public class MapGraphCreator {
             M = m = 0;
             
             for (Trip t : triplist) { // biore wszystkie przystanki dla danej przejazdzki
-                ArrayList<StopTime> l = localGtfsDatabase.getAllStopTimesOfTripId(t.getTripId());
+                ArrayList<StopTime> l = MCDatabase.getAllStopTimesOfTripId(t.getTripId());
                 
                 if( l.get(0).getStopId().equals( BEG ) && l.get( l.size()-1 ).getStopId().equals( END ) ){
                     if( l.size() > M ){

@@ -15,7 +15,7 @@ import java.util.Map;
  *
  * @author swacisko
  */
-public class localGtfsDatabase {
+public class MCDatabase {
 
     public static void init() {
         System.out.println( "Inicjalizacja wewnetrznej bazy danych" );
@@ -209,8 +209,7 @@ public class localGtfsDatabase {
     }
     //END OF STOP_TIMES SECTION
 
-    private static String gtfsDirPath = (new File("").getAbsolutePath()) + "/GTFS/";
-
+    
     private static ArrayList< Stop> stops = null;
     public static ArrayList< Route> routes = null;
     private static ArrayList< Shape> shapes = null;

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import mctemplates.MCConstants;
 import mctemplates.UsefulFunctions;
 
 public class GTFSInput {
@@ -188,6 +189,6 @@ public class GTFSInput {
     
     
     
-    public static String gtfsDirPath = (new File("").getAbsolutePath()) + "/GTFS/";
+    public static String gtfsDirPath = MCConstants.getGtfsDirectoryPath();
 
 }

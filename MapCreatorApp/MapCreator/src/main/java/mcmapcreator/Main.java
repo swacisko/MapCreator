@@ -1,7 +1,7 @@
 package mcmapcreator;
 
 import mcgraphs.MapGraph;
-import mcgtfsstructures.localGtfsDatabase;
+import mcgtfsstructures.MCDatabase;
 import mcmapdrawing.SVG;
 import mcmapdrawing.DrawingModule;
 import mctemplates.MCConstants;
@@ -15,7 +15,7 @@ public class Main {
         
         
         
-        localGtfsDatabase.init(); // na samym poczatku musze zainicjalizowac baze danych
+        MCDatabase.init(); // na samym poczatku musze zainicjalizowac baze danych
         
        // MapGraph g = new MapGraph();
        // g.testGraph();        

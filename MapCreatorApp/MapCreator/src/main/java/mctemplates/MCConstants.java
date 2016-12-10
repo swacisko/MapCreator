@@ -66,6 +66,8 @@ public class MCConstants {
     private static int INITIAL_NODE_WIDTH = 4;
     private static int INITIAL_NODE_HOVER_WIDTH = 12;
     
+    private static Color TEXT_COLOR = Color.BLACK;
+
     private static int INITIAL_ROUTE_HIGHLIGHT_WIDTH = 4*INITIAL_EDGE_WIDTH;
     private static int INITIAL_ROUTE_HIGHLIGHT_HOVER_WIDTH = 4*INITIAL_EDGE_HOVER_WIDTH;
 
@@ -102,6 +104,14 @@ public class MCConstants {
 
     
     //***************************************************************  GETTERS AND SETTERS AND SOME OTHER
+    
+    public static Color getTEXT_COLOR() {
+        return TEXT_COLOR;
+    }
+
+    public static void setTEXT_COLOR(Color TEXT_COLOR) {
+        MCConstants.TEXT_COLOR = TEXT_COLOR;
+    }
     
     public static int getINITIAL_ROUTE_HIGHLIGHT_HOVER_WIDTH() {
         return INITIAL_ROUTE_HIGHLIGHT_HOVER_WIDTH;

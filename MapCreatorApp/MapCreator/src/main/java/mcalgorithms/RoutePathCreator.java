@@ -61,7 +61,11 @@ public class RoutePathCreator {
     
     private void createMostFrequentPaths( String routeId ){
         mostFrequentPaths.clear();
-        ArrayList<Trip> trips = MCDatabase.getAllTripsOfRouteId(routeId);        
+        ArrayList<Trip> trips = MCDatabase.getAllTripsOfRouteId(routeId);  
+        if( trips == null ){
+            System.out.println( "There are no trips of route id = " + routeId );
+            return;
+        }
         
         ArrayList< Pair<GraphPath,Integer> > frequencies = new ArrayList<>();
         

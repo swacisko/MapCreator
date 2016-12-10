@@ -24,6 +24,12 @@ public class Main {
         MCConstants.addRouteToHighlight( "101" );
         MCConstants.addRouteToHighlight( "106" );
         MCConstants.addRouteToHighlight( "521" );
+        MCConstants.addRouteToHighlight( "74" );
+        MCConstants.addRouteToHighlight( "121" );
+        MCConstants.addRouteToHighlight( "74" );
+        MCConstants.addRouteToHighlight( "A" );
+        MCConstants.addRouteToHighlight( "E" );
+        
         DrawingModule dm = new DrawingModule( new SVG( MCConstants.getINITIAL_SVG_WIDTH(),MCConstants.getINITIAL_SVG_HEIGHT(),"Rysowanie" ) );        
         dm.drawAllMaps();
         

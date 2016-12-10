@@ -113,7 +113,7 @@ public class RoutePathCreator {
             }
         }        
         
-        System.out.println( "Most frequent paths:\n" + mostFrequentPaths );
+      //  System.out.println( "Most frequent paths:\n" + mostFrequentPaths );
     }
     
     private void createStructureMap(){

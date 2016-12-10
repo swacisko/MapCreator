@@ -53,6 +53,16 @@ public class UsefulFunctions {
         return new Point( Math.round(p.getST()), Math.round(p.getND()) );
     }
     
+    public static Pair<Float,Float> parsePairToFloat( Pair<Integer,Integer> p ){
+        return new Pair<>( (float)p.getST(), (float)p.getND() );
+    }
+    
+    public static Pair<Integer,Integer> parsePairToInteger( Pair<Float,Float> p ){
+        int a = Math.round(p.getST());
+        int b = Math.round( p.getND() );
+        return new Pair<>( a,b );        
+    }
+    
     /**
      * 
      * @param c Color to be parsed to String
@@ -128,5 +138,48 @@ public class UsefulFunctions {
             Color.RED, Color.BLACK, Color.YELLOW, Color.BLUE, Color.GREEN, Color.ORANGE, Color.WHITE, Color.GRAY, Color.MAGENTA, Color.CYAN,
             Color.PINK
         };
+    
+    /**
+     * Normalizes a vector
+     * @param vec vector to be normalized
+     * @return normalized vector
+     */
+    public static Pair<Float,Float> getNormalizedVector( Pair<Float,Float> vec ){
+        float diffx = vec.getST();
+        float diffy = vec.getND();
+        float length = (float)Math.sqrt( diffx*diffx + diffy*diffy );
+        
+        return new Pair<>( diffx / length, diffy / length );
+    }
+    
+    /**
+     * 
+     * @param pA coordinates of the node with lower id
+     * @param pB coordinates of the node with greater id 
+     * @return returns a normalized (with length 1) perpendicular vector to given fragment, with constant orientation - either to left or right of fragment [pA-pB]. Return null if pA equals pB
+     */
+    public static Pair<Float,Float> getNormalizedPerpendicularVector( Pair<Float,Float> pA, Pair<Float,Float> pB ){
+        float a = pB.getST() - pA.getST();
+        float b =  pB.getND() - pA.getND();
+        
+        if( new Float(a).equals(0f) && new Float(b).equals(0f) ) return null;
+        
+        if( new Float(b).equals(0f) ){
+            return new Pair<>( 0f,1f );
+        }else if( new Float(a).equals(0f) ) {
+            return new Pair<>( 1f,0f );
+        }
+        else{
+            float c = 1f;
+            float d = -a/b;
+            return getNormalizedVector( new Pair<>(c,d) );
+        }
+    }
+    
+    public static float getVectorLength( Pair<Float,Float> vec ){
+        float diffx = vec.getST();
+        float diffy = vec.getND();
+        return (float)Math.sqrt( diffx*diffx + diffy*diffy );
+    }
     
 }

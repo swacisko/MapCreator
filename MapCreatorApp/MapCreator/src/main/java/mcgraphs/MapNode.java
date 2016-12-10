@@ -188,7 +188,7 @@ public class MapNode extends MapStructure implements Drawable {
     }
     
     public int calculateMapNodeDrawingRadius(){
-        return Math.min(20, getDrawingWidth() - 1 + containedStopsIds.size() );
+        return Math.min(10, getDrawingWidth() - 1 + containedStopsIds.size() );
     }
     
     

@@ -41,7 +41,7 @@ public class MCConstants {
 
     private static int DRAWING_ROUTE_TYPE = TRAM;
 
-    private static Color TRAM_COLOR = Color.PINK;
+    private static Color TRAM_COLOR = Color.GREEN;
     private static Color METRO_COLOR = Color.GRAY;
     private static Color RAIL_COLOR = Color.YELLOW;
     private static Color BUS_COLOR = Color.BLUE;
@@ -56,15 +56,19 @@ public class MCConstants {
 
     private static final Color INITIAL_HOVER_COLOR = Color.RED;
 
-    private static Color INITIAL_EDGE_COLOR = Color.BLUE;
+    private static Color INITIAL_EDGE_COLOR = Color.BLACK;
     private static Color INITIAL_EDGE_HOVER_COLOR = INITIAL_HOVER_COLOR;
-    private static int INITIAL_EDGE_WIDTH = 4;
-    private static int INITIAL_EDGE_HOVER_WIDTH = 8;
-
+    private static int INITIAL_EDGE_WIDTH = 2;
+    private static int INITIAL_EDGE_HOVER_WIDTH = 2;
+    
     private static Color INITIAL_NODE_COLOR = Color.ORANGE;
     private static Color INITIAL_NODE_HOVER_COLOR = INITIAL_HOVER_COLOR;
     private static int INITIAL_NODE_WIDTH = 4;
     private static int INITIAL_NODE_HOVER_WIDTH = 12;
+    
+    private static int INITIAL_ROUTE_HIGHLIGHT_WIDTH = 4*INITIAL_EDGE_WIDTH;
+    private static int INITIAL_ROUTE_HIGHLIGHT_HOVER_WIDTH = 4*INITIAL_EDGE_HOVER_WIDTH;
+
 
     /**
      * Initial width is useless - width of svg is changed so that it's shape is
@@ -77,9 +81,10 @@ public class MCConstants {
     private static int INITIAL_SVG_HEIGHT = 2000;
 
     private static float FIRST_GLUEING_DISTANCE_PARAMETER = 10;
-    private static float SECOND_GLUEING_DISTANCE_PARAMTER = 100;
+    private static float SECOND_GLUEING_DISTANCE_PARAMTER = 70;
 
     private static String gtfsDirectoryPath = new File("").getAbsolutePath();
+    private static String mapsDirectoryPath = new File("").getAbsolutePath() + "/DrawingFolder/";
 
     /**
      * This is the list of routes ids i want to highlight on the graph. If i
@@ -93,8 +98,35 @@ public class MCConstants {
      * highlighted Otherwise on the scheme there will be only routes with
      * adequate routesToHighlight ids and TRANSPORT_MEASURE types
      */
-    private static boolean fullSchemeBackground = false;
+    private static boolean fullSchemeBackground = true;
 
+    
+    //***************************************************************  GETTERS AND SETTERS AND SOME OTHER
+    
+    public static int getINITIAL_ROUTE_HIGHLIGHT_HOVER_WIDTH() {
+        return INITIAL_ROUTE_HIGHLIGHT_HOVER_WIDTH;
+    }
+
+    public static void setINITIAL_ROUTE_HIGHLIGHT_HOVER_WIDTH(int INITIAL_ROUTE_HIGHLIGHT_HOVER_WIDTH) {
+        MCConstants.INITIAL_ROUTE_HIGHLIGHT_HOVER_WIDTH = INITIAL_ROUTE_HIGHLIGHT_HOVER_WIDTH;
+    }
+
+    public static int getINITIAL_ROUTE_HIGHLIGHT_WIDTH() {
+        return INITIAL_ROUTE_HIGHLIGHT_WIDTH;
+    }
+
+    public static void setINITIAL_ROUTE_HIGHLIGHT_WIDTH(int INITIAL_ROUTE_HIGHLIGHT_WIDTH) {
+        MCConstants.INITIAL_ROUTE_HIGHLIGHT_WIDTH = INITIAL_ROUTE_HIGHLIGHT_WIDTH;
+    }
+    
+     public static String getMapsDirectoryPath() {
+        return mapsDirectoryPath;
+    }
+
+    public static void setMapsDirectoryPath(String mapsDirectoryPath) {
+        MCConstants.mapsDirectoryPath = mapsDirectoryPath;
+    }
+    
     /**
      *
      * @return true if {@link #fullSchemeBackground} is true, false otherwise.
@@ -115,8 +147,8 @@ public class MCConstants {
         return routesToHighlight;
     }
 
-    public static void Highlight(ArrayList<String> routesToDraw) {
-        MCConstants.routesToHighlight = routesToDraw;
+    public static void setRoutesToHighlight(ArrayList<String> routesToHighlight) {
+        MCConstants.routesToHighlight = routesToHighlight;
     }
 
     public static String getGtfsDirectoryPath() {

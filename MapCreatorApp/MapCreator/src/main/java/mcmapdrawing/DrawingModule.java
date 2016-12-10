@@ -11,6 +11,7 @@ import mctemplates.Drawable;
 import mctemplates.Pair;
 import mcgtfsstructures.MCDatabase;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -30,7 +31,7 @@ public class DrawingModule {
 
     public DrawingModule(SVG s) {
         svg = s;
-        initialSVGFileName = "./DrawingFolder/" + svg.getFileName();        
+        //initialSVGFileName = "./DrawingFolder/" + svg.getFileName();        
         createLBCandRUC();
     }
 
@@ -361,11 +362,14 @@ public class DrawingModule {
      * @param graph This is the graph to be drawn
      */
     private void drawGraphNodesOnMap(MapGraph graph) {
-
+        Set<Integer> insignificantNodes = createInsignificantNodes(graph);
         for (MapNode n : graph.getNodes()) {
             setDrawingNodeParameters(n);
             
             int drawingWidth = n.calculateMapNodeDrawingRadius();
+            if( insignificantNodes.contains(n.getID()) ){
+                drawingWidth = 3;
+            }
             
             /*svg.setCircleFill( UsefulFunctions.parseColor( UsefulFunctions.getRandomColor() ) ); // to jest tylko do sprawdzenia dzialania funkcji addCricle() i innych
             svg.setCircleStrokeColor(UsefulFunctions.parseColor( UsefulFunctions.getRandomColor() ) );
@@ -376,14 +380,14 @@ public class DrawingModule {
             drawingWidth =  2 + new Random().nextInt(15); */
             
             
-            if (n.getContainedStopsIds().size() >= 2) {
+            if ((n.getContainedStopsIds().size() >= 2) && (insignificantNodes.contains(n.getID()) == false) ) {
                 svg.setTextColor("red");
                 String s = n.getStructureName() + " --- ";
                 s += "stops: " + n.getContainedStopsIds().size() +  " n:" + n.countNeighbours() + " e:" + n.countEdges() + " contr:" + n.isContractable();
                 /*for (String sadd : n.getContainedStopsIds()) {
                     s += MCDatabase.getStopOfID(sadd).getStopName() + " - ";
                 }*/
-                svg.addEllipse(UsefulFunctions.convertToPoint(normalizeCoordinates(LBC, RUC, n.getCoords())), 3 * drawingWidth, 2*drawingWidth);
+                addSvgEllipse(UsefulFunctions.convertToPoint(normalizeCoordinates(LBC, RUC, n.getCoords())), (int)(1.5 * drawingWidth), drawingWidth);
                 svg.addText(UsefulFunctions.convertToPoint(normalizeCoordinates(LBC, RUC, n.getCoords())), s);
                 svg.setTextColor("black");               
             } else if (n.countEdges() == 1 || ( n.countEdges() < 4 && n.isContractable() == false ) ) {
@@ -391,10 +395,10 @@ public class DrawingModule {
                 /*for (String sadd : n.getContainedStopsIds()) {
                     s += MCDatabase.getStopOfID(sadd).getStopName() + " -- ";
                 }*/
-                svg.addCircle(UsefulFunctions.convertToPoint(normalizeCoordinates(LBC, RUC, n.getCoords())), drawingWidth);
+                addCircle(UsefulFunctions.convertToPoint(normalizeCoordinates(LBC, RUC, n.getCoords())), drawingWidth);
                 svg.addText(UsefulFunctions.convertToPoint(normalizeCoordinates(LBC, RUC, n.getCoords())), s);                
             } else {
-                svg.addCircle(UsefulFunctions.convertToPoint(normalizeCoordinates(LBC, RUC, n.getCoords())), drawingWidth);
+                addCircle(UsefulFunctions.convertToPoint(normalizeCoordinates(LBC, RUC, n.getCoords())), drawingWidth);
             }
         }
     }
@@ -433,8 +437,8 @@ public class DrawingModule {
             polyline.add(UsefulFunctions.convertToPoint(normalizeCoordinates(LBC, RUC, n2.getCoords())));
 
             setDrawingEdgeParameters(e);
-
-            svg.addPolylinePlain(polyline);
+            
+            addSvgPolyline(polyline);
 
             drawEdgeText(e);
         }
@@ -449,52 +453,219 @@ public class DrawingModule {
         beginSVG();
        // svg.addImageLink( "background.jpg" );        
 
-     //   drawGraphEdgesOnMap(graph);
+        drawGraphEdgesOnMap(graph);
         drawRoutesToHighlightOnGraph(graph);
         drawGraphNodesOnMap(graph);
 
         endSVG();
     }
     
-    public void drawRoutesToHighlightOnGraph( MapGraph graph ){
+    private Set<Integer> createInsignificantNodes( MapGraph graph ){
+        Set<Integer> insNodes = new HashSet<>();
+        for( MapNode n : graph.getNodes() ){
+            insNodes.add(n.getID());
+        }
+        Map<String, ArrayList<GraphPath> > paths = new RoutePathCreator(graph).createRoutePaths();
+        for( Map.Entry<String, ArrayList<GraphPath> > entry : paths.entrySet() ){            
+            for( GraphPath gp : entry.getValue() ){
+                for( Integer d : gp.getPathSequence() ){
+                    insNodes.remove(d);
+                }                
+            }            
+        }
+        return insNodes;
+    }
+                
+    private void drawRoutesToHighlightOnGraph( MapGraph graph ){
         ArrayList<String> routes = MCConstants.getRoutesToHighlight();
         Map<String, ArrayList<GraphPath> > paths = new RoutePathCreator(graph).createRoutePaths();
+        createHighlights(paths);
         
         for( Map.Entry<String, ArrayList<GraphPath> > entry : paths.entrySet() ){
-            System.out.println( "\n\nROUTE: " + entry.getKey() );
             for( GraphPath gp : entry.getValue() ){
                 ArrayList<Point> polyline = new ArrayList<>();
-                System.out.print( "Start drawing a GraphPath:  " + gp );
-                for( Integer d : gp.getPathSequence() ){                    
-                    // na razie tylko sprawdzam czy dziala tworzenie sciezek dla dancyh drog, a nie przejmuje sie rysowaniem
-                    MapNode n = graph.getMapNodeByID( d );
+                if( gp.getPathSequence().size() < 2 ) continue;
+                
+                
+                for( int i=1; i < gp.getPathSequence().size(); i++ ){                    
+                    MapNode nA = graph.getMapNodeByID( gp.getPathSequence().get(i-1) );
+                    MapNode nB = graph.getMapNodeByID( gp.getPathSequence().get(i) );
+                    
+                    boolean reversed = false;
+                    if( nA.getID() > nB.getID() ){                        
+                        reversed = true;
+                        MapNode temp = nA;
+                        nA = nB;
+                        nB = temp;
+                    }
+                    
+                    Pair<Float,Float> coordsA = UsefulFunctions.parsePairToFloat( normalizeCoordinates(LBC, RUC, nA.getCoords() ) );
+                    Pair<Float,Float> coordsB = UsefulFunctions.parsePairToFloat( normalizeCoordinates(LBC, RUC, nB.getCoords() ) );
+                    
+                    if( coordsA == null || coordsB == null ){
+                        System.out.println( "coordsA = " + coordsA + "\ncoordsB = " + coordsB );
+                        System.out.println( "nA = " + nA + "\nnB = " + nB );  
+                        break;
+                    }
+                    
+                    Pair<Float,Float> perpVec = UsefulFunctions.getNormalizedPerpendicularVector( coordsA, coordsB );
+                    if( reversed ){
+                        perpVec.setST( -perpVec.getST() );
+                        perpVec.setND( -perpVec.getND() );
+                    }
+                    
+                    if( (UsefulFunctions.getVectorLength(perpVec) < 0.999f) || (UsefulFunctions.getVectorLength(perpVec) > 1.001f) ){
+                        System.out.println( "perpVec has length equals " + UsefulFunctions.getVectorLength(perpVec) );
+                    }
+                                        
+                    float x = coordsB.getST();
+                    float deltax = leftHighlightOffset.get( new Pair<>(nA.getID(), nB.getID()) ) * perpVec.getST();
+
+                    float y = coordsB.getND();
+                    float deltay = leftHighlightOffset.get( new Pair<>(nA.getID(), nB.getID()) ) * perpVec.getND();
+                    
+                    if( reversed ){
+                        x = coordsA.getST();
+                        deltax = rightHighlightOffset.get( new Pair<>(nA.getID(), nB.getID()) ) * perpVec.getST();
+                        y = coordsA.getND();
+                        deltay = rightHighlightOffset.get( new Pair<>(nA.getID(), nB.getID()) ) * perpVec.getST();
+                    }
+
+                    if( i == 1 ){
+                        float c = coordsA.getST();
+                        float d = coordsA.getND();
+                        if( reversed ){
+                            x = coordsB.getST();
+                            d = coordsA.getST();
+                        }
+                        //polyline.add( new Point( Math.round(c+deltax), Math.round(d+deltay) ) );
+                        polyline.add( new Point(Math.round(c),Math.round(d)) );
+                    }
+
+                   // polyline.add( new Point( Math.round(x+deltax), Math.round(y+deltay) ) ); 
+                      polyline.add( new Point(Math.round(x),Math.round(y)) );
+                    
+                    
+                    
+                    if( reversed ){
+                        float val = rightHighlightOffset.get( new Pair<>(nA.getID(), nB.getID()) );
+                        val -= MCConstants.getINITIAL_ROUTE_HIGHLIGHT_WIDTH();
+                        rightHighlightOffset.remove(new Pair<>(nA.getID(), nB.getID()));
+                        rightHighlightOffset.put( new Pair<>(nA.getID(), nB.getID()) , val  );
+                    }else{
+                        float val = leftHighlightOffset.get( new Pair<>(nA.getID(), nB.getID()) );
+                        val -= MCConstants.getINITIAL_ROUTE_HIGHLIGHT_WIDTH();
+                        leftHighlightOffset.remove(new Pair<>(nA.getID(), nB.getID()));
+                        leftHighlightOffset.put( new Pair<>(nA.getID(), nB.getID()) , val  );
+                    }
+                    
+                    if( reversed ){                     
+                        reversed = true;
+                        MapNode temp = nA;
+                        nA = nB;
+                        nB = temp;
+                    }
+                    
+                   /* MapNode n = graph.getMapNodeByID(gp.getPathSequence().get(i) );
                     Pair<Integer,Integer> coords = normalizeCoordinates(LBC, RUC, n.getCoords() );
-                    int randVal = new Random().nextInt(30) - 15;
+                    int randVal = new Random().nextInt(20) - 10;
                     coords.setST( coords.getST() + randVal );
                     coords.setND( coords.getND() + randVal );
                     Point p = UsefulFunctions.convertToPoint( coords );
-                    polyline.add(p);
-                    
+                    polyline.add(p);*/
                 }
                 
                 Color c = UsefulFunctions.getNextColor();
                 if( c.equals(Color.WHITE) ) c = Color.BLACK;
                 svg.setPolylineWidth(8);
-                svg.setPolylineColorHover( UsefulFunctions.parseColor( UsefulFunctions.getNextColor() ) );
+                svg.setPolylineColorHover( UsefulFunctions.parseColor( c ) );
                 svg.setPolylineWidthHover(15);
                 svg.setPolylineColor( UsefulFunctions.parseColor( c ) );
-                svg.addPolylinePlain(polyline);
+                addSvgPolyline( polyline );
                 
                 System.out.println();
             }
         }
     }
-
-    private String initialSVGFileName = "";
+    
+    private void createHighlights( Map<String, ArrayList<GraphPath> > paths ){
+        highlights.clear();
+        leftHighlightOffset.clear();
+        rightHighlightOffset.clear();
+        for( Map.Entry<String, ArrayList<GraphPath> > entry : paths.entrySet() ){
+            for( GraphPath gp : entry.getValue() ){
+                for( int i=1; i<gp.getPathSequence().size(); i++ ){
+                    int a = gp.getPathSequence().get(i);
+                    int b = gp.getPathSequence().get(i-1);
+                    if( a > b ){
+                        int temp = a;
+                        a = b;
+                        b = temp;
+                    }
+                    Pair<Integer,Integer> p = new Pair<>(a,b);
+                    
+                    if( highlights.containsKey( p ) == false ){
+                        highlights.put( p , 0 );
+                    }
+                    
+                    int val = highlights.get(p).intValue();
+                    highlights.remove(p);
+                    highlights.put( p,val+1 );
+                }
+            }
+        }
+        
+        for( Map.Entry< Pair<Integer,Integer>, Integer > entry : highlights.entrySet() ){
+            int offset = entry.getValue();
+            float val;
+            if( offset % 2 == 0 ){
+                offset /= 2;
+                val = MCConstants.getINITIAL_ROUTE_HIGHLIGHT_WIDTH()*offset;
+                val -= ( (float)MCConstants.getINITIAL_ROUTE_HIGHLIGHT_WIDTH() )/ 2;
+                leftHighlightOffset.put( entry.getKey() , val );
+                rightHighlightOffset.put( entry.getKey(), val );
+            }else{
+                offset /= 2;
+                val = MCConstants.getINITIAL_ROUTE_HIGHLIGHT_WIDTH()*offset;
+                leftHighlightOffset.put( entry.getKey() , val );
+                rightHighlightOffset.put( entry.getKey(), val );
+            }
+            
+        }
+    }
+    
+    private void addSvgPolyline( ArrayList<Point> list ){
+        svg.addPolylinePlain(list);
+    }
+    
+    private void addSvgCircle( int x, int y, int r ){
+        svg.addCirclePlain( x,y,r );
+    }
+    
+    private void addCircle( Point p, int r ){
+        addSvgCircle( (int)p.getX(), (int)p.getY(),r );
+    }
+    
+    private void addSvgEllipse( int x, int y, int width, int height ){
+        svg.addEllipsePlain(x, y, width, height);
+    }
+    
+    private void addSvgEllipse( Point p, int width, int height ){
+        DrawingModule.this.addSvgEllipse((int)p.getX(), (int)p.getY(), width, height);
+    }
+     
+    private String initialSVGFileName = MCConstants.getMapsDirectoryPath();
     private SVG svg = null;
     private MapGraph graph = new MapGraph();
 
     private Pair<Float, Float> RUC = null;
     private Pair<Float, Float> LBC = null;
+    
+    /**
+     * {@link #highlights} is a map in which for each pair of nodes in a graph there is number of routes between them to be highlighted
+     */
+    private Map< Pair<Integer,Integer>, Integer > highlights = new HashMap<>();
+    private Map< Pair<Integer,Integer>, Float> leftHighlightOffset = new HashMap<>();
+    private Map< Pair<Integer,Integer>, Float>  rightHighlightOffset = new HashMap<>();
 
 }

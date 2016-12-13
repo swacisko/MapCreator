@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import mcgraphs.*;
 import mcgtfsstructures.*;
-import mctemplates.MCConstants;
+import mctemplates.MCSettings;
 import mctemplates.Pair;
 
 /**
@@ -26,8 +26,8 @@ public class MapGraphCreator {
     
     private boolean addRouteCondition( Route r ){
         int routetype = Integer.parseInt(r.getRouteType());
-        if( ( (MCConstants.isFullSchemeBackground() || MCConstants.getRoutesToHighlight().isEmpty()  ) &&  (TRANSPORT_MEASURE & (1 << routetype)) != 0 )||
-                (  MCConstants.getRoutesToHighlight().contains( r.getRouteId() ) )  ){
+        if( ( (MCSettings.isFullSchemeBackground() || MCSettings.getRoutesToHighlight().isEmpty()  ) &&  (TRANSPORT_MEASURE & (1 << routetype)) != 0 )||
+                (  MCSettings.getRoutesToHighlight().contains( r.getRouteId() ) )  ){
             return true;
         }
         return false;
@@ -122,7 +122,7 @@ public class MapGraphCreator {
                             MapNode n1 = resGraph.getMapNodeByID(id1);
                             MapNode n2 = resGraph.getMapNodeByID(id2);
                             e.setEnds(new Pair<>(n1, n2));
-                            e.setColor(MCConstants.getCorrespondingColor(colormode));
+                            e.setColor(MCSettings.getCorrespondingColor(colormode));
                             resGraph.addMapEdge(e);
 
                             System.out.print("\rDodaje krawedz nr: " + CNT++);
@@ -267,7 +267,7 @@ public class MapGraphCreator {
                         MapNode n1 = resGraph.getMapNodeByID(id1);
                         MapNode n2 = resGraph.getMapNodeByID(id2);
                         e.setEnds(new Pair<>(n1, n2));
-                        e.setColor(MCConstants.getCorrespondingColor(colormode));
+                        e.setColor(MCSettings.getCorrespondingColor(colormode));
                         resGraph.addMapEdge(e);
                     }
                 }

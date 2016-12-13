@@ -8,7 +8,7 @@ package mcgraphs;
 import java.awt.geom.Arc2D;
 import java.util.ArrayList;
 import java.util.Collections;
-import mctemplates.MCConstants;
+import mctemplates.MCSettings;
 import mctemplates.Pair;
 
 /**
@@ -19,10 +19,10 @@ public class MapEdge extends MapStructure {
 
     public MapEdge() {
         super();
-        setColor( MCConstants.getINITIAL_EDGE_COLOR() );
-        setHoverColor( MCConstants.getINITIAL_EDGE_HOVER_COLOR() );
-        setDrawingWidth( MCConstants.getINITIAL_EDGE_WIDTH() );
-        setHoverWidth( MCConstants.getINITIAL_EDGE_HOVER_WIDTH() );
+        setColor(MCSettings.getINITIAL_EDGE_COLOR() );
+        setHoverColor(MCSettings.getINITIAL_EDGE_HOVER_COLOR() );
+        setDrawingWidth(MCSettings.getINITIAL_EDGE_WIDTH() );
+        setHoverWidth(MCSettings.getINITIAL_EDGE_HOVER_WIDTH() );
     }
 
     public void setEnds(Pair<MapNode, MapNode> p) {

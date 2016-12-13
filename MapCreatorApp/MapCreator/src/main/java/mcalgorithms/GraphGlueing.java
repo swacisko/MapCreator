@@ -14,9 +14,10 @@ import mcgraphs.MapEdge;
 import mcgraphs.MapGraph;
 import mcgraphs.MapNode;
 import mctemplates.LongestCommonSubstring;
-import mctemplates.MCConstants;
+import mctemplates.MCSettings;
 import mctemplates.Pair;
 import mctemplates.UsefulFunctions;
+import org.hibernate.util.StringHelper;
 
 /**
  *
@@ -217,8 +218,6 @@ public class GraphGlueing {
                 }
             }            
         }        
-        
-        resGraph = graph;
     }
         
     /**
@@ -227,18 +226,20 @@ public class GraphGlueing {
      */
     public MapGraph convertGraph() {
         if( graph == null ) return null;
-        resGraph = graph;
+        // resGraph = graph;
         CNT = 0;
         System.out.println( "Przed sklejaniem graf ma " + graph.countNodes() + "  wierzcholkow i " + graph.countEdges() + " krawedzi" );
         
         //resGraph = new MapGraph(); // to jest potrzebne gdy uzywamy funkcji gluegraphold
         //glueGraphOld();   
         
-        glueingParameter = MCConstants.getFIRST_GLUEING_DISTANCE_PARAMETER();
+        glueingParameter = MCSettings.getFIRST_GLUEING_DISTANCE_PARAMETER();
         glueGraph();
         glueingTime++;
-        glueingParameter = MCConstants.getSECOND_GLUEING_DISTANCE_PARAMTER();
+        glueingParameter = MCSettings.getSECOND_GLUEING_DISTANCE_PARAMTER();
         glueGraph();
+        trimNodeStructureNames();
+        transformPolishLetters();
         
         return resGraph;
     }
@@ -333,7 +334,7 @@ public class GraphGlueing {
      * @return If distance between c1 and c2 is lower than threshold then return true. Otherwise returns false
      */
     private boolean coordinatesRoughlyTheSame(Pair<Float, Float> c1, Pair<Float, Float> c2, float threshold) {
-        float FACT = MCConstants.COORDINATES_COMPARISON_PRECISION;
+        float FACT = MCSettings.COORDINATES_COMPARISON_PRECISION;
         float f1x = FACT * c1.getST();
         float f1y = FACT* c1.getND();
 
@@ -350,8 +351,55 @@ public class GraphGlueing {
     public void setGlueingParameter(float glueingParameter) {
         this.glueingParameter = glueingParameter;
     }
+    
+    /**
+     * For given structure name trims it to proper name. E.g. if structure name is "Żeromskiego nż 1", then it will return "Żeromskiego"
+     * @param strName Name of a node (or arbitrary string) to be trimmed
+     * @return returns trimmed string
+     */
+    private String trimStructureName( String strName ){
+        String res = strName;
+        boolean found;
+        do{
+            found = false;
+            for( int i=0; i<=9; i++ ){
+                if( res.endsWith( ""+i ) ){
+                    res = res.substring( 0, res.lastIndexOf( ""+i ) );
+                    found = true;
+                }
+            }
+            
+            if( res.lastIndexOf(" nż" ) != -1 ){
+                res = res.substring( 0, res.lastIndexOf( " nż" ) );
+                found = true;
+            }
+            
+        }while(found);
+        return res;
+    }
+    
+    /**
+     * Executes {@link #trimStructureName(java.lang.String) } function for each node in {@link #graph}
+     */
+    private void trimNodeStructureNames(){
+        for( MapNode n : graph.getNodes() ){
+            n.setStructureName( trimStructureName( n.getStructureName() ) );
+        }
+    }
+    
+    /**
+     * Transforms polish letters to English ones in structure names of each node in {@link #graph}
+     */
+    private void transformPolishLetters(){
+        for( MapNode n : graph.getNodes() ){
+            n.setStructureName( UsefulFunctions.removePolishLetters( n.getStructureName() ) );
+        }
+    }
 
-    private MapGraph resGraph = null;
+    /**
+     * We need this only when we use glueGraphOld, which i think is useless now.
+     */
+    private MapGraph resGraph = null; 
     private MapGraph graph = null;
     private float glueingParameter = 10;
     private int glueingTime = 1;

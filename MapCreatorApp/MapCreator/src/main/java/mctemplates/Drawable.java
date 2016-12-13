@@ -5,8 +5,6 @@
  */
 package mctemplates;
 
-import mctemplates.Pair;
-
 /**
  *
  * @author swacisko

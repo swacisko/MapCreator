@@ -198,7 +198,7 @@ public class EdgeContraction {
     /**
      * Function converts graph using edge-contraction
      */
-    public void convertGraph(){
+    public MapGraph convertGraph(){
         createDeg2Vertices();
                 
         int CNT = 1;
@@ -220,7 +220,8 @@ public class EdgeContraction {
             removeDeg2NodeFromGraph(n);
         }        
         System.out.println("\nGraph ma teraz " + graph.countNodes() + " wierzcholkow oraz " + graph.countEdges()+ " krawedzi");
-          */       
+          */   
+        return graph;
     }
     
     

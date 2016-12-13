@@ -14,7 +14,7 @@ import mcgraphs.MapNode;
 import mcgtfsstructures.MCDatabase;
 import mcgtfsstructures.StopTime;
 import mcgtfsstructures.Trip;
-import mctemplates.MCConstants;
+import mctemplates.MCSettings;
 import mctemplates.Pair;
 
 /**
@@ -28,7 +28,7 @@ public class RoutePathCreator {
     
     
     public Map< String, ArrayList<GraphPath> > createRoutePaths(){
-        ArrayList<String> routes = MCConstants.getRoutesToHighlight();
+        ArrayList<String> routes = MCSettings.getRoutesToHighlight();
         
         createStructureMap();
         Map< String,ArrayList<GraphPath> > res = new HashMap<>();
@@ -41,9 +41,9 @@ public class RoutePathCreator {
     }
     
     /**
-     * Creates GraphPath object for given route
-     * @param routeId
-     * @return 
+     * Creates GraphPath objects for given route
+     * @param routeId this parameter is a String with id corresponding to given route
+     * @return returns an ArrayList of most frequent graph paths on given route
      */
     private ArrayList<GraphPath> getGraphPathsForRoute( String routeId ){
         createMostFrequentPaths(routeId);        
@@ -63,7 +63,7 @@ public class RoutePathCreator {
         mostFrequentPaths.clear();
         ArrayList<Trip> trips = MCDatabase.getAllTripsOfRouteId(routeId);  
         if( trips == null ){
-            System.out.println( "There are no trips of route id = " + routeId );
+           // System.out.println( "There are no trips of route id = " + routeId );
             return;
         }
         

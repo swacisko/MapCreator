@@ -12,7 +12,7 @@ import java.util.HashSet;
 import java.util.Set;
 import mcalgorithms.GraphGlueing;
 import mctemplates.Drawable;
-import mctemplates.MCConstants;
+import mctemplates.MCSettings;
 
 /**
  *
@@ -22,10 +22,10 @@ public class MapNode extends MapStructure implements Drawable {
 
     public MapNode() {
         super();
-        setColor( MCConstants.getINITIAL_NODE_COLOR() );
-        setHoverColor( MCConstants.getINITIAL_NODE_HOVER_COLOR() );
-        setDrawingWidth( MCConstants.getINITIAL_NODE_WIDTH() );
-        setHoverWidth( MCConstants.getINITIAL_NODE_HOVER_WIDTH() );
+        setColor(MCSettings.getINITIAL_NODE_COLOR() );
+        setHoverColor(MCSettings.getINITIAL_NODE_HOVER_COLOR() );
+        setDrawingWidth(MCSettings.getINITIAL_NODE_WIDTH() );
+        setHoverWidth(MCSettings.getINITIAL_NODE_HOVER_WIDTH() );
     }
 
     public void setCoords(Pair<Float, Float> p) {
@@ -182,7 +182,7 @@ public class MapNode extends MapStructure implements Drawable {
     
     // zwraca wartosc ladunku danego wierzcholka - czyli liczbe zawartych przez niego przystankow + INITIAL_CHARGE_VALUE
     public float getCharge(){        
-        float charge = MCConstants.getINITIAL_NODE_CHARGE();
+        float charge = MCSettings.getINITIAL_NODE_CHARGE();
         //charge += (float) containedStopsIds.size();
         return charge;
     }

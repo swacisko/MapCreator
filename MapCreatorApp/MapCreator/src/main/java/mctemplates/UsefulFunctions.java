@@ -208,6 +208,97 @@ public class UsefulFunctions {
         float diffy = vec.getND();
         return (float) Math.sqrt(diffx * diffx + diffy * diffy);
     }
+    
+    /**
+     * Transforms polish letters to their English counterparts in given string
+     * @param s String to be transformed
+     * @return String with transformed letters
+     */
+    public static String removePolishLetters( String s ){
+        String res = "";
+        for( int i=0; i<s.length(); i++ ){
+            char t;
+            switch( "" + s.charAt(i) ){
+                case "ó":{
+                    t = 'o';
+                    break;
+                }
+                case "ł":{                    
+                    t = 'l';
+                    break;
+                }
+                case "ż":{
+                    t = 'z';
+                    break;
+                }
+                case "ź":{
+                    t = 'z';
+                    break;
+                }
+                case "ą":{
+                    t = 'a';
+                    break;
+                }
+                case "ę":{
+                    t = 'e';
+                    break;
+                }
+                case "ń":{
+                    t = 'n';
+                    break;
+                }
+                case "ś":{
+                    t = 's';
+                    break;
+                }
+                case "ć":{
+                    t = 'c';
+                    break;
+                }
+                case "Ó":{
+                    t = 'O';
+                    break;
+                }
+                case "Ł":{                    
+                    t = 'L';
+                    break;
+                }
+                case "Ż":{
+                    t = 'Z';
+                    break;
+                }
+                case "Ź":{
+                    t = 'Z';
+                    break;
+                }
+                case "Ą":{
+                    t = 'A';
+                    break;
+                }
+                case "Ę":{
+                    t = 'E';
+                    break;
+                }
+                case "Ń":{
+                    t = 'N';
+                    break;
+                }
+                case "Ś":{
+                    t = 'S';
+                    break;
+                }
+                case "Ć":{
+                    t = 'C';
+                    break;
+                }
+                default:{
+                    t = s.charAt(i);
+                }                
+            }
+            res += t;
+        }
+        return res;
+    }
 
     private static int currentColor = 0;
     private static Color[] colors = {

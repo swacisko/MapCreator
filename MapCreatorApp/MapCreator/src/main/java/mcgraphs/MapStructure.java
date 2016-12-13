@@ -9,7 +9,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 
 /**
- *
+ * 
  * @author swacisko
  */
 public class MapStructure {
@@ -69,7 +69,7 @@ public class MapStructure {
 
     /**
      * 
-     * @return return the name of structure - in case of nodes it returns the name of the most significant place in the vicinity of the node
+     * @return return {@link #structureName} - the name of structure - in case of nodes it returns the name of the most significant place in the vicinity of the node
      */
     public String getStructureName() {
         return structureName;
@@ -110,7 +110,15 @@ public class MapStructure {
     private int ID = -1;
     private Color color = Color.BLACK;
     private String description = "";
+    
+    /**
+     * Structure name is the real name of a stop - e.g. Most Teatralny
+     */
     private String structureName = "";
+    
+    /**
+     * This is radius in case of circle or ellipse, width in case of an edge.
+     */
     private int drawingWidth = 2;
     private int hoverWidth = 5;
 

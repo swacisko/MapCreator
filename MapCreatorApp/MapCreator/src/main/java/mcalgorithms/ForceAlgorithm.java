@@ -12,7 +12,7 @@ import mcgraphs.MapEdge;
 import mcgraphs.MapGraph;
 import mcgraphs.MapNode;
 import mcmapdrawing.SVG;
-import mctemplates.MCConstants;
+import mctemplates.MCSettings;
 import mctemplates.Pair;
 
 /**
@@ -174,7 +174,7 @@ public class ForceAlgorithm {
         float charge1 = n1.getCharge();
         float charge2 = n2.getCharge(); 
         
-        float mutualForce = MCConstants.getCOULOMB_COEF(); // sily beda sie odpychaly, poniewa COULOMB_COEF ma WARTOSC UJEMNA
+        float mutualForce = MCSettings.getCOULOMB_COEF(); // sily beda sie odpychaly, poniewa COULOMB_COEF ma WARTOSC UJEMNA
         mutualForce *= charge1*charge2;
         mutualForce /= ( distance*distance );
         
@@ -221,7 +221,8 @@ public class ForceAlgorithm {
         Pair<Float,Float> dir2 = getNormalizedForceVector( n2.getCoords(), n1.getCoords() ); // to rownie dobrze mogloby byc po prostu  -direction1
         
         float deltaX = e.getLength(); // - averageEdgeLength; // jezeli ta wartosc jest dodatnia - to krawedz bedzie chciala sie skrocic - w przeciwnym razie krawedz bedzie chciala sie wydluzyc
-        float lengthfactor = 1 + (float) Math.max( e.getContainedForwardStopsIds().size(), e.getContainedBackwardStopsIds().size() );   // krawedziem na ktorych jest wiecej przystankow musza byc dluzsze, wiec dziala na nie wieksza sila     
+        float lengthfactor = (float) Math.max( e.getContainedForwardStopsIds().size(), e.getContainedBackwardStopsIds().size() );   // krawedziem na ktorych jest wiecej przystankow musza byc dluzsze, wiec dziala na nie wieksza sila     
+        lengthfactor = Math.max( 1f, 10f-lengthfactor );
         if( deltaX < 0 ){
             deltaX *= lengthfactor;
         } else{
@@ -229,7 +230,7 @@ public class ForceAlgorithm {
             float wsp = 0.3f;
             deltaX *= ( wsp + (1-wsp)* ( (float)1 / ( (float) lengthfactor ) ) );
         }
-        float mutualForce = MCConstants.getSPRING_COEF(); // spring COEF jest dodatnia wartosci;
+        float mutualForce = MCSettings.getSPRING_COEF(); // spring COEF jest dodatnia wartosci;
         mutualForce *= deltaX;
         
     //    System.out.println( "\nSpringForce  ID1 = " + n1.getID() + "   ID2 = " + n2.getID() + "\ndir1 = " + dir1 + "    dir2 = " + dir2 + "   mutualForce = " + mutualForce );
@@ -288,13 +289,13 @@ public class ForceAlgorithm {
     }
      
     // zwraca true, jezeli algorytm ma przestac dzialac, czyli gdy juz mam przestac liczyc sily i zwrocic otrzymany graf
-    // zwraca true, jezeli maksymalna sila wypadkowa dzialajaca na wierzcholki jest nie wieksza niz MCConstants.STOP_THRESHOLD
+    // zwraca true, jezeli maksymalna sila wypadkowa dzialajaca na wierzcholki jest nie wieksza niz MCSettings.STOP_THRESHOLD
     private boolean stopCondition(){
-        return getMaxForceValue() < MCConstants.getSTOP_THRESHOLD();
+        return getMaxForceValue() < MCSettings.getSTOP_THRESHOLD();
     }
     
     private void scaleForcesToUpperBound( float maxForce ){
-        float factor = MCConstants.getFORCE_UPPER_BOUND_PER_TURN() / maxForce; // wszystkie sily nalezy pomnozyc przez ta wartosc
+        float factor = MCSettings.getFORCE_UPPER_BOUND_PER_TURN() / maxForce; // wszystkie sily nalezy pomnozyc przez ta wartosc
         for( Map.Entry<Integer,Pair<Float,Float>> entry : forces.entrySet() ){
             Pair<Float,Float> p = entry.getValue();
             p.setST( factor * p.getST() );
@@ -307,7 +308,7 @@ public class ForceAlgorithm {
     // funkcja zmienia wspolrzedna grafu tak, aby najwieksza wartosci o jaka sie przesunie wierzcholek byla nie wieksza niz MCConstanst.FORCE_UPPER_BOUND_PER_TURN
     private void applyForcesAndMoveNodes(){
         float maxForce = getMaxForceValue();
-        if( maxForce > MCConstants.getFORCE_UPPER_BOUND_PER_TURN() ){
+        if( maxForce > MCSettings.getFORCE_UPPER_BOUND_PER_TURN() ){
             scaleForcesToUpperBound( maxForce );
         }
         

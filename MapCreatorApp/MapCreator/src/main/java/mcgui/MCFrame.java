@@ -8,6 +8,7 @@ package mcgui;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import javax.swing.JFrame;
+import javax.swing.JMenuBar;
 
 /**
  * This class is the main frame of MapCreator's GUI. Here you can click to choose what do you want to change, select, draw, etc.
@@ -34,6 +35,8 @@ public class MCFrame extends JFrame {
     
     
     
+    JMenuBar menuBar = null;
+    SchemeContructionPanel glp = null;
     
     
 }

@@ -24,14 +24,14 @@ import mcalgorithms.MapGraphCreator;
 import mcalgorithms.RoutePathCreator;
 import mcgraphs.GraphPath;
 import mcgraphs.MapEdge;
-import mctemplates.MCConstants;
+import mctemplates.MCSettings;
 import mctemplates.UsefulFunctions;
 
 public class DrawingModule {
 
     public DrawingModule(SVG s) {
         svg = s;
-        //initialSVGFileName = "./DrawingFolder/" + svg.getFileName();        
+        initialSVGFileName = "./DrawingFolder/" + svg.getFileName();        
         createLBCandRUC();
     }
 
@@ -73,7 +73,7 @@ public class DrawingModule {
     }
 
     private void modifyLBCandRUC() {
-        float ratio = 0.01f; // dziwne jest, ze nawet jak zmienie wartosci wzglednie o 1 tysieczna to i tak rysunek sie mocno wygina
+        float ratio = 0.02f; // dziwne jest, ze nawet jak zmienie wartosci wzglednie o 1 tysieczna to i tak rysunek sie mocno wygina
         float dW = RUC.getST() - LBC.getST();
         float dH = RUC.getND() - LBC.getND();
 
@@ -266,7 +266,7 @@ public class DrawingModule {
 
     public void drawDatabaseGraph() {
         System.out.println("Zaczynam tworzyc podstawowy graf z danych GTFS");
-        graph = new MapGraphCreator().createMapGraphFromGtfsDatabase(MCConstants.getDRAWING_ROUTE_TYPE());
+        graph = new MapGraphCreator().createMapGraphFromGtfsDatabase(MCSettings.getDRAWING_ROUTE_TYPE());
         System.out.println("Ukonczylem tworzenie grafu z danych GTFS");
         System.out.println("Basic graph ma " + graph.countNodes() + " wierzcholkow i " + graph.countEdges() + " krawedzi");
 
@@ -334,9 +334,10 @@ public class DrawingModule {
         String formerColor = svg.getTextColor();
         svg.setTextColor(UsefulFunctions.parseColor(c));
         String s = n.getStructureName();
-        s += " : " + n.getContainedStopsIds().size();
+        s += ":" + n.getContainedStopsIds().size();
         Point p = UsefulFunctions.convertToPoint(normalizeCoordinates(LBC, RUC, n.getCoords()));
-        p.x = p.x - 30;
+        p.x -= 45;
+        p.y -= 15;
         svg.addText(p, s);
         svg.setTextColor(formerColor);
     }
@@ -369,11 +370,12 @@ public class DrawingModule {
     }
 
     /**
-     * Draws a graph to using SVG
+     * Draws graph nodes
      *
-     * @param graph This is the graph to be drawn
+     * @param graph Nodes from this graph will be drawn
+     * @return return the same graph to enable chain call
      */
-    private void drawGraphNodesOnMap(MapGraph graph) {
+    private MapGraph drawGraphNodesOnMap(MapGraph graph) {
         Set<Integer> insignificantNodes = createInsignificantNodes(graph);
         for (MapNode n : graph.getNodes()) {
             setDrawingNodeParameters(n);
@@ -383,27 +385,20 @@ public class DrawingModule {
                 drawingWidth = 3;
             }
 
-            if ((n.getContainedStopsIds().size() >= 2) && (insignificantNodes.contains(n.getID()) == false)) {
+            if ((n.getContainedStopsIds().size() >= 4) || (insignificantNodes.contains(n.getID()) == false)) {
                 addSvgEllipse(UsefulFunctions.convertToPoint(normalizeCoordinates(LBC, RUC, n.getCoords())), 2 * drawingWidth, (int) (1.5f * drawingWidth));
-                drawNodeText(n, MCConstants.getTEXT_COLOR());
             } else if (n.countEdges() == 1 || (n.countEdges() < 4 && n.isContractable() == false)) {
                 addCircle(UsefulFunctions.convertToPoint(normalizeCoordinates(LBC, RUC, n.getCoords())), drawingWidth);
-                drawNodeText(n, MCConstants.getTEXT_COLOR());
             } else {
                 addCircle(UsefulFunctions.convertToPoint(normalizeCoordinates(LBC, RUC, n.getCoords())), drawingWidth);
-                drawNodeText(n, MCConstants.getTEXT_COLOR());
             }
+            drawNodeText(n, MCSettings.getTEXT_COLOR());
         }
+        
+        return graph;
     }
 
-    /**
-     * Writes every information we want to write, concerned with the edge
-     *
-     * @param edge Writes for given MapEdge
-     */
-    private void drawEdgeText(MapEdge edge) {
-
-    }
+    
 
     private void setDrawingEdgeParameters(MapEdge e) {
         if (e.getHoverWidth() != 0) {
@@ -420,7 +415,7 @@ public class DrawingModule {
         }
     }
 
-    private void drawGraphEdgesOnMap(MapGraph graph) {
+    private MapGraph drawGraphEdgesOnMap(MapGraph graph) {
         ArrayList<Point> polyline = new ArrayList<>();
 
         for (MapEdge e : graph.getEdges()) {
@@ -436,11 +431,11 @@ public class DrawingModule {
 
             drawEdgeText(e);
         }
-
+        return graph;
     }
 
     // rysuje zadany graf do pliku svg
-    public void drawGraphOnMap(MapGraph graph, String svgname) {
+    public MapGraph drawGraphOnMap(MapGraph graph, String svgname) {
         createLBCandRUC(graph);
 
         svg.setFileName(initialSVGFileName + "_" + svgname);
@@ -450,8 +445,39 @@ public class DrawingModule {
         drawGraphEdgesOnMap(graph);
         drawRoutesToHighlightOnGraph(graph);
         drawGraphNodesOnMap(graph);
+        drawTextsOnMap(graph);
 
         endSVG();
+        return graph;
+    }
+    
+    /**
+     * Draws text we want to show on map. This includes among the others structure names of nodes and route names of edges. This function is called after 
+     * drawing edges and nodes to avoid text being shadowed by other node
+     * @param graph 
+     */
+    private void drawTextsOnMap(MapGraph graph){
+        drawEdgeTexts(graph);
+        drawNodeTexts(graph);
+    }
+    
+    private void drawEdgeTexts(MapGraph graph){
+        
+    }
+    
+    /**
+     * Writes every information we want to write, concerned with the edge.
+     *
+     * @param edge Writes for given MapEdge
+     */
+    private void drawEdgeText(MapEdge edge) {
+
+    }
+    
+    private void drawNodeTexts( MapGraph graph ){
+        for( MapNode n : graph.getNodes() ){
+            drawNodeText(n, MCSettings.getTEXT_COLOR());
+        }
     }
 
     private Set<Integer> createInsignificantNodes(MapGraph graph) {
@@ -471,7 +497,7 @@ public class DrawingModule {
     }
 
     private void drawRoutesToHighlightOnGraph(MapGraph graph) {
-        ArrayList<String> routes = MCConstants.getRoutesToHighlight();
+        ArrayList<String> routes = MCSettings.getRoutesToHighlight();
         Map<String, ArrayList<GraphPath>> paths = new RoutePathCreator(graph).createRoutePaths();
         createHighlights(paths);
 
@@ -538,12 +564,12 @@ public class DrawingModule {
 
                     if (reversed) {
                         float val = rightHighlightOffset.get(new Pair<>(nA.getID(), nB.getID()));
-                        val -= MCConstants.getINITIAL_ROUTE_HIGHLIGHT_WIDTH();
+                        val -= MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH();
                         rightHighlightOffset.remove(new Pair<>(nA.getID(), nB.getID()));
                         rightHighlightOffset.put(new Pair<>(nA.getID(), nB.getID()), val);
                     } else {
                         float val = leftHighlightOffset.get(new Pair<>(nA.getID(), nB.getID()));
-                        val -= MCConstants.getINITIAL_ROUTE_HIGHLIGHT_WIDTH();
+                        val -= MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH();
                         leftHighlightOffset.remove(new Pair<>(nA.getID(), nB.getID()));
                         leftHighlightOffset.put(new Pair<>(nA.getID(), nB.getID()), val);
                     }
@@ -554,9 +580,9 @@ public class DrawingModule {
                 while (c.equals(Color.WHITE) || c.equals(Color.BLACK)) {
                     c = UsefulFunctions.getNextColor();
                 }
-                svg.setPolylineWidth( MCConstants.getINITIAL_ROUTE_HIGHLIGHT_WIDTH() );
+                svg.setPolylineWidth(MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH() );
                 svg.setPolylineColorHover(UsefulFunctions.parseColor(c));
-                svg.setPolylineWidthHover(MCConstants.getINITIAL_ROUTE_HIGHLIGHT_HOVER_WIDTH());
+                svg.setPolylineWidthHover(MCSettings.getINITIAL_ROUTE_HIGHLIGHT_HOVER_WIDTH());
                 svg.setPolylineColor(UsefulFunctions.parseColor(c));
                 addSvgPolyline(polyline);
 
@@ -602,13 +628,13 @@ public class DrawingModule {
             float val;
             if (offset % 2 == 0) {
                 offset /= 2;
-                val = MCConstants.getINITIAL_ROUTE_HIGHLIGHT_WIDTH() * offset;
-                val -= ((float) MCConstants.getINITIAL_ROUTE_HIGHLIGHT_WIDTH()) / 2;
+                val = MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH() * offset;
+                val -= ((float) MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH()) / 2;
                 leftHighlightOffset.put(entry.getKey(), val);
                 rightHighlightOffset.put(entry.getKey(), val);
             } else {
                 offset /= 2;
-                val = MCConstants.getINITIAL_ROUTE_HIGHLIGHT_WIDTH() * offset;
+                val = MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH() * offset;
                 leftHighlightOffset.put(entry.getKey(), val);
                 rightHighlightOffset.put(entry.getKey(), val);
             }
@@ -657,7 +683,7 @@ public class DrawingModule {
         DrawingModule.this.addSvgEllipse((int) p.getX(), (int) p.getY(), width, height);
     }
 
-    private String initialSVGFileName = MCConstants.getMapsDirectoryPath();
+    private String initialSVGFileName = MCSettings.getMapsDirectoryPath();
     private SVG svg = null;
     private MapGraph graph = new MapGraph();
 

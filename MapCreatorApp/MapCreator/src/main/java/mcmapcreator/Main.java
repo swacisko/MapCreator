@@ -4,7 +4,7 @@ import mcgraphs.MapGraph;
 import mcgtfsstructures.MCDatabase;
 import mcmapdrawing.SVG;
 import mcmapdrawing.DrawingModule;
-import mctemplates.MCConstants;
+import mctemplates.MCSettings;
 
 public class Main {
 
@@ -20,11 +20,11 @@ public class Main {
        // MapGraph g = new MapGraph();
        // g.testGraph();        
         
-        for( int i=5; i<15; i++ ){
-            MCConstants.addRouteToHighlight( ""+i );
+        for( int i=1; i<=15; i++ ){
+            MCSettings.addRouteToHighlight( ""+i );
         }
         
-        DrawingModule dm = new DrawingModule( new SVG( MCConstants.getINITIAL_SVG_WIDTH(),MCConstants.getINITIAL_SVG_HEIGHT(),"Rysowanie" ) );        
+        DrawingModule dm = new DrawingModule( new SVG( MCSettings.getINITIAL_SVG_WIDTH(),MCSettings.getINITIAL_SVG_HEIGHT(),"Rysowanie" ) );        
         dm.drawAllMaps();
         
         

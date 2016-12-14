@@ -336,8 +336,9 @@ public class DrawingModule {
         String s = n.getStructureName();
         s += ":" + n.getContainedStopsIds().size();
         Point p = UsefulFunctions.convertToPoint(normalizeCoordinates(LBC, RUC, n.getCoords()));
-        p.x -= 45;
-        p.y -= 15;
+        Pair<Integer,Integer> offset = n.getTextOffset();
+        p.x += offset.getST();
+        p.y += offset.getND();
         svg.addText(p, s);
         svg.setTextColor(formerColor);
     }
@@ -380,19 +381,19 @@ public class DrawingModule {
         for (MapNode n : graph.getNodes()) {
             setDrawingNodeParameters(n);
 
-            int drawingWidth = n.calculateMapNodeDrawingRadius() + getNodeDrawingWidthHighlightCoefficient(n);
+            int dW = MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH()*getNodeDrawingWidthHighlightCoefficient(n) / 4;
             if (insignificantNodes.contains(n.getID())) {
-                drawingWidth = 3;
+                dW = 3;
             }
 
             if ((n.getContainedStopsIds().size() >= 4) || (insignificantNodes.contains(n.getID()) == false)) {
-                addSvgEllipse(UsefulFunctions.convertToPoint(normalizeCoordinates(LBC, RUC, n.getCoords())), 2 * drawingWidth, (int) (1.5f * drawingWidth));
+                addEllipse(UsefulFunctions.convertToPoint(normalizeCoordinates(LBC, RUC, n.getCoords())), 3*n.getWidth() +dW, 2*n.getHeight() + dW );
             } else if (n.countEdges() == 1 || (n.countEdges() < 4 && n.isContractable() == false)) {
-                addCircle(UsefulFunctions.convertToPoint(normalizeCoordinates(LBC, RUC, n.getCoords())), drawingWidth);
+                addEllipse(UsefulFunctions.convertToPoint(normalizeCoordinates(LBC, RUC, n.getCoords())), n.getWidth() +dW , n.getHeight() + dW );
             } else {
-                addCircle(UsefulFunctions.convertToPoint(normalizeCoordinates(LBC, RUC, n.getCoords())), drawingWidth);
+                addEllipse(UsefulFunctions.convertToPoint(normalizeCoordinates(LBC, RUC, n.getCoords())), n.getWidth() + dW, n.getHeight() + dW );
             }
-            drawNodeText(n, MCSettings.getTEXT_COLOR());
+            //drawNodeText(n, MCSettings.getTEXT_COLOR());
         }
         
         return graph;
@@ -427,7 +428,7 @@ public class DrawingModule {
 
             setDrawingEdgeParameters(e);
 
-            addSvgPolyline(polyline);
+            addPolyline(polyline);
 
             drawEdgeText(e);
         }
@@ -584,7 +585,7 @@ public class DrawingModule {
                 svg.setPolylineColorHover(UsefulFunctions.parseColor(c));
                 svg.setPolylineWidthHover(MCSettings.getINITIAL_ROUTE_HIGHLIGHT_HOVER_WIDTH());
                 svg.setPolylineColor(UsefulFunctions.parseColor(c));
-                addSvgPolyline(polyline);
+                addPolyline(polyline);
 
             }
         }
@@ -663,24 +664,24 @@ public class DrawingModule {
         return M;
     }
 
-    private void addSvgPolyline(ArrayList<Point> list) {
+    private void addPolyline(ArrayList<Point> list) {
         svg.addPolylinePlain(list);
     }
 
-    private void addSvgCircle(int x, int y, int r) {
+    private void addCircle(int x, int y, int r) {
         svg.addCirclePlain(x, y, r);
     }
 
     private void addCircle(Point p, int r) {
-        addSvgCircle((int) p.getX(), (int) p.getY(), r);
+        addCircle((int) p.getX(), (int) p.getY(), r);
     }
 
-    private void addSvgEllipse(int x, int y, int width, int height) {
+    private void addEllipse(int x, int y, int width, int height) {
         svg.addEllipsePlain(x, y, width, height);
     }
 
-    private void addSvgEllipse(Point p, int width, int height) {
-        DrawingModule.this.addSvgEllipse((int) p.getX(), (int) p.getY(), width, height);
+    private void addEllipse(Point p, int width, int height) {
+        DrawingModule.this.addEllipse((int) p.getX(), (int) p.getY(), width, height);
     }
 
     private String initialSVGFileName = MCSettings.getMapsDirectoryPath();

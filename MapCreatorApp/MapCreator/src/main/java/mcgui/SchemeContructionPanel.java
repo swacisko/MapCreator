@@ -6,17 +6,27 @@
 package mcgui;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.util.ArrayList;
 import javax.swing.JPanel;
 import mcmapdrawing.DrawingModuleInterface;
 
 /**
- *  This class is a panel on which we draw
+ *  This class is a panel on which we draw a scheme. 
  * @author swacisko
  */
 public class SchemeContructionPanel extends JPanel implements DrawingModuleInterface{
 
+    
+    public SchemeContructionPanel(){
+        
+    }
+    
+    
+    
+    
+    
     @Override
     public void addEllipse(Point p, int w, int h) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -49,4 +59,16 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
     
     
     
+    
+    
+    
+    
+    //******************************************** CLASS FIELDS
+    
+    /**
+     * This is class field to enable functions from {@link DrawingModuleInterface} be called without passing Graphics object as a parameter
+     */
+    private Graphics2D graphics = null;
+    
+        
 }

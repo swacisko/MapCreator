@@ -191,6 +191,42 @@ public class MapNode extends MapStructure implements Drawable {
         return Math.min(10, getDrawingWidth() - 1 + containedStopsIds.size() );
     }
     
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+        
+    public Pair<Integer, Integer> getTextOffset() {
+        return textOffset;
+    }
+
+    public void setTextOffset(Pair<Integer, Integer> textOffset) {
+        this.textOffset = textOffset;
+    }
+    
+    /**
+     * This function changes {@link #textOffset} by adding x to its X coordinate and y to its Y coordinate
+     * @param x the value of horizontal offset to add
+     * @param y the value of vertical offset to add
+     */
+    public void updateTextOffset( int x, int y ){
+        int X = textOffset.getST();
+        int Y = textOffset.getND();
+        textOffset.setST( X+x );
+        textOffset.setND( Y+y );
+    }
+    
     
     /**
      * variable contractable is used to either allow or disable {@link GraphGlueing#glueGraphOld() } function to glue this node with other nodes 
@@ -200,14 +236,14 @@ public class MapNode extends MapStructure implements Drawable {
     private Pair<Float, Float> coords = new Pair<>(new Float(0), new Float(0)); // to sa wspolrzedne danego wierzcholka na mapie, PRZED NORMALIZACJA!!! czyli po prostu wspolrzedne z GTFS
     // NORMALIZACJA WSPOLRZEDNYCH BEDZIE NASTEPOWALA TUZ PRZED WYPISYWANIEM GOTOWEJ STRUKTURY GRAFU DO SVG
 
+    private int width = MCSettings.getINITIAL_NODE_WIDTH();
+    private int height = MCSettings.getINITIAL_NODE_WIDTH();
     
     private ArrayList<String> containedStopsIds = new ArrayList<>();
+    
+    private Pair<Integer,Integer> textOffset = new Pair<>( -15,-15 );
 
-   
-
     
    
-    
-    
 
 }

@@ -302,7 +302,7 @@ public class ForceAlgorithm {
             p.setND( factor * p.getND() );
             entry.setValue(p); // ta linijka prawdopodobnie nie jest wogole potrzebna, poniewaz p jest referencja do pary, ale na wszelki wypadek ja zamieszczam
         }
-        if( CNT % 20 == 0 ) System.out.print( "   forces scaled, now getMaxForceValue() = " + getMaxForceValue() );
+        //if( CNT % 20 == 0 ) System.out.print( "   forces scaled, now getMaxForceValue() = " + getMaxForceValue() );
     }
     
     // funkcja zmienia wspolrzedna grafu tak, aby najwieksza wartosci o jaka sie przesunie wierzcholek byla nie wieksza niz MCConstanst.FORCE_UPPER_BOUND_PER_TURN

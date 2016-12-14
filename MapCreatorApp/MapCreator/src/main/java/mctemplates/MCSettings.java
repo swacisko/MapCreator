@@ -39,7 +39,7 @@ public class MCSettings {
     public static final int FUNICULAR = (1 << 7);
     public static final int ALL_TRANSPORT_MEASURES = (1 << 8) - 1;
 
-    private static int DRAWING_ROUTE_TYPE = TRAM | BUS;
+    private static int DRAWING_ROUTE_TYPE = TRAM;
 
     private static Color TRAM_COLOR = Color.GREEN;
     private static Color METRO_COLOR = Color.GRAY;
@@ -72,7 +72,10 @@ public class MCSettings {
     private static int INITIAL_ROUTE_HIGHLIGHT_WIDTH = 4*INITIAL_EDGE_WIDTH;
     private static int INITIAL_ROUTE_HIGHLIGHT_HOVER_WIDTH = 4*INITIAL_EDGE_HOVER_WIDTH;
 
+    private static int MAX_TEXT_FONT = 30;
 
+    
+    
     /**
      * Initial width is useless - width of svg is changed so that it's shape is
      * kept
@@ -105,6 +108,14 @@ public class MCSettings {
 
     
     //***************************************************************  GETTERS AND SETTERS AND SOME OTHER
+    
+    public static int getMAX_TEXT_FONT() {
+        return MAX_TEXT_FONT;
+    }
+
+    public static void setMAX_TEXT_FONT(int MAX_TEXT_FONT) {
+        MCSettings.MAX_TEXT_FONT = MAX_TEXT_FONT;
+    }
     
     public static Color getTEXT_COLOR() {
         return TEXT_COLOR;

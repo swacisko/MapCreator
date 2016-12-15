@@ -43,7 +43,7 @@ public class EdgeContraction {
     }
     
     // usuwa z grafu zadany wierzcholek stopnia 2
-    private void removeDeg2NodeFromGraph( MapNode node ){
+    public void removeDeg2NodeFromGraph( MapNode node ){
         ArrayList<MapEdge> edges = node.getEdges();
         if( edges.size() != 2 ){
             System.out.println( "edges.size() != 2 w removeDeg2NodeFromGraph, EdgeContraction" );

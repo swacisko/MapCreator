@@ -74,7 +74,9 @@ public class MCSettings {
 
     private static int MAX_TEXT_FONT = 30;
     private static int MAX_NODE_WIDTH = 15;
+    private static int INITIAL_TEXT_FONT_SIZE = 5;
 
+    
     
     
     /**
@@ -109,6 +111,15 @@ public class MCSettings {
 
     
     //***************************************************************  GETTERS AND SETTERS AND SOME OTHER
+    
+    public static int getINITIAL_TEXT_FONT_SIZE() {
+        return INITIAL_TEXT_FONT_SIZE;
+    }
+
+    public static void setINITIAL_TEXT_FONT_SIZE(int INITIAL_TEXT_FONT_SIZE) {
+        MCSettings.INITIAL_TEXT_FONT_SIZE = INITIAL_TEXT_FONT_SIZE;
+    }
+    
       public static int getMAX_NODE_WIDTH() {
         return MAX_NODE_WIDTH;
     }

@@ -33,7 +33,7 @@ public interface DrawingModuleInterface {
      * @param beg
      * @param end 
      */
-    public void addLine(Point beg, Point end, int width);
+    public void addLine(Point beg, Point end);
     /**
      * Draws a polyline
      * @param polyline ArrayList of points in the line
@@ -41,11 +41,12 @@ public interface DrawingModuleInterface {
     public void addPolyline( ArrayList<Point> polyline );   
     /**
      * Writes given text in module
-     * @param text text to be written
      * @param p left bottom corner of the text
-     * @param size size of the text to be written
+     * @param text text to be written
+     * @param fontisze size of font of the text
+     * @param angle angle at which text should be written
      */
-    public void addText( String text, Point p );
+    public void addText( Point p, String text, int fontisze, int format, int angle );
     
     /**
      * Sets color of the object we want to draw. I.e. before calling one of the functions: {@link #addCircle(java.awt.Point, int)}, {@link #addEllipse(java.awt.Point, int, int)},
@@ -61,9 +62,7 @@ public interface DrawingModuleInterface {
     public String getName();
         
     public void setFill( Color c );
-        
-    public void setTextSize( int fontsize );
-    
+            
     public void setSize( int width, int height );
     
     public int getWidth();

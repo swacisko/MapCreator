@@ -6,6 +6,7 @@
  */
 package mcgraphs;
 
+import java.awt.Font;
 import mctemplates.Pair;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -227,6 +228,54 @@ public class MapNode extends MapStructure implements Drawable {
         textOffset.setND( Y+y );
     }
     
+    /**
+     * 
+     * @return returns angle at which node text should be written
+     */
+    public int getTextAngle() {
+        return textAngle;
+    }
+
+    public void setTextAngle(int textAngle) {
+        this.textAngle = textAngle;
+    }
+
+    /**
+     * 
+     * @return return whether text should be visible
+     */
+    public boolean isTextVisilbe() {
+        return textVisilbe;
+    }
+
+    public void setTextVisilbe(boolean textVisilbe) {
+        this.textVisilbe = textVisilbe;
+    }
+    
+    public int getTextFontSize() {
+        return textFontSize;
+    }
+
+    public void setTextFontSize(int textFontSize) {
+        this.textFontSize = textFontSize;
+    }
+    
+    public boolean isTextBold() {
+        return textBold;
+    }
+
+    public void setTextBold(boolean textBold) {
+        this.textBold = textBold;
+    }
+
+    public int getTextFormat() {
+        return textFormat;
+    }
+
+    public void setTextFormat(int textFormat) {
+        this.textFormat = textFormat;
+    }
+    
     
     /**
      * variable contractable is used to either allow or disable {@link GraphGlueing#glueGraphOld() } function to glue this node with other nodes 
@@ -243,6 +292,12 @@ public class MapNode extends MapStructure implements Drawable {
     
     private Pair<Integer,Integer> textOffset = new Pair<>( -15,-15 );
 
+    private int textAngle = 0;  
+    private boolean textVisilbe = true;
+    private int textFontSize = MCSettings.getINITIAL_TEXT_FONT_SIZE();
+    private boolean textBold = false;
+    private int textFormat = Font.PLAIN;
+    
     
    
 

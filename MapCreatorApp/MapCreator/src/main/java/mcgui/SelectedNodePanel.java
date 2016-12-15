@@ -25,6 +25,7 @@ import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import mcalgorithms.EdgeContraction;
 import mcgraphs.MapNode;
 import mctemplates.MCSettings;
 import mctemplates.UsefulFunctions;
@@ -209,12 +210,7 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
         if (source == moveNodeBox) {
-            JCheckBox b = (JCheckBox) source;
-            if (b.isSelected()) {
-                selectedItems.setMovableNode(true);
-            } else {
-                selectedItems.setMovableNode(false);
-            }
+            selectedItems.setMovableNode( moveNodeBox.isSelected() );
         } else if (source == removeNodeButton) {
             int confirm = new JOptionPane().showConfirmDialog(this, "Are yout sure yout want to remove that node?","Remove node", JOptionPane.OK_CANCEL_OPTION);
             if (confirm == JOptionPane.CANCEL_OPTION || confirm == JOptionPane.CLOSED_OPTION) {
@@ -226,19 +222,46 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
                 id = n.getID();
             }
             selectedItems.getGraph().removeMapNodeByID(id);
+            selectedItems.setSelectedNode1(null);
         }else if( source == contractNodeButton ){
-            
+            MapNode n = selectedItems.getSelectedNode1();
+            if( n == null ) return;
+            else{
+                if( n.countEdges() != 2 || n.countNeighbours() != 2 ){
+                    JOptionPane.showMessageDialog(this, "The contracted node must have 2 neighbours and be conbtractable!", "Cannot contract node",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                else{
+                    new EdgeContraction( selectedItems.getGraph() ).removeDeg2NodeFromGraph(n);
+                    selectedItems.setSelectedNode1(null);
+                }
+            }
+                
+           
         }else if( source == glueNodeButton ){
             
+            
         }else if( source == textVisibleBox ){
-            
+            MapNode n = selectedItems.getSelectedNode1();
+            if( n == null ) return;
+            n.setTextVisilbe(textVisibleBox.isSelected());            
         }else if( source == textBoldBox ){
-            
+            MapNode n = selectedItems.getSelectedNode1();
+            if( n == null ) return;
+            int fontformat = n.getTextFormat();
+            n.setTextFormat(fontformat ^ Font.BOLD );
         }else if( source == structureNameAcceptButton ){
-            
+            MapNode n = selectedItems.getSelectedNode1();
+            if( n == null ) return;
+            n.setStructureName( structureNameTextField.getText() );
         }else if( source == nodeColorBox ){
-            
+            MapNode n = selectedItems.getSelectedNode1();
+            if( n == null ) return;
+            n.setColor( (Color) nodeColorBox.getSelectedItem() );
         }
+        
+        repaint();
     }
     
     @Override

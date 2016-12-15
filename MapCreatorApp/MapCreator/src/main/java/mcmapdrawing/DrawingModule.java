@@ -32,7 +32,7 @@ public class DrawingModule {
     public DrawingModule(DrawingModuleInterface s) {
         svg = s;
         initialSVGFileName = "./DrawingFolder/" + svg.getName();        
-        createLBCandRUC();
+        //createLBCandRUC();
     }
 
     public void beginSVG() {
@@ -263,14 +263,7 @@ public class DrawingModule {
         endSVG();
     }
 
-    // rysuje schematyczna mapke - czyli to o co w całym projekcie miało chodzic, ale ze jestesmy ambitni to robimy wieeeeecej
-    public void drawSchemeMap() {
-        svg.setName(initialSVGFileName + "_scheme");
-        beginSVG();
-
-        endSVG();
-    }
-
+    
     public void drawDatabaseGraph() {
         System.out.println("Zaczynam tworzyc podstawowy graf z danych GTFS");
         graph = new MapGraphCreator().createMapGraphFromGtfsDatabase(MCSettings.getDRAWING_ROUTE_TYPE());
@@ -329,7 +322,6 @@ public class DrawingModule {
      */
     public void drawAllMaps() {
         drawShapeMap();
-        //  drawSchemeMap();
 
         drawDatabaseGraph(); // UWAGA - to rysowanie musi byc w takiej kolejnosci!
         drawGluedGraph();
@@ -345,7 +337,7 @@ public class DrawingModule {
         Pair<Integer,Integer> offset = n.getTextOffset();
         p.x += offset.getST();
         p.y += offset.getND();
-        svg.addText(s,p);
+        svg.addText(p,s, n.getTextFontSize(), n.getTextFormat(), n.getTextAngle());
     }
 
     private void setDrawingNodeParameters(MapNode n) {
@@ -448,6 +440,8 @@ public class DrawingModule {
 
     // rysuje zadany graf do pliku svg
     public MapGraph drawGraphOnMap(MapGraph graph, String svgname) {
+        if( graph == null ) return null;
+        
         createLBCandRUC(graph);
 
         svg.setName(initialSVGFileName + "_" + svgname);

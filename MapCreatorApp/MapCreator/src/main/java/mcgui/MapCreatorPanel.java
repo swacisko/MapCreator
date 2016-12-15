@@ -24,10 +24,11 @@ import mctemplates.MCSettings;
  */
 public class MapCreatorPanel extends JPanel{
 
-    public MapCreatorPanel(){
+    public MapCreatorPanel( ManagerFrame parent ){
+        parentFrame = parent;
          setSize( DEFAULT_WIDTH, DEFAULT_HEIGHT );  
          
-         setLayout( new GridLayout(6,1) );
+         setLayout( new GridLayout(5,1) );
          
          basicMapButton = new JButton( "Draw basic map" );
          basicMapButton.addActionListener( new ActionListener() {
@@ -37,6 +38,7 @@ public class MapCreatorPanel extends JPanel{
                  MapGraph graph = new MapGraphCreator().createMapGraphFromGtfsDatabase( MCSettings.getDRAWING_ROUTE_TYPE() );
                  selectedItems.setGraph( graph );
                  enableAllButtons();
+                 repaintAll();
              }
          } );
          
@@ -49,6 +51,7 @@ public class MapCreatorPanel extends JPanel{
                  graph = new GraphGlueing(graph).convertGraph();
                  selectedItems.setGraph( graph );
                  enableAllButtons();
+                 repaintAll();
              }
          } );
          
@@ -63,6 +66,7 @@ public class MapCreatorPanel extends JPanel{
                  graph = new EdgeContraction(graph).convertGraph();
                  selectedItems.setGraph( graph );
                  enableAllButtons();
+                 repaintAll();
              }
          } );
          
@@ -77,28 +81,35 @@ public class MapCreatorPanel extends JPanel{
                  graph = new ForceAlgorithm(graph, new SVG( MCSettings.getINITIAL_SVG_WIDTH(), MCSettings.getINITIAL_SVG_HEIGHT(), "forcespaced" ) ).convertGraph();
                  selectedItems.setGraph( graph );
                  enableAllButtons();
+                 repaintAll();
              }
          });
          
-         centralizedAttractionButton = new JButton( "Centralized Attraction Algorithm" );
+         /*centralizedAttractionButton = new JButton( "Centralized Attraction Algorithm" );
          centralizedAttractionButton.addActionListener(new ActionListener(){
              @Override
              public void actionPerformed(ActionEvent e) {
-                 System.out.println( "parent.clss = " + getParent().getClass() );
-                 MainFrame frame = (MainFrame) getParent();
-                 frame.switchToCentralizedAttractionPanel();
+                 System.out.println( "parent.clss = " + getParent().getClass() );                 
+                 parentFrame.switchToCentralizedAttractionPanel();
              }
-         });
+         });*/
+         
+         
          
          add( new JPanel() );
          add( basicMapButton );
          add( gluedMapButton );
          add( contractedMapButton );
          add( forcespacedMapButton );
-         add( centralizedAttractionButton );
+        // add( centralizedAttractionButton );
     }
     
-    private SelectedItems selectedItems = null;
+    private void repaintAll(){
+        parentFrame.getParentFrame().repaint();
+        parentFrame.repaint();
+    }
+    
+   
 
     public SelectedItems getSelectedItems() {
         return selectedItems;
@@ -113,7 +124,7 @@ public class MapCreatorPanel extends JPanel{
         gluedMapButton.setEnabled(false);
         contractedMapButton.setEnabled(false);
         forcespacedMapButton.setEnabled(false);
-        centralizedAttractionButton.setEnabled(false);
+       // centralizedAttractionButton.setEnabled(false);
     }
     
     public void enableAllButtons(){
@@ -121,9 +132,19 @@ public class MapCreatorPanel extends JPanel{
         gluedMapButton.setEnabled(true);
         contractedMapButton.setEnabled(true);
         forcespacedMapButton.setEnabled(true);
-        centralizedAttractionButton.setEnabled(true);
+       // centralizedAttractionButton.setEnabled(true);
     }
     
+    public ManagerFrame getParentFrame() {
+        return parentFrame;
+    }
+
+    public void setParentFrame(ManagerFrame parentFrame) {
+        this.parentFrame = parentFrame;
+    }
+    
+    private SelectedItems selectedItems = null;
+     
     private int DEFAULT_WIDTH = 400;
     private int DEFAULT_HEIGHT = 600;
     
@@ -132,4 +153,7 @@ public class MapCreatorPanel extends JPanel{
     private JButton contractedMapButton = null;
     private JButton forcespacedMapButton = null;
     private JButton centralizedAttractionButton = null;
+    
+    private ManagerFrame parentFrame = null;
+    
 }

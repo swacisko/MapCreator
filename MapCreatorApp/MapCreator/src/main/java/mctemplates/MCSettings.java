@@ -8,6 +8,8 @@ package mctemplates;
 import java.awt.Color;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -39,7 +41,7 @@ public class MCSettings {
     public static final int FUNICULAR = (1 << 7);
     public static final int ALL_TRANSPORT_MEASURES = (1 << 8) - 1;
 
-    private static int DRAWING_ROUTE_TYPE = TRAM;
+    private static int DRAWING_ROUTE_TYPE = BUS;
 
     private static Color TRAM_COLOR = Color.GREEN;
     private static Color METRO_COLOR = Color.GRAY;
@@ -62,11 +64,13 @@ public class MCSettings {
     private static int INITIAL_EDGE_WIDTH = 2;
     private static int INITIAL_EDGE_HOVER_WIDTH = 2;
     
-    private static Color INITIAL_NODE_COLOR = Color.ORANGE;
+    private static Color INITIAL_NODE_COLOR = Color.BLACK;
     private static Color INITIAL_NODE_HOVER_COLOR = INITIAL_HOVER_COLOR;
     private static int INITIAL_NODE_WIDTH = 4;
     private static int INITIAL_NODE_HOVER_WIDTH = 12;
-    
+    private static Color INITIAL_FILL_COLOR = Color.ORANGE;
+
+        
     private static Color TEXT_COLOR = Color.BLACK;
 
     private static int INITIAL_ROUTE_HIGHLIGHT_WIDTH = 4*INITIAL_EDGE_WIDTH;
@@ -83,11 +87,11 @@ public class MCSettings {
      * Initial width is useless - width of svg is changed so that it's shape is
      * kept
      */
-    private static int INITIAL_SVG_WIDTH = 2000;
+    private static int INITIAL_SVG_WIDTH = 3000;
     /**
      * This is the initial value of height of our svg
      */
-    private static int INITIAL_SVG_HEIGHT = 2000;
+    private static int INITIAL_SVG_HEIGHT = 3000;
 
     private static float FIRST_GLUEING_DISTANCE_PARAMETER = 5;
     private static float SECOND_GLUEING_DISTANCE_PARAMTER = 20;
@@ -100,6 +104,7 @@ public class MCSettings {
      * want to draw all routes in routes.txt file, then this can be empty
      */
     private static ArrayList<String> routesToHighlight = new ArrayList<>();
+    private static Map<String,Color> routeToHighlightColor = new HashMap<>();
 
     /**
      * If this variable is set to true, then on the scheme all routes and stops
@@ -111,6 +116,23 @@ public class MCSettings {
 
     
     //***************************************************************  GETTERS AND SETTERS AND SOME OTHER
+    
+    public static Color getINITIAL_FILL_COLOR() {
+        return INITIAL_FILL_COLOR;
+    }
+
+    public static void setINITIAL_FILL_COLOR(Color INITIAL_FILL_COLOR) {
+        MCSettings.INITIAL_FILL_COLOR = INITIAL_FILL_COLOR;
+    }
+    
+    public static Color getRouteToHighlightColor( String id ){
+        Color c = routeToHighlightColor.get(id);
+        return c;
+    }
+    
+    public static void setRouteToHighlightColor( String id, Color c ){
+        routeToHighlightColor.put(id, c);
+    }
     
     public static int getINITIAL_TEXT_FONT_SIZE() {
         return INITIAL_TEXT_FONT_SIZE;
@@ -180,7 +202,14 @@ public class MCSettings {
     }
 
     public static void addRouteToHighlight(String routeId) {
-        routesToHighlight.add(routeId);
+        if( routesToHighlight.contains(routeId) == false ) {
+            routesToHighlight.add(routeId);
+            Color color = null;
+            do{
+                color = UsefulFunctions.getNextColor();
+            }while( color != Color.WHITE );
+            routeToHighlightColor.put( routeId, color );
+        }        
     }
 
     public static ArrayList<String> getRoutesToHighlight() {

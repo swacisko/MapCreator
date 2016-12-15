@@ -73,7 +73,7 @@ public class DrawingModule {
     }
 
     private void modifyLBCandRUC() {
-        float ratio = 0.02f; // dziwne jest, ze nawet jak zmienie wartosci wzglednie o 1 tysieczna to i tak rysunek sie mocno wygina
+        float ratio = 0f; // 0.02f; // dziwne jest, ze nawet jak zmienie wartosci wzglednie o 1 tysieczna to i tak rysunek sie mocno wygina
         float dW = RUC.getST() - LBC.getST();
         float dH = RUC.getND() - LBC.getND();
 
@@ -108,7 +108,7 @@ public class DrawingModule {
         }
 
         scaleSVG();
-        modifyLBCandRUC();
+        //modifyLBCandRUC();
     }
 
     /**
@@ -123,9 +123,15 @@ public class DrawingModule {
             dH = 0.00001f;
         }
 
-      //  System.out.println( "dW = " + dW + "   dH = " + dH );
-        //svg.setWidth((int) ((float) svg.getHeight() * (dW / dH)));
-        svg.setSize((int) ((float) svg.getHeight() * (dW / dH)), svg.getHeight() );
+        float ratio = dW / dH;
+        float H = svg.getHeight();
+        float W = svg.getWidth();
+        //if( W >= ratio*H ){
+            svg.setSize( Math.round( (ratio*H) ), svg.getHeight() );
+       // }
+       // else{
+       //     svg.setSize( svg.getWidth(), Math.round( ( W / ratio ) ) );
+       // }
         //   System.out.println( "width = " + svg.getWidth() + "   height = " + svg.getHeight() );
     }
 
@@ -582,7 +588,7 @@ public class DrawingModule {
 
                 }
 
-                Color c = UsefulFunctions.getNextColor();
+                Color c = MCSettings.getRouteToHighlightColor( entry.getKey() );
                 while (c.equals(Color.WHITE) || c.equals(Color.BLACK)) {
                     c = UsefulFunctions.getNextColor();
                 }

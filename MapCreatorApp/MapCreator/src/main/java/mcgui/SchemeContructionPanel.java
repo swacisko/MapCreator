@@ -21,8 +21,10 @@ import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
+import mcgraphs.MapNode;
 import mcmapdrawing.DrawingModule;
 import mcmapdrawing.DrawingModuleInterface;
+import mctemplates.Pair;
 
 /**
  *  This class is a panel on which we draw a scheme. 
@@ -39,10 +41,6 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
          setLayout( new FlowLayout());         
          setBorder( BorderFactory.createLineBorder(Color.RED, 3, true) );
          
-        // add( new JTextArea(1000,1000), BorderLayout.CENTER );
-         /*for( int i=0; i<20; i++ ){
-             add( new JButton(""+i) );
-         }*/
          
     }
     
@@ -56,7 +54,7 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
     
     @Override
     public void addEllipse(Point p, int w, int h) {
-        Ellipse2D ellipse = new Ellipse2D.Double(p.x- (w/2) ,p.y -(h/2) ,w,h);
+        Ellipse2D ellipse = new Ellipse2D.Double( p.x- (w/2) ,p.y -(h/2) ,w/2 ,h/2 );
         graphics.setColor( color );
         graphics.draw( ellipse );
         graphics.setColor(fillColor);
@@ -65,21 +63,21 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
 
     @Override
     public void addCircle(Point p, int radius) {
-        addEllipse(p, radius,radius);
+        addEllipse(p, radius/2,radius/2);
     }
 
     @Override
     public void addLine(Point beg, Point end) {
         Line2D line = new Line2D.Double( beg, end );
         graphics.setColor( color );
-        graphics.setStroke( new BasicStroke(strokeWidth) );
+        graphics.setStroke( new BasicStroke(strokeWidth/2) );
         graphics.draw( line );
     }
 
     @Override
     public void addPolyline(ArrayList<Point> polyline) {
         graphics.setColor( color );
-        graphics.setStroke( new BasicStroke(strokeWidth) );
+        graphics.setStroke( new BasicStroke(strokeWidth/2) );
         int[] x = new int[ polyline.size() ];
         int[] y = new int[ polyline.size() ];
         for( int i=0; i<polyline.size(); i++ ){
@@ -123,12 +121,12 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
 
     @Override
     public void begin() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // nothing to do here
     }
 
     @Override
     public void end() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // nothing to do here
     }
     
     public SelectedItems getSelectedItems() {
@@ -142,8 +140,8 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
     
     
     
-    
-    //******************************************** CLASS FIELDS
+
+//******************************************** CLASS FIELDS
     
     /**
      * This is class field to enable functions from {@link DrawingModuleInterface} be called without passing Graphics object as a parameter
@@ -171,6 +169,18 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
     
     class MouseHandler extends MouseAdapter{
         
+        private MapNode getMapNodeOnPosition( Point p ){
+            for( MapNode n : selectedItems.getGraph().getNodes() ){
+                Pair<Float,Float> coords = n.getCoords();
+                
+                
+                
+                
+            }
+            
+            return null;
+        }
+        
         @Override
         public void mousePressed(MouseEvent event){
             
@@ -178,7 +188,15 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
         
         @Override
         public void mouseClicked( MouseEvent event ){
-            
+            MapNode n = getMapNodeOnPosition( event.getPoint() );
+            if( n == null ){
+                selectedItems.setSelectedNode1(null);
+            }
+            else if( selectedItems.getSelectedNode1() != null ){
+                selectedItems.setSelectedNode2(n);
+            }else{
+                selectedItems.setSelectedNode1(n);
+            }
         }
         
     }

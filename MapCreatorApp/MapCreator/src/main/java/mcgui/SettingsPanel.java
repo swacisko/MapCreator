@@ -5,10 +5,29 @@
  */
 package mcgui;
 
+import javax.swing.JPanel;
+
 /**
  *
  * @author swacisko
  */
-public class SettingsPanel {
+public class SettingsPanel extends JPanel{
     
+    public SettingsPanel(){
+         setSize( DEFAULT_WIDTH, DEFAULT_HEIGHT );  
+    }
+    
+    public SelectedItems getSelectedItems() {
+        return selectedItems;
+    }
+
+    public void setSelectedItems(SelectedItems selectedItems) {
+        this.selectedItems = selectedItems;
+    }
+    
+    
+    private SelectedItems selectedItems = null;  
+    
+    private int DEFAULT_WIDTH = 400;
+    private int DEFAULT_HEIGHT = 600;
 }

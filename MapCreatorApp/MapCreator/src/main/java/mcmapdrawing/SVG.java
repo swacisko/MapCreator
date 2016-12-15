@@ -1,9 +1,11 @@
 package mcmapdrawing;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import mctemplates.UsefulFunctions;
 
 //TO DO:
 //dodawanie klasy (stylu)
@@ -12,7 +14,7 @@ import java.util.ArrayList;
 
 //funkcje - pair
 
-public class SVG {
+public class SVG implements DrawingModuleInterface{
 
 	public SVG () {
             
@@ -39,27 +41,34 @@ public class SVG {
 	}
 	
 	//wszystkie potrzebne rzeczy na początek plików
-	public void beginSVG () {            
-                try {
-			writerSVG = new PrintWriter(fileName + ".svg");
-			writerHTML = new PrintWriter(fileName + ".html");
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-                        return;
-		}
-		writerSVG.println("<svg width=\"" + width + "\" height=\"" + height +"\">");
-		
-		writerHTML.println("<!DOCTYPE html>");
-		writerHTML.println("<html>");
-		writerHTML.println("<body>");
-		writerHTML.println();
-		writerHTML.println("<svg width=\"" + width + "\" height=\"" + height +"\">");
+        @Override
+	public void begin () {  
+            
+            try {
+                    writerSVG = new PrintWriter(fileName + ".svg");
+                    writerHTML = new PrintWriter(fileName + ".html");
+            } catch (FileNotFoundException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                    return;
+            }
+            writerSVG.println("<svg width=\"" + width + "\" height=\"" + height +"\">");
 
+            writerHTML.println("<!DOCTYPE html>");
+            writerHTML.println("<html>");
+            writerHTML.println("<body>");
+            writerHTML.println();
+            writerHTML.println("<svg width=\"" + width + "\" height=\"" + height +"\">");
+
+            addPolylineStyle();
+            addCircleStyle();
+            addRectangleStyle();
+            addEllipseStyle();
 	}
 	
 	//wszystkie potrzebne rzeczy na koniec plików
-	public void endSVG () {
+        @Override
+	public void end () {
 		writerSVG.println("</svg>");
 		writerSVG.close();
 		
@@ -70,6 +79,148 @@ public class SVG {
 		writerHTML.close();
 	}
 	
+        
+        @Override
+	public void setName (String filename) {
+		fileName = filename;
+	}
+        
+        public void addLine (int x1, int y1, int x2, int y2) {
+		writerSVG.println( "   <line x1=\"" + x1 + "\" y1=\"" + y1 +"\" x2=\"" + x2 + "\" y2=\"" + y2 +"\" style=\"stroke:rgb(255,0,0);stroke-width:2\" />" );
+		writerHTML.println( "   <line x1=\"" + x1 + "\" y1=\"" + y1 +"\" x2=\"" + x2 + "\" y2=\"" + y2 +"\" style=\"stroke:rgb(255,0,0);stroke-width:2\" />" );
+
+	}
+        
+        @Override
+        public void addLine( Point beg, Point end, int width ){
+            addLine( beg.x, beg.y, end.x, end.y );
+        }
+        
+        //przyjmuje jako parametr listę point (x,y)
+	//dodaje łamaną bez stylu do pliku HTML i łamaną z "domyślnym" (ustawionym w parametrach klasy) stylem do pliku SVG
+        @Override
+	public void addPolyline (ArrayList<Point> points) {
+		int s = points.size();
+		writerSVG.print( "   <polyline points=\"" + points.get(0).getX() + "," + points.get(0).getY() );
+		for (int i=1;i<s;i++) writerSVG.print( " " + points.get(i).getX() + "," + points.get(i).getY() );
+		writerSVG.print( "\" style=\"stroke:" + polylineColor + "; stroke-width:"+ polylineWidth + "; fill:none; stroke-linejoin:" + polylineLinejoin +"; stroke-linecap:" + polylineLinecap + ";\" />\n" );
+		
+		writerHTML.print( "   <polyline points=\"" + points.get(0).getX() + "," + points.get(0).getY() );
+		for (int i=1;i<s;i++) writerHTML.print( " " + points.get(i).getX() + "," + points.get(i).getY() );
+		//writerHTML.print( "\" />\n" );
+                writerHTML.print( "\" style=\"fill:none;stroke:" + polylineColor + ";stroke-width:" + polylineWidth + "\" />\n" );
+	}
+        
+        //parametry: p - środek koła; r - promień
+	//dodaje kółko bez stylu do pliku HTML i kółko z "domyślnym" (ustawionym w parametrach klasy) stylem do pliku SVG
+        @Override
+	public void addCircle (Point p, int r) {
+		addCircle((int)p.getX(), (int)p.getY(),r);
+	}
+	
+	//dodaje kółko bez stylu do pliku HTML i kółko z "domyślnym" (ustawionym w parametrach klasy) stylem do pliku SVG
+	public void addCircle (int x, int y, int r) {
+		writerSVG.println( "   <circle cx=\"" + x + "\" cy=\"" + y + "\" r=\"" + r + "\" stroke=\"" + circleStrokeColor + "\" stroke-width=\"" + circleStrokeWidth + "\" fill=\"" + circleFill + "\" />" );
+		writerHTML.println( "   <circle cx=\"" + x + "\" cy=\"" + y + "\" r=\"" + r + "\" />" );
+	}
+	
+        
+        //c - środek elipsy, rx - promień poziomy, ry - promień pionowy
+	//dodaje elipsę bez stylu do pliku HTML i elipse z "domyślnym" (ustawionym w parametrach klasy) stylem do pliku SVG
+        @Override
+	public void addEllipse (Point c, int rx, int ry) {
+		addEllipse((int)c.getX(), (int)c.getY(), rx, ry);
+	}
+	
+	//dodaje elipsę bez stylu do pliku HTML i elipse z "domyślnym" (ustawionym w parametrach klasy) stylem do pliku SVG
+	public void addEllipse (int cx, int cy, int rx, int ry) {
+		writerSVG.println("   <ellipse cx=\"" + cx + "\" cy=\"" + cy + "\" rx=\"" + rx + "\" ry=\"" + ry + "\" style=\"fill:" + ellipseColor + ";stroke:" + ellipseStrokeColor + ";stroke-width:" + ellipseStrokeWidth + "\" />");
+		writerHTML.println("   <ellipse cx=\"" + cx + "\" cy=\"" + cy + "\" rx=\"" + rx + "\" ry=\"" + ry + "\" />");
+	}
+	
+        //p - lewy dolny wierzchołek prostokąta, w którym znajduje się napis
+	//dodaje napis w kolorze z parametrów klasy
+        @Override
+	public void addText ( String text, Point p ) {
+		addText((int)p.getX(), (int)p.getY(), text);
+	}
+	
+	//dodaje napis w kolorze z parametrów klasy
+	public void addText (int x, int y, String text) {
+		writerSVG.println( "   <text x=\"" + x + "\" y=\"" + y + "\" fill=\"" + textColor + "\">" + text + "</text>" );
+		writerHTML.println( "   <text x=\"" + x + "\" y=\"" + y + "\" fill=\"" + textColor + "\">" + text + "</text>" );
+	}
+        
+         @Override
+        public void setColor( Color c ){
+            String color = UsefulFunctions.parseColor(c);
+            this.color = color;
+            setFill(c);
+            
+            setPolylineColor(color);
+            setCircleStrokeColor(color);
+            setEllipseStrokeColor(color);  
+            setEllipseColor(color);           
+        }
+        
+        @Override
+        public void setFill( Color c ){            
+            String color = UsefulFunctions.parseColor(c);
+            fillColor = color;
+            setCircleFill(color);
+            setEllipseColor(color);
+            setTextColor(color);
+        }
+        
+        public Color getFill(){
+            return UsefulFunctions.parseColor(fillColor);
+        }
+        
+        @Override
+        public void setStrokeWidth(int width){
+            strokeWidth = width;
+            setPolylineWidth(width);
+            setCircleStrokeWidth(width);
+            setEllipseStrokeWidth(width);
+            setRectangleStrokeWidth(width);
+        }
+        
+        public int getStrokeWidth(){
+            return strokeWidth;
+        }
+        
+        @Override
+        public void setTextSize( int fontsize ){
+            textSize = fontsize;
+        }
+        
+        @Override
+        public int getWidth () {
+		return width;
+	}
+	
+        @Override
+	public int getHeight () {
+		return  height;
+	}
+        
+        @Override
+        public String getName(){
+            return fileName;
+        }
+	
+        
+                
+        private String fillColor;
+        private String color;
+        private int strokeWidth;
+        private int textSize;
+        private PrintWriter writerSVG;
+	private PrintWriter writerHTML;
+	private int width = 700;
+	private int height = 500;
+	private String fileName = "domyslny";
+        
 //STYLE
 	
 	/*dodaje styl danej klasy łamanych
@@ -255,25 +406,9 @@ public class SVG {
 		writerHTML.println("");
 	}
 	
-	public void addLine (int x1, int y1, int x2, int y2) {
-		writerSVG.println( "   <line x1=\"" + x1 + "\" y1=\"" + y1 +"\" x2=\"" + x2 + "\" y2=\"" + y2 +"\" style=\"stroke:rgb(255,0,0);stroke-width:2\" />" );
-		writerHTML.println( "   <line x1=\"" + x1 + "\" y1=\"" + y1 +"\" x2=\"" + x2 + "\" y2=\"" + y2 +"\" style=\"stroke:rgb(255,0,0);stroke-width:2\" />" );
-
-	}
 	
-	//przyjmuje jako parametr listę point (x,y)
-	//dodaje łamaną bez stylu do pliku HTML i łamaną z "domyślnym" (ustawionym w parametrach klasy) stylem do pliku SVG
-	public void addPolylinePlain (ArrayList<Point> points) {
-		int s = points.size();
-		writerSVG.print( "   <polyline points=\"" + points.get(0).getX() + "," + points.get(0).getY() );
-		for (int i=1;i<s;i++) writerSVG.print( " " + points.get(i).getX() + "," + points.get(i).getY() );
-		writerSVG.print( "\" style=\"stroke:" + polylineColor + "; stroke-width:"+ polylineWidth + "; fill:none; stroke-linejoin:" + polylineLinejoin +"; stroke-linecap:" + polylineLinecap + ";\" />\n" );
-		
-		writerHTML.print( "   <polyline points=\"" + points.get(0).getX() + "," + points.get(0).getY() );
-		for (int i=1;i<s;i++) writerHTML.print( " " + points.get(i).getX() + "," + points.get(i).getY() );
-		//writerHTML.print( "\" />\n" );
-                writerHTML.print( "\" style=\"fill:none;stroke:" + polylineColor + ";stroke-width:" + polylineWidth + "\" />\n" );
-	}
+	
+	
 	
 	/*dodaje łamaną
 	 * przyjmuje jako parametr listę point (x,y) oraz nazwę klasy stylu 
@@ -291,7 +426,7 @@ public class SVG {
 	}
 	
 	//dodaje łamaną bez stylu do pliku HTML i łamaną z "domyślnym" (ustawionym w parametrach klasy) stylem do pliku SVG
-	public void addPolylinePlain (ArrayList x,ArrayList y) {
+	public void addPolyline (ArrayList x,ArrayList y) {
 		int s = x.size();
 		writerSVG.print( "   <polyline points=\"" + x.get(0) + "," + y.get(0) );
 		for (int i=1;i<s;i++) writerSVG.print( " " + x.get(i) + "," + y.get(i) );
@@ -304,30 +439,6 @@ public class SVG {
                 writerHTML.print( "\" style=\"fill:none;stroke:" + polylineColor + ";stroke-width:2\" />\n" );
 	}
 	
-	//jako parametr przyjmuje listę punktów na płaszczyźnie
-	//dodaje łamaną ze stylem (czarna łamana)
-	public void addPolyline (ArrayList<Point> points) {
-		int s = points.size();
-		writerSVG.print( "   <polyline points=\"" + points.get(0).getX() + "," + points.get(0).getY() );
-		for (int i=1;i<s;i++) writerSVG.print( " " + points.get(i).getX() + "," + points.get(i).getY() );
-		writerSVG.print( "\" style=\"fill:none;stroke:black;stroke-width:2\" />\n" );
-		
-		writerHTML.print( "   <polyline points=\"" + points.get(0).getX() + "," + points.get(0).getY() );
-		for (int i=1;i<s;i++) writerHTML.print( " " + points.get(i).getX() + "," + points.get(i).getY() );
-		writerHTML.print( "\" style=\"fill:none;stroke:black;stroke-width:2\" />\n" );
-	}
-	
-	//dodaje łamaną ze stylem (czarna łamana)
-	public void addPolyline (ArrayList x,ArrayList y) {
-		int s = x.size();
-		writerSVG.print( "   <polyline points=\"" + x.get(0) + "," + y.get(0) );
-		for (int i=1;i<s;i++) writerSVG.print( " " + x.get(i) + "," + y.get(i) );
-		writerSVG.print( "\" style=\"fill:none;stroke:black;stroke-width:2\" />\n" );
-		
-		writerHTML.print( "   <polyline points=\"" + x.get(0) + "," + y.get(0) );
-		for (int i=1;i<s;i++) writerHTML.print( " " + x.get(i) + "," + y.get(i) );
-		writerHTML.print( "\" style=\"fill:none;stroke:black;stroke-width:2\" />\n" );
-	}
 	
 //KÓŁKA
 	//dodaje styl wszystkich kół - z parametrów określonych w klasie SVG
@@ -364,29 +475,7 @@ public class SVG {
 		writerHTML.println("");
 	}
 	
-	//parametry: p - środek koła; r - promień
-	//dodaje kółko bez stylu do pliku HTML i kółko z "domyślnym" (ustawionym w parametrach klasy) stylem do pliku SVG
-	public void addCirclePlain (Point p, int r) {
-		addCirclePlain((int)p.getX(), (int)p.getY(),r);
-	}
 	
-	//dodaje kółko bez stylu do pliku HTML i kółko z "domyślnym" (ustawionym w parametrach klasy) stylem do pliku SVG
-	public void addCirclePlain (int x, int y, int r) {
-		writerSVG.println( "   <circle cx=\"" + x + "\" cy=\"" + y + "\" r=\"" + r + "\" stroke=\"" + circleStrokeColor + "\" stroke-width=\"" + circleStrokeWidth + "\" fill=\"" + circleFill + "\" />" );
-		writerHTML.println( "   <circle cx=\"" + x + "\" cy=\"" + y + "\" r=\"" + r + "\" />" );
-	}
-	
-	//parametry: p - środek koła; r - promień
-	//dodaje kółko ze stylem (żółte z zielonym brzegiem)
-	public void addCircle (Point p, int r) {
-		addCirclePlain((int)p.getX(), (int)p.getY(),r);
-	}
-	
-	//dodaje kółko ze stylem (żółte z zielonym brzegiem)
-	public void addCircle (int x, int y, int r) {
-		writerSVG.println( "   <circle cx=\"" + x + "\" cy=\"" + y + "\" r=\"" + r + "\" stroke=\"green\" stroke-width=\"2\" fill=\"yellow\" />" );
-		writerHTML.println( "   <circle cx=\"" + x + "\" cy=\"" + y + "\" r=\"" + r + "\" stroke=\"green\" stroke-width=\"2\" fill=\"yellow\" />" );
-	}
 	
 	/* dodaje kółko
 	 * przyjmuje jako parametry współrzędne środka i promień koła oraz nazwę klasy stylu 
@@ -558,29 +647,7 @@ public class SVG {
 		writerHTML.println("");
 	}
 	
-	//c - środek elipsy, rx - promień poziomy, ry - promień pionowy
-	//dodaje elipsę bez stylu do pliku HTML i elipse z "domyślnym" (ustawionym w parametrach klasy) stylem do pliku SVG
-	public void addEllipsePlain (Point c, int rx, int ry) {
-		addEllipsePlain((int)c.getX(), (int)c.getY(), rx, ry);
-	}
 	
-	//dodaje elipsę bez stylu do pliku HTML i elipse z "domyślnym" (ustawionym w parametrach klasy) stylem do pliku SVG
-	public void addEllipsePlain (int cx, int cy, int rx, int ry) {
-		writerSVG.println("   <ellipse cx=\"" + cx + "\" cy=\"" + cy + "\" rx=\"" + rx + "\" ry=\"" + ry + "\" style=\"fill:" + ellipseColor + ";stroke:" + ellipseStrokeColor + ";stroke-width:" + ellipseStrokeWidth + "\" />");
-		writerHTML.println("   <ellipse cx=\"" + cx + "\" cy=\"" + cy + "\" rx=\"" + rx + "\" ry=\"" + ry + "\" />");
-	}
-	
-	//c - środek elipsy, rx - promień poziomy, ry - promień pionowy
-	//dodaje elipsę ze stylem (żółta z fioletowym brzegiem)
-	public void addEllipse (Point c, int rx, int ry) {
-		addEllipse((int)c.getX(), (int)c.getY(), rx, ry);
-	}
-	
-	//dodaje elipsę ze stylem (żółta z fioletowym brzegiem)
-	public void addEllipse (int cx, int cy, int rx, int ry) {
-		writerSVG.println("   <ellipse cx=\"" + cx + "\" cy=\"" + cy + "\" rx=\"" + rx + "\" ry=\"" + ry + "\" style=\"fill:yellow;stroke:purple;stroke-width:2\" />");
-		writerHTML.println("   <ellipse cx=\"" + cx + "\" cy=\"" + cy + "\" rx=\"" + rx + "\" ry=\"" + ry + "\" style=\"fill:yellow;stroke:purple;stroke-width:2\" />");
-	}
 	
 	/* dodaje elipsę
 	 * cx,cy - środek elipsy, rx - promień poziomy, ry - promień pionowy, className - nazwa klasy stylu
@@ -600,19 +667,11 @@ public class SVG {
 	}
 	
 	
+       
+        
 //NAPISY
 	
-	//p - lewy dolny wierzchołek prostokąta, w którym znajduje się napis
-	//dodaje napis w kolorze z parametrów klasy
-	public void addText (Point p, String text) {
-		addText((int)p.getX(), (int)p.getY(), text);
-	}
 	
-	//dodaje napis w kolorze z parametrów klasy
-	public void addText (int x, int y, String text) {
-		writerSVG.println( "   <text x=\"" + x + "\" y=\"" + y + "\" fill=\"" + textColor + "\">" + text + "</text>" );
-		writerHTML.println( "   <text x=\"" + x + "\" y=\"" + y + "\" fill=\"" + textColor + "\">" + text + "</text>" );
-	}
 	
 	//p - lewy dolny wierzchołek prostokąta, w którym znajduje się napis
 	//dodaje napis
@@ -691,10 +750,7 @@ public class SVG {
 		height = h;
 	}
 	
-	public void setFileName (String filename) {
-		fileName = filename;
-	}
-	
+        	
 	public void setPolylineColor (String color) {
 		polylineColor = color;
 	}
@@ -796,14 +852,7 @@ public class SVG {
 	}
 	
 //GET
-	public int getWidth () {
-		return width;
-	}
-	
-	public int getHeight () {
-		return  height;
-	}
-	
+
 	public String getFileName () {
 		return fileName;
 	}	
@@ -909,13 +958,9 @@ public class SVG {
 	}
 
 	
-	private PrintWriter writerSVG;
-	private PrintWriter writerHTML;
-	private int width = 700;
-	private int height = 500;
-	private String fileName = "domyslny";
 	
-	private String polylineColor = "rgb(155,150,255)";
+	
+	private String polylineColor = "orange";
 	private String polylineColorHover = "rgb(55,70,170)";
 	private int polylineWidth = 3;
 	private int polylineWidthHover = 6;
@@ -944,4 +989,7 @@ public class SVG {
 	private String ellipseColorHover = "yellow";
 	private int ellipseStrokeWidthHover = 6;
 	private String ellipseStrokeColorHover = "rgb(170,0,170)";
+
+    
+    
 }

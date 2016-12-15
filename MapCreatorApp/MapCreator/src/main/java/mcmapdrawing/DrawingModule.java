@@ -29,22 +29,22 @@ import mctemplates.UsefulFunctions;
 
 public class DrawingModule {
 
-    public DrawingModule(SVG s) {
+    public DrawingModule(DrawingModuleInterface s) {
         svg = s;
-        initialSVGFileName = "./DrawingFolder/" + svg.getFileName();        
+        initialSVGFileName = "./DrawingFolder/" + svg.getName();        
         createLBCandRUC();
     }
 
     public void beginSVG() {
-        svg.beginSVG();
-        svg.addPolylineStyle();
+        svg.begin();
+        /*svg.addPolylineStyle();
         svg.addCircleStyle();
         svg.addRectangleStyle();
-        svg.addEllipseStyle();
+        svg.addEllipseStyle();*/
     }
 
     public void endSVG() {
-        svg.endSVG();
+        svg.end();
     }
 
     private void compareLBCRUC(Pair< Pair<Float, Float>, Pair<Float, Float>> LBCRUC) {
@@ -124,7 +124,8 @@ public class DrawingModule {
         }
 
       //  System.out.println( "dW = " + dW + "   dH = " + dH );
-        svg.setWidth((int) ((float) svg.getHeight() * (dW / dH)));
+        //svg.setWidth((int) ((float) svg.getHeight() * (dW / dH)));
+        svg.setSize((int) ((float) svg.getHeight() * (dW / dH)), svg.getHeight() );
         //   System.out.println( "width = " + svg.getWidth() + "   height = " + svg.getHeight() );
     }
 
@@ -213,9 +214,15 @@ public class DrawingModule {
                     y.add(norm.getND());
                 }
 
-                svg.setPolylineWidth(3);
-                svg.setPolylineColor(UsefulFunctions.parseColor(UsefulFunctions.getNextColor()));
-                svg.addPolylinePlain(x, y);
+                /*svg.setPolylineWidth(3);
+                svg.setPolylineColor(UsefulFunctions.parseColor(UsefulFunctions.getNextColor()));*/
+                svg.setStrokeWidth(3);
+                svg.setColor(UsefulFunctions.getNextColor());
+                ArrayList<Point> list = new ArrayList<>();
+                for( int i=0; i<x.size();i++ ){
+                    list.add( new Point( x.get(i), y.get(i) ) );
+                }
+                addPolyline(list);
 
                 //  System.out.println( "Narysowalem linie dla " + s.getShapeId() );
             }
@@ -230,7 +237,7 @@ public class DrawingModule {
             float x = Float.parseFloat(s.getStopLon());
             float y = Float.parseFloat(s.getStopLat());
             Pair<Integer, Integer> p = normalizeCoordinates(LBC, RUC, new Pair<>(x, y));
-            svg.addCircle(p.getST(), p.getND(), 3);
+            svg.addCircle(new Point(p.getST(), p.getND()), 3);
             //   System.out.println( "Dodalem przystanek o id = " + s.getStopId() + "   x = " + p.getST() + "  y = " + p.getND() );
         }
     }
@@ -247,7 +254,7 @@ public class DrawingModule {
         }
 
         createLBCandRUC();
-        svg.setFileName(initialSVGFileName + "_shape_map");
+        svg.setName(initialSVGFileName + "_shape_map");
         beginSVG();
 
         drawShapesOnMap();
@@ -258,7 +265,7 @@ public class DrawingModule {
 
     // rysuje schematyczna mapke - czyli to o co w całym projekcie miało chodzic, ale ze jestesmy ambitni to robimy wieeeeecej
     public void drawSchemeMap() {
-        svg.setFileName(initialSVGFileName + "_scheme");
+        svg.setName(initialSVGFileName + "_scheme");
         beginSVG();
 
         endSVG();
@@ -330,40 +337,41 @@ public class DrawingModule {
         drawForceSpacedGraph();
     }
 
-    private void drawNodeText(MapNode n, Color c) {
-        String formerColor = svg.getTextColor();
-        svg.setTextColor(UsefulFunctions.parseColor(c));
+    private void drawNodeText(MapNode n, Color c){        
+        svg.setColor(c);
         String s = n.getStructureName();
         s += ":" + n.getContainedStopsIds().size();
         Point p = UsefulFunctions.convertToPoint(normalizeCoordinates(LBC, RUC, n.getCoords()));
         Pair<Integer,Integer> offset = n.getTextOffset();
         p.x += offset.getST();
         p.y += offset.getND();
-        svg.addText(p, s);
-        svg.setTextColor(formerColor);
+        svg.addText(s,p);
     }
 
     private void setDrawingNodeParameters(MapNode n) {
         if (n.getDrawingWidth() != 0) {
-            svg.setCircleStrokeWidth(n.getDrawingWidth());
-
-            svg.setEllipseStrokeWidth(n.getDrawingWidth());
+            svg.setStrokeWidth(n.getDrawingWidth());
+            //svg.setCircleStrokeWidth(n.getDrawingWidth());
+            //svg.setEllipseStrokeWidth(n.getDrawingWidth());
         }
         if (n.getHoverWidth() != 0) {
-            svg.setCircleStrokeWidthHover(n.getHoverWidth());
-
-            svg.setEllipseStrokeWidthHover(n.getHoverWidth());
+            svg.setStrokeWidth(n.getDrawingWidth());
+          //  svg.setCircleStrokeWidthHover(n.getHoverWidth());
+           // svg.setEllipseStrokeWidthHover(n.getHoverWidth());
         }
         if (n.getHoverColor() != null) {
-            svg.setCircleFillHover(UsefulFunctions.parseColor(n.getHoverColor()));
+            svg.setColor(n.getColor());
+            svg.setFill( n.getColor() );
+            /*svg.setCircleFillHover(UsefulFunctions.parseColor(n.getHoverColor()));
             svg.setCircleStrokeColorHover(UsefulFunctions.parseColor(n.getHoverColor()));
-
             svg.setEllipseColorHover(UsefulFunctions.parseColor(n.getHoverColor()));
-            svg.setEllipseStrokeColorHover(UsefulFunctions.parseColor(n.getHoverColor()));
+            svg.setEllipseStrokeColorHover(UsefulFunctions.parseColor(n.getHoverColor()));*/
         }
         if (n.getColor() != null) {
-            svg.setCircleFill(UsefulFunctions.parseColor(n.getColor()));
-            svg.setCircleStrokeColor(UsefulFunctions.parseColor(n.getColor()));
+            svg.setColor(n.getColor());
+            svg.setFill( n.getColor() );
+            //svg.setCircleFill(UsefulFunctions.parseColor(n.getColor()));
+           // svg.setCircleStrokeColor(UsefulFunctions.parseColor(n.getColor()));
 
               //  svg.setEllipseColor( UsefulFunctions.parseColor(n.getColor()) );
             //   svg.setEllipseStrokeColor( UsefulFunctions.parseColor(n.getColor()) );
@@ -403,16 +411,19 @@ public class DrawingModule {
 
     private void setDrawingEdgeParameters(MapEdge e) {
         if (e.getHoverWidth() != 0) {
-            svg.setPolylineWidthHover(e.getHoverWidth());
+            
+            //svg.setPolylineWidthHover(e.getHoverWidth());
         }
         if (e.getDrawingWidth() != 0) {
-            svg.setPolylineWidth(e.getDrawingWidth());
+            svg.setStrokeWidth( e.getDrawingWidth() );
+            //svg.setPolylineWidth(e.getDrawingWidth());
         }
         if (e.getColor() != null) {
-            svg.setPolylineColor(UsefulFunctions.parseColor(e.getColor()));
+            svg.setColor(e.getColor());
+            //svg.setPolylineColor(UsefulFunctions.parseColor(e.getColor()));
         }
         if (e.getHoverColor() != null) {
-            svg.setPolylineColorHover(UsefulFunctions.parseColor(e.getHoverColor()));
+            //svg.setPolylineColorHover(UsefulFunctions.parseColor(e.getHoverColor()));
         }
     }
 
@@ -439,7 +450,7 @@ public class DrawingModule {
     public MapGraph drawGraphOnMap(MapGraph graph, String svgname) {
         createLBCandRUC(graph);
 
-        svg.setFileName(initialSVGFileName + "_" + svgname);
+        svg.setName(initialSVGFileName + "_" + svgname);
         beginSVG();
         // svg.addImageLink( "background.jpg" );        
 
@@ -581,10 +592,13 @@ public class DrawingModule {
                 while (c.equals(Color.WHITE) || c.equals(Color.BLACK)) {
                     c = UsefulFunctions.getNextColor();
                 }
-                svg.setPolylineWidth(MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH() );
+                
+                /*svg.setPolylineWidth(MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH() );
                 svg.setPolylineColorHover(UsefulFunctions.parseColor(c));
                 svg.setPolylineWidthHover(MCSettings.getINITIAL_ROUTE_HIGHLIGHT_HOVER_WIDTH());
-                svg.setPolylineColor(UsefulFunctions.parseColor(c));
+                svg.setPolylineColor(UsefulFunctions.parseColor(c));*/
+                svg.setStrokeWidth( MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH() );
+                svg.setColor( c );
                 addPolyline(polyline);
 
             }
@@ -665,11 +679,11 @@ public class DrawingModule {
     }
 
     private void addPolyline(ArrayList<Point> list) {
-        svg.addPolylinePlain(list);
+        svg.addPolyline(list);
     }
 
     private void addCircle(int x, int y, int r) {
-        svg.addCirclePlain(x, y, r);
+        svg.addCircle(new Point(x,y), r);
     }
 
     private void addCircle(Point p, int r) {
@@ -677,7 +691,7 @@ public class DrawingModule {
     }
 
     private void addEllipse(int x, int y, int width, int height) {
-        svg.addEllipsePlain(x, y, width, height);
+        svg.addEllipse( new Point(x,y), width, height);
     }
 
     private void addEllipse(Point p, int width, int height) {
@@ -685,7 +699,7 @@ public class DrawingModule {
     }
 
     private String initialSVGFileName = MCSettings.getMapsDirectoryPath();
-    private SVG svg = null;
+    private DrawingModuleInterface svg = null;
     private MapGraph graph = new MapGraph();
 
     private Pair<Float, Float> RUC = null;

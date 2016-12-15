@@ -241,7 +241,7 @@ public class GraphGlueing {
         trimNodeStructureNames();
         transformPolishLetters();
         
-        return resGraph;
+        return graph;
     }
 
     /**

@@ -5,15 +5,20 @@
  */
 package mcgui;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -22,6 +27,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import mcgraphs.MapNode;
 import mctemplates.MCSettings;
+import mctemplates.UsefulFunctions;
 
 /**
  *
@@ -30,7 +36,7 @@ import mctemplates.MCSettings;
 public class SelectedNodePanel extends JPanel implements ActionListener, ChangeListener {
 
     public SelectedNodePanel() {
-        setSize( 500,500 );
+        setSize( DEFAULT_WIDTH, DEFAULT_HEIGHT );  
         setLayout(new GridBagLayout());
         addAllComponents();
 
@@ -44,7 +50,6 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
         addStructureName();
         addNodeColorBox();
         addNodeSizesSliders();
-        addTextManagers();
         addContainedStopsTextArea();
     }
 
@@ -64,10 +69,10 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
         glueNodeButton = new JButton("Glue");
         glueNodeButton.addActionListener(this);
         
-        add( moveNodeBox, new GBC( 0,0,6,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
-        add( removeNodeButton, new GBC( 6,0,6,1 ).setAnchor(GBC.CENTER).setFill(GBC.BOTH).setWeight(100,100) );
-        add( contractNodeButton, new GBC( 0,1,8,1 ).setAnchor(GBC.CENTER).setFill(GBC.BOTH).setWeight(100,100)  );
-        add( glueNodeButton, new GBC( 8,1,4,1 ).setAnchor(GBC.CENTER).setFill(GBC.BOTH).setWeight(100,100) );       
+        add( moveNodeBox, new GBC( 0,0,6,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH) );
+        add( removeNodeButton, new GBC( 6,0,6,1 ).setAnchor(GBC.CENTER).setFill(GBC.BOTH) );
+        add( contractNodeButton, new GBC( 0,1,6,1 ).setAnchor(GBC.CENTER).setFill(GBC.BOTH)  );
+        add( glueNodeButton, new GBC( 6,1,6,1 ).setAnchor(GBC.CENTER).setFill(GBC.BOTH) );       
         
     }
 
@@ -87,7 +92,7 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
      */
     private void addStructureName() {
         JPanel strPanel = new JPanel();
-        strPanel.setBorder( new TitledBorder( "StructureName settings" ) );
+        strPanel.setBorder( new TitledBorder( BorderFactory.createLineBorder( Color.BLACK,3 ), "StructureName settings" ) );
         strPanel.setLayout( new GridBagLayout() );
         
         structureNameLabel = new JLabel( "Structure Name:" );
@@ -102,21 +107,21 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
         textVisibleBox = new JCheckBox( "Visible" );
         textVisibleBox.addActionListener(this);
         
-        textSizeSlider = new JSlider( 0, MCSettings.getMAX_TEXT_FONT() );
+        textSizeSlider = new JSlider( 0, MCSettings.getMAX_TEXT_FONT(),10 );
         textSizeSlider.setPaintTicks(true);
         textSizeSlider.setMajorTickSpacing( 5 );
         textSizeSlider.setPaintLabels(true);
         textSizeSlider.setPaintTrack(true);
         textSizeSlider.addChangeListener(this);
-        textSizeLabel = new JLabel( "Text size: " );
+        textSizeLabel = new JLabel( "Text size:" );
         
-        textAngleSlider = new JSlider( 0,360 );
+        textAngleSlider = new JSlider( 0,360,0 );
         textAngleSlider.setPaintTicks(true);
         textAngleSlider.setMajorTickSpacing( 45 );
         textAngleSlider.setPaintLabels(true);
         textAngleSlider.setPaintTrack(true);
         textAngleSlider.addChangeListener(this);
-        textAngleLabel = new JLabel( "Text angle: " );
+        textAngleLabel = new JLabel( "Text angle:" );
         
         strPanel.add( structureNameLabel, new GBC( 0,0,4,1 ).setAnchor( GBC.EAST ).setFill(GBC.BOTH).setWeight(100,100) );
         strPanel.add( structureNameTextField, new GBC( 4,0,6,1 ).setAnchor( GBC.WEST ).setFill(GBC.BOTH).setWeight(100,100) );
@@ -134,37 +139,59 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
         strPanel.add( textAngleLabel, new GBC( 0,4,4,1 ).setAnchor( GBC.EAST ).setFill(GBC.BOTH).setWeight(100,100));
         strPanel.add( textAngleSlider, new GBC( 4,4,8,1 ).setAnchor( GBC.WEST ).setFill(GBC.BOTH).setWeight(100,100));
         
-        add(strPanel, new GBC( 0,2,12,5 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH));
+        add(strPanel, new GBC( 0,2,12,5 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100));
     }
 
     /**
      * Adds nodeColor ComboBox
      */
     private void addNodeColorBox() {
-
+        nodeColorLabel = new JLabel( "Node color:" );
+        Color[] colors = UsefulFunctions.getColors();
+        String[] cols = new String[ colors.length ];
+        for( int i=0; i<cols.length; i++ ){
+            cols[i] = UsefulFunctions.parseColor( colors[i] );
+        }
+        
+        nodeColorBox = new JComboBox( cols );
+        nodeColorBox.addActionListener(this);
+               
+        add( nodeColorLabel, new GBC( 0,7,4,2 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH) );
+        add( nodeColorBox, new GBC( 4,7,8,2 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH) );        
     }
 
     /**
      * Adds node's width and height sliders
      */
     private void addNodeSizesSliders() {
-
+        
+        nodeWidthLabel = new JLabel( "Node width:" );
+        nodeWidthSlider = new JSlider( 0, MCSettings.getMAX_NODE_WIDTH(), 5 );
+        
+        nodeWidthSlider.setPaintTicks(true);
+        nodeWidthSlider.setMajorTickSpacing(3);
+        nodeWidthSlider.setPaintTrack(true);
+        nodeWidthSlider.setPaintLabels(true);
+        nodeWidthSlider.addChangeListener(this);
+        
+        add( nodeWidthLabel, new GBC( 0,9,4,2 ).setAnchor( GBC.EAST ).setFill(GBC.BOTH).setWeight(100,100) );
+        add( nodeWidthSlider, new GBC( 4,9,8,2 ).setAnchor( GBC.EAST ).setFill(GBC.BOTH).setWeight(100,100) );        
     }
 
     /**
      * Adds text area to display node's data.
      */
-    private void addContainedStopsTextArea() {
-
+    private void addContainedStopsTextArea(){         
+        containedStopsTextArea = new JTextArea("Witam",10,50);
+        containedStopsTextArea.setLineWrap(true);
+        containedStopsTextArea.setFont( new Font( "Serif",Font.PLAIN, 10 ) );
+        containedStopsTextArea.setEnabled(false);
+        JScrollPane scroll = new JScrollPane( containedStopsTextArea );
+        scroll.setBorder( new TitledBorder( BorderFactory.createLineBorder( Color.BLUE , 3), "Contained stops" ) );
+        
+        add( scroll, new GBC( 0,11,12,7 ).setFill(GBC.BOTH).setAnchor(GBC.CENTER).setWeight(100,100) );
     }
-
-    /**
-     * Adds components to manage text of the node.
-     */
-    private void addTextManagers() {
-
-    }
-
+    
     /**
      *
      * @return return selected items. This panel must have an access to selected
@@ -209,6 +236,8 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
             
         }else if( source == structureNameAcceptButton ){
             
+        }else if( source == nodeColorBox ){
+            
         }
     }
     
@@ -247,7 +276,6 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
     private JLabel nodeHeightLabel = null;
     private JSlider nodeHeightSlider = null;
 
-    private JLabel containedStopsLabel = null;
     private JTextArea containedStopsTextArea = null;
 
     private JCheckBox textVisibleBox = null;
@@ -258,6 +286,7 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
     private JCheckBox textBoldBox = null;
     
     
-    
+    private int DEFAULT_WIDTH = 400;
+    private int DEFAULT_HEIGHT = 600;
     
 }

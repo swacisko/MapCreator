@@ -5,10 +5,32 @@
  */
 package mcgui;
 
+import javax.swing.JPanel;
+
 /**
  *
  * @author swacisko
  */
-public class SelectedEdgePanel {
+public class SelectedEdgePanel extends JPanel {
     
+    public SelectedEdgePanel(){
+        setSize( DEFAULT_WIDTH, DEFAULT_HEIGHT );     
+        
+    }
+    
+    
+    private SelectedItems selectedItems = null;
+
+    public SelectedItems getSelectedItems() {
+        return selectedItems;
+    }
+
+    public void setSelectedItems(SelectedItems selectedItems) {
+        this.selectedItems = selectedItems;
+    }
+    
+    
+    
+    private int DEFAULT_WIDTH = 400;
+    private int DEFAULT_HEIGHT = 600;
 }

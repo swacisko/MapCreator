@@ -76,6 +76,7 @@ public class MapGraphCreator {
             node.setStructureName(s.getStopName());
             node.setDescription("Structure represents a STOP");
             if( s.getColor() != null ) node.setColor(s.getColor());
+            else node.setColor( MCSettings.getINITIAL_NODE_COLOR() );
             node.addContainedStopsId(s.getStopId());
             if( noncontractableNodes.contains( s.getStopId() ) ){
                 node.setContractable( false );

@@ -108,7 +108,7 @@ public class MapStructure {
 
     private Color hoverColor = Color.RED;
     private int ID = -1;
-    private Color color = Color.BLACK;
+    private Color color = null;
     private String description = "";
     
     /**

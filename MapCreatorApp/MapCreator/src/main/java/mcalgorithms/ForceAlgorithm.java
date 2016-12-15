@@ -11,6 +11,7 @@ import java.util.Map;
 import mcgraphs.MapEdge;
 import mcgraphs.MapGraph;
 import mcgraphs.MapNode;
+import mcmapdrawing.DrawingModuleInterface;
 import mcmapdrawing.SVG;
 import mctemplates.MCSettings;
 import mctemplates.Pair;
@@ -22,7 +23,7 @@ import mctemplates.Pair;
 public class ForceAlgorithm {
     
     // uwaga - modyfikuje zadany graf, nie tworzy nowej kopii!!!!
-    public ForceAlgorithm( MapGraph g, SVG s ){
+    public ForceAlgorithm( MapGraph g, DrawingModuleInterface s ){
         graph = g;
         svg = s;
     }
@@ -335,7 +336,7 @@ public class ForceAlgorithm {
     }
     
     private MapGraph graph = null;
-    private SVG svg = null;
+    private DrawingModuleInterface svg = null;
     private Pair<Float,Float> LBC = null;
     private Pair<Float,Float> RUC = null;
     

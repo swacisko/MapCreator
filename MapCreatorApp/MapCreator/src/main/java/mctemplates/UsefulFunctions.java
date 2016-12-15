@@ -96,6 +96,21 @@ public class UsefulFunctions {
             return "" + c.getRGB();
         }
     }
+    
+    public static Color parseColor( String c ){
+        if( c.equalsIgnoreCase( "blue" ) ) return Color.BLUE;
+        else if( c.equalsIgnoreCase( "red" ) ) return Color.RED;
+        else if( c.equalsIgnoreCase( "yellow" ) ) return Color.YELLOW;
+        else if( c.equalsIgnoreCase( "black" ) ) return Color.BLACK;
+        else if( c.equalsIgnoreCase( "green" ) ) return Color.GREEN;
+        else if( c.equalsIgnoreCase( "orange" ) ) return Color.ORANGE;
+        else if( c.equalsIgnoreCase( "pink" ) ) return Color.PINK;
+        else if( c.equalsIgnoreCase( "white" ) ) return Color.WHITE;
+        else if( c.equalsIgnoreCase( "gray" ) ) return Color.GRAY;
+        else if( c.equalsIgnoreCase( "cyan" ) ) return Color.CYAN;
+        else if( c.equalsIgnoreCase( "magenta" ) ) return Color.MAGENTA;
+        else return null;
+    }
 
     /**
      * Calculates the center of gravity of two points
@@ -300,7 +315,11 @@ public class UsefulFunctions {
 
     private static int currentColor = 0;
     private static Color[] colors = {
-        Color.RED, Color.BLACK, Color.YELLOW, Color.BLUE, Color.GREEN, Color.ORANGE, Color.WHITE, Color.GRAY, Color.MAGENTA, Color.CYAN,
+        Color.RED, /*Color.BLACK,*/ Color.YELLOW, Color.BLUE, Color.GREEN, Color.ORANGE, Color.WHITE, Color.GRAY, Color.MAGENTA, Color.CYAN,
         Color.PINK
     };
+
+    public static Color[] getColors() {
+        return colors;
+    }
 }

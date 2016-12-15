@@ -73,6 +73,7 @@ public class MCSettings {
     private static int INITIAL_ROUTE_HIGHLIGHT_HOVER_WIDTH = 4*INITIAL_EDGE_HOVER_WIDTH;
 
     private static int MAX_TEXT_FONT = 30;
+    private static int MAX_NODE_WIDTH = 15;
 
     
     
@@ -108,7 +109,13 @@ public class MCSettings {
 
     
     //***************************************************************  GETTERS AND SETTERS AND SOME OTHER
-    
+      public static int getMAX_NODE_WIDTH() {
+        return MAX_NODE_WIDTH;
+    }
+
+    public static void setMAX_NODE_WIDTH(int MAX_NODE_WIDTH) {
+        MCSettings.MAX_NODE_WIDTH = MAX_NODE_WIDTH;
+    }
     public static int getMAX_TEXT_FONT() {
         return MAX_TEXT_FONT;
     }

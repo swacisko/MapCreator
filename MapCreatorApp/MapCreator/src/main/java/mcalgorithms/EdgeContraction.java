@@ -29,6 +29,11 @@ public class EdgeContraction {
     private void createDeg2Vertices(){        
         System.out.print( "Wybieram wierzcholki stopnia 2" );
         deg2Nodes.clear();
+        if( graph == null || graph.getNodes() == null ){
+            System.out.println( (graph==null)?"graph==null":"graph.getNodes()==null" );
+            return;
+        }
+        
         for( MapNode n : graph.getNodes() ){
             if( (n.countEdges() == 2) && n.isContractable() ){
                 deg2Nodes.add(n);

@@ -2,7 +2,6 @@ package mcmapcreator;
 
 import java.awt.EventQueue;
 import javax.swing.JFrame;
-import mcgraphs.MapGraph;
 import mcgtfsstructures.MCDatabase;
 import mcgui.MainFrame;
 import mcmapdrawing.SVG;
@@ -22,7 +21,7 @@ public class Main {
                 MainFrame frame = new MainFrame();
                 frame.setVisible(true);
                 frame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
-                                
+                frame.setResizable(true);
             }
         });
         
@@ -32,7 +31,7 @@ public class Main {
        // MapGraph g = new MapGraph();
        // g.testGraph();        
         
-        for( int i=1; i<=15; i++ ){
+        for( int i=1; i<=10; i++ ){
             MCSettings.addRouteToHighlight( ""+i );
         }
         

@@ -318,8 +318,24 @@ public class UsefulFunctions {
         Color.RED, Color.BLACK, Color.YELLOW, Color.BLUE, Color.GREEN, Color.ORANGE, Color.WHITE, Color.GRAY, Color.MAGENTA, Color.CYAN,
         Color.PINK
     };
+    
+    public static float getDistance( Pair<Float,Float> p, Pair<Float,Float> q){
+        float dx = p.getST() - q.getST();
+        float dy = p.getND() - q.getND();
+        return (float)Math.sqrt( dx*dx + dy*dy );
+    }
 
     public static Color[] getColors() {
         return colors;
     }
+    
+    /**
+     * Converts pair to integers
+     * @param p pair to be converted
+     * @return converted pair
+     */
+    public static Pair<Integer,Integer> convertToPairInteger( Pair<Float,Float> p ){
+        return new Pair<>( Math.round(p.getST()), Math.round( p.getND() ) );
+    }
+    
 }

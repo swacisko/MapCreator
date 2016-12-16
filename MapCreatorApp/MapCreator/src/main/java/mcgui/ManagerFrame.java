@@ -30,21 +30,18 @@ public class ManagerFrame extends JFrame {
     
     private void arrangeInitialFrameSettings(){
         setTitle("Map Manager");
-        Toolkit t = Toolkit.getDefaultToolkit();
         try {
             //setIconImage(ImageIO.read(null));
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Dimension d = t.getScreenSize();
-        setSize(d.width/3, d.height/3);
         
-        setLayout( new GridBagLayout() );
-        
+        setLayout( new GridBagLayout() );   
         
         
         nodePanel = new SelectedNodePanel();
         nodePanel.setSelectedItems( selectedItems );
+        nodePanel.setParentFrame(this);
                 
         settingsPanel = new SettingsPanel();
         settingsPanel.setSelectedItems(selectedItems);
@@ -54,6 +51,7 @@ public class ManagerFrame extends JFrame {
         
         edgePanel = new SelectedEdgePanel();
         edgePanel.setSelectedItems(selectedItems);
+        edgePanel.setParentFrame(this);
         
         mapCreatorButton = new JButton( "Map Creator" );
         mapCreatorButton.addActionListener(new ActionListener() {
@@ -68,7 +66,6 @@ public class ManagerFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 switchToSelectedNodePanel();
-                System.out.println( "Switched to nodePanel! currentPanel == selectedNodePanel:  " + ( currentPanel == nodePanel ) );
             }
         });
         

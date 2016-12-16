@@ -7,9 +7,11 @@ package mcgui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.EventQueue;
+import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.Toolkit;
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 import mcmapdrawing.DrawingModule;
 
 /**
@@ -28,17 +30,26 @@ public class MainFrame extends JFrame {
         }
         Dimension d = t.getScreenSize();
         setSize(d.width, d.height);
-        setResizable(false);
                 
-        schemePanel = new SchemeContructionPanel( d.width - 30, d.height-350 );
+        schemePanel = new SchemeContructionPanel( d.width - 30, d.height-30 );
         schemePanel.setSelectedItems(selectedItems);
+        schemePanel.setParentFrame(this);
         setLayout( new BorderLayout() );
-        add( schemePanel, BorderLayout.CENTER );
+        JScrollPane scroll = new JScrollPane( schemePanel );
+        add( scroll, BorderLayout.CENTER );
         
         managerFrame = new ManagerFrame(this, selectedItems);
+        managerFrame.setLocation( new Point( (2*d.width/3), d.height / 10  ) );
+        managerFrame.setSize( d.width / 3, d.height/2 );
         managerFrame.setVisible(true);
         managerFrame.setDefaultCloseOperation( JFrame.HIDE_ON_CLOSE );
         
+    }
+        
+    @Override
+    public void repaint(){
+        super.repaint();
+        managerFrame.repaint();
     }
         
     private SelectedItems selectedItems = new SelectedItems();

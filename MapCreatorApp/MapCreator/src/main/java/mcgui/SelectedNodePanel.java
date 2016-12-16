@@ -7,6 +7,7 @@ package mcgui;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -41,6 +42,30 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
         setLayout(new GridBagLayout());
         addAllComponents();
 
+    }
+    
+    
+    
+    @Override
+    public void paintComponent(Graphics g){
+        updateComponentsData();
+    }
+    
+    private void updateComponentsData(){
+        MapNode n = selectedItems.getSelectedNode1();
+        if( n == null ) return;
+        structureNameTextField.setText( n.getStructureName() );
+        String res = "";
+        for( String s : n.getContainedStopsIds() ){
+            res += s + "\n";
+        }
+        containedStopsTextArea.setText(res);
+        nodeColorBox.setSelectedItem( UsefulFunctions.parseColor( n.getColor() ) );
+        nodeHeightSlider.setValue( n.getHeight() );
+        nodeWidthSlider.setValue( n.getWidth() );
+        textAngleSlider.setValue( n.getTextAngle() );
+        textVisibleBox.setSelected( n.isTextVisilbe() );
+        textBoldBox.setSelected( n.isTextBold() );
     }
 
     /**
@@ -84,6 +109,7 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
             @Override
             public void actionPerformed(ActionEvent e) {
                 selectedItems.getSelectedNode1().updateTextOffset( xdiff, ydiff );
+                getParentFrame().getParentFrame().repaint();
             }
         } );
         return button;
@@ -131,10 +157,10 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
         strPanel.add( textVisibleBox,  new GBC( 0,1,6,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
         strPanel.add( textBoldBox,  new GBC( 6,1,6,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
         strPanel.add( new JLabel("Move node text: "), new GBC( 0,2,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
-        strPanel.add( getTextMoveButton("U",0,1),  new GBC( 4,2,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
-        strPanel.add( getTextMoveButton("D",0,-1),  new GBC( 6,2,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100));
-        strPanel.add( getTextMoveButton("L",-1,0),  new GBC( 8,2,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
-        strPanel.add( getTextMoveButton("R",1,0),  new GBC( 10,2,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100));
+        strPanel.add( getTextMoveButton("U",0,2),  new GBC( 4,2,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
+        strPanel.add( getTextMoveButton("D",0,-2),  new GBC( 6,2,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100));
+        strPanel.add( getTextMoveButton("L",-2,0),  new GBC( 8,2,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
+        strPanel.add( getTextMoveButton("R",2,0),  new GBC( 10,2,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100));
         strPanel.add( textSizeLabel, new GBC( 0,3,4,1 ).setAnchor( GBC.EAST ).setFill(GBC.BOTH).setWeight(100,100));
         strPanel.add( textSizeSlider, new GBC( 4,3,8,1 ).setAnchor( GBC.WEST ).setFill(GBC.BOTH).setWeight(100,100));
         strPanel.add( textAngleLabel, new GBC( 0,4,4,1 ).setAnchor( GBC.EAST ).setFill(GBC.BOTH).setWeight(100,100));
@@ -175,8 +201,21 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
         nodeWidthSlider.setPaintLabels(true);
         nodeWidthSlider.addChangeListener(this);
         
-        add( nodeWidthLabel, new GBC( 0,9,4,2 ).setAnchor( GBC.EAST ).setFill(GBC.BOTH).setWeight(100,100) );
-        add( nodeWidthSlider, new GBC( 4,9,8,2 ).setAnchor( GBC.EAST ).setFill(GBC.BOTH).setWeight(100,100) );        
+        add( nodeWidthLabel, new GBC( 0,9,2,2 ).setAnchor( GBC.EAST ).setFill(GBC.BOTH).setWeight(100,100) );
+        add( nodeWidthSlider, new GBC( 2,9,4,2 ).setAnchor( GBC.WEST ).setFill(GBC.BOTH).setWeight(100,100) ); 
+        
+        nodeHeightLabel = new JLabel( "Node height:" );
+        nodeHeightSlider = new JSlider( 0, MCSettings.getMAX_NODE_HEIGHT(), 5 );
+        
+        nodeHeightSlider.setPaintTicks(true);
+        nodeHeightSlider.setMajorTickSpacing(3);
+        nodeHeightSlider.setPaintTrack(true);
+        nodeHeightSlider.setPaintLabels(true);
+        nodeHeightSlider.addChangeListener(this);
+        
+        add( nodeHeightLabel, new GBC( 6,9,2,2 ).setAnchor( GBC.EAST ).setFill(GBC.BOTH).setWeight(100,100) );
+        add( nodeHeightSlider, new GBC( 8,9,4,2 ).setAnchor( GBC.WEST ).setFill(GBC.BOTH).setWeight(100,100) ); 
+        
     }
 
     /**
@@ -236,8 +275,7 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
                     new EdgeContraction( selectedItems.getGraph() ).removeDeg2NodeFromGraph(n);
                     selectedItems.setSelectedNode1(null);
                 }
-            }
-                
+            }               
            
         }else if( source == glueNodeButton ){
             
@@ -258,24 +296,41 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
         }else if( source == nodeColorBox ){
             MapNode n = selectedItems.getSelectedNode1();
             if( n == null ) return;
-            n.setColor( (Color) nodeColorBox.getSelectedItem() );
+            n.setColor( UsefulFunctions.parseColor( (String)nodeColorBox.getSelectedItem() ) );
         }
         
-        repaint();
+        getParentFrame().getParentFrame().repaint();
     }
     
     @Override
     public void stateChanged(ChangeEvent e) {
         Object source = e.getSource();
+        MapNode n = selectedItems.getSelectedNode1();
+        if( n == null ) return;
         if (source == textSizeSlider ){
+            n.setTextFontSize( textSizeSlider.getValue() );
             
         }else if (source == textAngleSlider ){
-            
+            n.setTextAngle( textAngleSlider.getValue() );
         }else if (source == nodeWidthSlider ){
-            
+            n.setWidth( nodeWidthSlider.getValue() );
         } else if (source == nodeHeightSlider ){
-            
+            n.setHeight( nodeHeightSlider.getValue() );
         }
+        
+        getParentFrame().getParentFrame().repaint();
+    }
+    
+    public ManagerFrame getPareFrame(){
+        return parentFrame;
+    }
+    
+     public ManagerFrame getParentFrame() {
+        return parentFrame;
+    }
+
+    public void setParentFrame(ManagerFrame parentFrame) {
+        this.parentFrame = parentFrame;
     }
 
     //**************************** CLASS FIELDS
@@ -308,6 +363,9 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
     private JSlider textAngleSlider = null;
     private JCheckBox textBoldBox = null;
     
+    private ManagerFrame parentFrame = null;
+
+   
     
     private int DEFAULT_WIDTH = 400;
     private int DEFAULT_HEIGHT = 600;

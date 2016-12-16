@@ -202,6 +202,8 @@ public class GraphGlueing {
         n1.getContainedStopsIds().addAll( n2.getContainedStopsIds() );
         n1.setCoords( UsefulFunctions.centerOfGravity( n1.getCoords() ,n2.getCoords()) );
         n1.setContractable( n1.isContractable() && n2.isContractable() );
+        n1.setWidth( n1.getContainedStopsIds().size() );
+        n1.setHeight( (int)(2*(float)n1.getContainedStopsIds().size()/3) );
     }
     
     /**

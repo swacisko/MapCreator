@@ -30,6 +30,17 @@ public class SelectedEdgePanel extends JPanel {
     }
     
     
+     public ManagerFrame getParentFrame() {
+        return parentFrame;
+    }
+
+    public void setParentFrame(ManagerFrame parentFrame) {
+        this.parentFrame = parentFrame;
+    }
+    
+    private ManagerFrame parentFrame = null;
+
+   
     
     private int DEFAULT_WIDTH = 400;
     private int DEFAULT_HEIGHT = 600;

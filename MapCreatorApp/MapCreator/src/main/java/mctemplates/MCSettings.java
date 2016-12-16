@@ -41,7 +41,7 @@ public class MCSettings {
     public static final int FUNICULAR = (1 << 7);
     public static final int ALL_TRANSPORT_MEASURES = (1 << 8) - 1;
 
-    private static int DRAWING_ROUTE_TYPE = BUS;
+    private static int DRAWING_ROUTE_TYPE = TRAM;
 
     private static Color TRAM_COLOR = Color.GREEN;
     private static Color METRO_COLOR = Color.GRAY;
@@ -77,7 +77,10 @@ public class MCSettings {
     private static int INITIAL_ROUTE_HIGHLIGHT_HOVER_WIDTH = 4*INITIAL_EDGE_HOVER_WIDTH;
 
     private static int MAX_TEXT_FONT = 30;
-    private static int MAX_NODE_WIDTH = 15;
+    private static int MAX_NODE_WIDTH = 30;
+
+    
+    private static int MAX_NODE_HEIGHT = 30;
     private static int INITIAL_TEXT_FONT_SIZE = 5;
 
     
@@ -94,7 +97,7 @@ public class MCSettings {
     private static int INITIAL_SVG_HEIGHT = 3000;
 
     private static float FIRST_GLUEING_DISTANCE_PARAMETER = 5;
-    private static float SECOND_GLUEING_DISTANCE_PARAMTER = 20;
+    private static float SECOND_GLUEING_DISTANCE_PARAMTER = 25;
 
     private static String gtfsDirectoryPath = new File("").getAbsolutePath();
     private static String mapsDirectoryPath = new File("").getAbsolutePath() + "/DrawingFolder/";
@@ -116,6 +119,14 @@ public class MCSettings {
 
     
     //***************************************************************  GETTERS AND SETTERS AND SOME OTHER
+    
+    public static int getMAX_NODE_HEIGHT() {
+        return MAX_NODE_HEIGHT;
+    }
+
+    public static void setMAX_NODE_HEIGHT(int MAX_NODE_HEIGHT) {
+        MCSettings.MAX_NODE_HEIGHT = MAX_NODE_HEIGHT;
+    }
     
     public static Color getINITIAL_FILL_COLOR() {
         return INITIAL_FILL_COLOR;
@@ -207,7 +218,7 @@ public class MCSettings {
             Color color = null;
             do{
                 color = UsefulFunctions.getNextColor();
-            }while( color != Color.WHITE );
+            }while( color == Color.WHITE || color == Color.BLACK );
             routeToHighlightColor.put( routeId, color );
         }        
     }

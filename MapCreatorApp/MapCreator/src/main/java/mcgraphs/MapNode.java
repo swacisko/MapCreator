@@ -6,6 +6,7 @@
  */
 package mcgraphs;
 
+import java.awt.Color;
 import java.awt.Font;
 import mctemplates.Pair;
 import java.util.ArrayList;
@@ -37,7 +38,8 @@ public class MapNode extends MapStructure implements Drawable {
     public Pair<Float, Float> getCoords() {
         return coords;
     }
-
+    
+    
     public void addMapEdge(MapEdge e) {
         edges.add(e);
     }
@@ -228,6 +230,8 @@ public class MapNode extends MapStructure implements Drawable {
         textOffset.setND( Y+y );
     }
     
+    
+    
     /**
      * 
      * @return returns angle at which node text should be written
@@ -276,6 +280,13 @@ public class MapNode extends MapStructure implements Drawable {
         this.textFormat = textFormat;
     }
     
+    public Color getFillColor() {
+        return fillColor;
+    }
+
+    public void setFillColor(Color fillColor) {
+        this.fillColor = fillColor;
+    }
     
     /**
      * variable contractable is used to either allow or disable {@link GraphGlueing#glueGraphOld() } function to glue this node with other nodes 
@@ -297,6 +308,8 @@ public class MapNode extends MapStructure implements Drawable {
     private int textFontSize = MCSettings.getINITIAL_TEXT_FONT_SIZE();
     private boolean textBold = false;
     private int textFormat = Font.PLAIN;
+    private Color fillColor = MCSettings.getINITIAL_FILL_COLOR();
+
     
     
    

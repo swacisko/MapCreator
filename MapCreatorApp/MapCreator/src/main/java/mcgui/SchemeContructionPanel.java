@@ -21,10 +21,12 @@ import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
+import mcgraphs.MapGraph;
 import mcgraphs.MapNode;
 import mcmapdrawing.DrawingModule;
 import mcmapdrawing.DrawingModuleInterface;
 import mctemplates.Pair;
+import mctemplates.UsefulFunctions;
 
 /**
  *  This class is a panel on which we draw a scheme. 
@@ -41,6 +43,8 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
          setLayout( new FlowLayout());         
          setBorder( BorderFactory.createLineBorder(Color.RED, 3, true) );
          
+         addMouseMotionListener( new MouseMotionHandler() );
+         addMouseListener( new MouseHandler() );
          
     }
     
@@ -54,16 +58,18 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
     
     @Override
     public void addEllipse(Point p, int w, int h) {
-        Ellipse2D ellipse = new Ellipse2D.Double( p.x- (w/2) ,p.y -(h/2) ,w/2 ,h/2 );
-        graphics.setColor( color );
-        graphics.draw( ellipse );
+        Ellipse2D ellipse = new Ellipse2D.Double( p.x- (w/4) ,p.y -(h/4) ,w/2 ,h/2 );        
         graphics.setColor(fillColor);
         graphics.fill(ellipse);
+        graphics.setColor( color );
+        graphics.setStroke( new BasicStroke(strokeWidth/2) );
+        graphics.draw( ellipse );
+        
     }
 
     @Override
     public void addCircle(Point p, int radius) {
-        addEllipse(p, radius/2,radius/2);
+        addEllipse(p, radius,radius);
     }
 
     @Override
@@ -98,9 +104,9 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
     @Override
     public void addText(Point p, String text, int fontsize, int format, int angleWidth) {        
         AffineTransform at = new AffineTransform();
-        at.setToRotation( 2 * Math.PI * angleWidth / 360f );
+        at.setToRotation( 2 * Math.PI * angleWidth / 360f, p.x, p.y );
         graphics.setTransform(at);
-        graphics.setFont( new Font( "Serif",format,fontsize ) );
+        graphics.setFont( new Font( "Serif",format,2*fontsize ) );
         graphics.drawString(text,p.x,p.y);
     }
 
@@ -137,7 +143,13 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
         this.selectedItems = selectedItems;
     }
     
-    
+    public MainFrame getParentFrame() {
+        return parentFrame;
+    }
+
+    public void setParentFrame(MainFrame parentFrame) {
+        this.parentFrame = parentFrame;
+    }
     
     
 
@@ -149,6 +161,9 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
     private Graphics2D graphics = null;
     
     private DrawingModule module = null;
+    private MainFrame parentFrame = null;
+
+    
     
     private SelectedItems selectedItems = null;    
     private int DEFAULT_WIDTH = 1500;
@@ -170,12 +185,15 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
     class MouseHandler extends MouseAdapter{
         
         private MapNode getMapNodeOnPosition( Point p ){
+            if( selectedItems.getGraph() == null ) return null;
+            if( selectedItems.getGraph().getNodes() == null ) return null;
+            System.out.println( "szukam wierzcholka" );
             for( MapNode n : selectedItems.getGraph().getNodes() ){
-                Pair<Float,Float> coords = n.getCoords();
-                
-                
-                
-                
+                Pair<Integer,Integer> coords = module.normalizeCoordinates( n.getCoords() );
+                float radius = Math.max( n.getWidth(), n.getHeight() );
+                Pair<Float,Float> pf = new Pair<>( (float)p.x, (float)p.y );
+                float dist = UsefulFunctions.getDistance( new Pair<Float,Float>( (float)coords.getST(), (float)coords.getND() ), pf );
+                if( dist < radius ) return n;
             }
             
             return null;
@@ -189,14 +207,20 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
         @Override
         public void mouseClicked( MouseEvent event ){
             MapNode n = getMapNodeOnPosition( event.getPoint() );
+            System.out.println( "Point:\t" + event.getPoint() );
             if( n == null ){
                 selectedItems.setSelectedNode1(null);
+                System.out.println( "NULL !" );
+                return;
             }
             else if( selectedItems.getSelectedNode1() != null ){
                 selectedItems.setSelectedNode2(n);
             }else{
                 selectedItems.setSelectedNode1(n);
             }
+            
+            System.out.println( "Map node selected, name = " + n.getStructureName() + "   coords: " + n.getCoords() );
+            getParentFrame().repaint();
         }
         
     }

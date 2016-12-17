@@ -5,52 +5,51 @@
  */
 package mcgui;
 
-import java.awt.Frame;
+import java.awt.BorderLayout;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
-import javax.swing.JDialog;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneLayout;
 import mcgtfsstructures.MCDatabase;
 import mcgtfsstructures.Route;
 import mctemplates.MCSettings;
 
 /**
- * {@link MRSDialog} is MainRoutesDialog. Here we can select routes we want to highlight on the scheme.
+ * {@link MRSPanel} is MainRoutesDialog. Here we can select routes we want to highlight on the scheme.
  * @author swacisko
  */
-public class MRSDialog extends JDialog {
+public class MRSPanel extends JPanel {
     
-    public MRSDialog( Frame parent, String title ){
-        super( parent, title, false );
-                
+    public MRSPanel(){        
         addComponents();
     }
-    
-    
-    private void addComponents(){
-        panel = new JPanel();
-        panel.setLayout( new BoxLayout(panel, BoxLayout.Y_AXIS)  );
         
+    private void addComponents(){
+        setLayout( new GridBagLayout()  );
+              
         ArrayList<Route> routes = MCDatabase.getAllRoutes();
+        int row = 0;
         for( Route r : routes ){            
-            addJCheckBox(r);            
+            addJCheckBox(r, row++);            
         }
-         
         
     }
     
-    private void addJCheckBox( final Route r ){
-        String text = r.getRouteId();
+    private void addJCheckBox( final Route r, int row ){
+        String text = "Route " + r.getRouteId();
         text += ". ";
-        if( r.getRouteShortName().equals( "" ) == false ){
-            text += r.getRouteShortName();
+        if( r.getRouteLongName().equals( "" ) == false ){            
+            text += "Long name: " + r.getRouteLongName();
         }else{
-            text += r.getRouteLongName();
+            text += "Short name: " + r.getRouteShortName();
         }
         JCheckBox box = new JCheckBox( text );
+        box.setSelected( (MCSettings.getRouteToHighlightColor( r.getRouteId() ) != null) ); // this way i can check, whether route with r.getRouteID() is in routesToHighlight
         box.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -63,12 +62,7 @@ public class MRSDialog extends JDialog {
             }
         });
         
-        add( box );
+        add( box, new GBC( 0,row,3,1 ).setAnchor( GBC.CENTER ).setFill( GBC.BOTH ) );
     }
-    
-    
-    
-    
-    public JPanel panel = null;
-    
+        
 }

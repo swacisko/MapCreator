@@ -76,7 +76,7 @@ public class MCSettings {
     private static int INITIAL_ROUTE_HIGHLIGHT_WIDTH = 4*INITIAL_EDGE_WIDTH;
     private static int INITIAL_ROUTE_HIGHLIGHT_HOVER_WIDTH = 4*INITIAL_EDGE_HOVER_WIDTH;
 
-    private static int MAX_TEXT_FONT = 30;
+    private static int MAX_TEXT_FONT = 50;
     private static int MAX_NODE_WIDTH = 30;
 
     
@@ -89,8 +89,6 @@ public class MCSettings {
     private static float svgToSwingFactor = 0.5f;
 
      
-    
-    
     /**
      * Initial width is useless - width of svg is changed so that it's shape is
      * kept

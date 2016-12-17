@@ -76,6 +76,7 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
         textAngleSlider.setValue( n.getTextAngle() );
         textVisibleBox.setSelected( n.isTextVisilbe() );
         textBoldBox.setSelected( n.isTextBold() );
+        textSizeSlider.setValue( n.getTextFontSize() );
         
         selectedItems.setJustSelected(false);
     }
@@ -146,9 +147,9 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
         textVisibleBox = new JCheckBox( "Visible" );
         textVisibleBox.addActionListener(this);
         
-        textSizeSlider = new JSlider( 0, MCSettings.getMAX_TEXT_FONT(),10 );
+        textSizeSlider = new JSlider( 0, MCSettings.getMAX_TEXT_FONT(), MCSettings.getINITIAL_TEXT_FONT_SIZE() );
         textSizeSlider.setPaintTicks(true);
-        textSizeSlider.setMajorTickSpacing( 5 );
+        textSizeSlider.setMajorTickSpacing( 10 );
         textSizeSlider.setPaintLabels(true);
         textSizeSlider.setPaintTrack(true);
         textSizeSlider.addChangeListener(this);

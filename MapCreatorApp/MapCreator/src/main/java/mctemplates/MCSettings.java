@@ -88,7 +88,7 @@ public class MCSettings {
     
     private static float svgToSwingFactor = 0.5f;
 
-     
+   
     /**
      * Initial width is useless - width of svg is changed so that it's shape is
      * kept

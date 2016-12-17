@@ -23,7 +23,7 @@ public class Main {
        // MapGraph g = new MapGraph();
        // g.testGraph();        
         
-        for( int i=1; i<=10; i++ ){
+        for( int i=1; i<=7; i++ ){
             MCSettings.addRouteToHighlight( ""+i );
         }
         
@@ -37,8 +37,8 @@ public class Main {
             }
         });
         
-        DrawingModule dm = new DrawingModule( new SVG( MCSettings.getINITIAL_SVG_WIDTH(),MCSettings.getINITIAL_SVG_HEIGHT(),"Rysowanie" ) );        
-        dm.drawAllMaps();
+        /*DrawingModule dm = new DrawingModule( new SVG( MCSettings.getINITIAL_SVG_WIDTH(),MCSettings.getINITIAL_SVG_HEIGHT(),"Rysowanie" ) );        
+        dm.drawAllMaps();*/
         
         
         

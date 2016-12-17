@@ -425,6 +425,28 @@ public class DrawingModule {
         }
     }
 
+    /**
+     * Draws contained stops in edges, and their names
+     */
+    private void drawEdgeContainedStops( MapGraph graph ){
+        for( MapEdge e : graph.getEdges() ){
+            Pair<MapNode,MapNode> ends = e.getEnds();
+            MapNode beg = ends.getST();
+            MapNode end = ends.getND();
+            Pair<Integer,Integer> begCoords = normalizeCoordinates( beg.getCoords() );
+            Pair<Integer,Integer> endCoords = normalizeCoordinates( end.getCoords() );
+            ArrayList<String> containedStops = e.getContainedForwardStopsIds();
+            int L = containedStops.size();
+            Pair<Float,Float> vec = new Pair<>( (float)endCoords.getST() - begCoords.getST(), (float)endCoords.getND() - begCoords.getND() );
+            vec.setST( vec.getST() / (L+1) );
+            vec.setND( vec.getND() / (L+1)  );
+            for( int i=1; i<=L; i++ ){
+                int radius = 5;
+                addEllipse( (int) (begCoords.getST() + i*vec.getST() ) , (int)( begCoords.getND() + i*vec.getND() ) ,radius,radius);
+            }
+        }
+    }
+    
     private MapGraph drawGraphEdgesOnMap(MapGraph graph) {
         ArrayList<Point> polyline = new ArrayList<>();
 
@@ -438,8 +460,6 @@ public class DrawingModule {
             setDrawingEdgeParameters(e);
 
             addPolyline(polyline);
-
-            drawEdgeText(e);
         }
         return graph;
     }
@@ -458,6 +478,7 @@ public class DrawingModule {
         drawGraphEdgesOnMap(graph);
         drawRoutesToHighlightOnGraph(graph);
         drawGraphNodesOnMap(graph);
+        drawEdgeContainedStops(graph);
         drawTextsOnMap(graph);
 
         endSVG();

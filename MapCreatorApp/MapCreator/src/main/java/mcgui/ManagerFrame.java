@@ -35,6 +35,7 @@ public class ManagerFrame extends JFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        setAlwaysOnTop(true);
         
         setLayout( new GridBagLayout() );   
         

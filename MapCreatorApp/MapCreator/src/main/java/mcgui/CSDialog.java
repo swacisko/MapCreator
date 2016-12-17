@@ -5,10 +5,12 @@
  */
 package mcgui;
 
+import javax.swing.JDialog;
+
 /**
- * APSFrame is AlgorithmsParametersFrame. Here we can change values of parameters in particular algorithms
+ * CSDialog is ColorSettingsDialog. We can change default colors of elements in here
  * @author swacisko
  */
-public class APSFrame {
+public class CSDialog extends JDialog {
     
 }

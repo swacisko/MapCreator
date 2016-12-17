@@ -15,15 +15,7 @@ public class Main {
      //  TEST_SVG t = new TEST_SVG();
      //  t.test();
         
-        EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                MainFrame frame = new MainFrame();
-                frame.setVisible(true);
-                frame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
-                frame.setResizable(true);
-            }
-        });
+        
         
         
         MCDatabase.init(); // na samym poczatku musze zainicjalizowac baze danych
@@ -34,6 +26,16 @@ public class Main {
         for( int i=1; i<=10; i++ ){
             MCSettings.addRouteToHighlight( ""+i );
         }
+        
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                MainFrame frame = new MainFrame();
+                frame.setVisible(true);
+                frame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
+                frame.setResizable(true);
+            }
+        });
         
         DrawingModule dm = new DrawingModule( new SVG( MCSettings.getINITIAL_SVG_WIDTH(),MCSettings.getINITIAL_SVG_HEIGHT(),"Rysowanie" ) );        
         dm.drawAllMaps();

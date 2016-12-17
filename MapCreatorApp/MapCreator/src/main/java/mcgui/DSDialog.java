@@ -5,10 +5,12 @@
  */
 package mcgui;
 
+import javax.swing.JDialog;
+
 /**
- * DSFrame is DisplaySettingsFrame. We can change here widths of nodes, edges and select background transport measures to be drawn
+ * DSDialog is DisplaySettingsDialog. We can change here widths of nodes, edges and select background transport measures to be drawn
  * @author swacisko
  */
-public class DSFrame {
+public class DSDialog extends JDialog {
     
 }

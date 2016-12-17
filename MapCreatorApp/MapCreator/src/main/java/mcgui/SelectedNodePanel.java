@@ -28,6 +28,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import mcalgorithms.EdgeContraction;
 import mcgraphs.MapNode;
+import mcgtfsstructures.MCDatabase;
 import mctemplates.MCSettings;
 import mctemplates.UsefulFunctions;
 
@@ -53,19 +54,30 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
     
     private void updateComponentsData(){
         MapNode n = selectedItems.getSelectedNode1();
-        if( n == null ) return;
-        structureNameTextField.setText( n.getStructureName() );
+        if( n == null ) {
+            structureNameTextField.setText( "" );
+            return;
+        }
+        
+        if( selectedItems.isJustSelected() ){
+            structureNameTextField.setText( n.getStructureName() );            
+        }
+        
         String res = "";
         for( String s : n.getContainedStopsIds() ){
-            res += s + "\n";
+            res += MCDatabase.getStopOfID(s).getStopName() + "\n";
         }
-        containedStopsTextArea.setText(res);
+        
+        containedStopsTextArea.setText(res);        
         nodeColorBox.setSelectedItem( UsefulFunctions.parseColor( n.getColor() ) );
+        nodeFillBox.setSelectedItem( UsefulFunctions.parseColor( n.getFillColor()) );
         nodeHeightSlider.setValue( n.getHeight() );
         nodeWidthSlider.setValue( n.getWidth() );
         textAngleSlider.setValue( n.getTextAngle() );
         textVisibleBox.setSelected( n.isTextVisilbe() );
         textBoldBox.setSelected( n.isTextBold() );
+        
+        selectedItems.setJustSelected(false);
     }
 
     /**
@@ -157,8 +169,8 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
         strPanel.add( textVisibleBox,  new GBC( 0,1,6,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
         strPanel.add( textBoldBox,  new GBC( 6,1,6,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
         strPanel.add( new JLabel("Move node text: "), new GBC( 0,2,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
-        strPanel.add( getTextMoveButton("U",0,2),  new GBC( 4,2,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
-        strPanel.add( getTextMoveButton("D",0,-2),  new GBC( 6,2,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100));
+        strPanel.add( getTextMoveButton("U",0,-2),  new GBC( 4,2,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
+        strPanel.add( getTextMoveButton("D",0,2),  new GBC( 6,2,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100));
         strPanel.add( getTextMoveButton("L",-2,0),  new GBC( 8,2,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
         strPanel.add( getTextMoveButton("R",2,0),  new GBC( 10,2,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100));
         strPanel.add( textSizeLabel, new GBC( 0,3,4,1 ).setAnchor( GBC.EAST ).setFill(GBC.BOTH).setWeight(100,100));
@@ -182,9 +194,16 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
         
         nodeColorBox = new JComboBox( cols );
         nodeColorBox.addActionListener(this);
+        
+        nodeFillLabel = new JLabel( "Node fill color:" );
+        nodeFillBox = new JComboBox( cols );
+        nodeFillBox.addActionListener(this);
                
         add( nodeColorLabel, new GBC( 0,7,4,2 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH) );
-        add( nodeColorBox, new GBC( 4,7,8,2 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH) );        
+        add( nodeColorBox, new GBC( 4,7,8,2 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH) );  
+        
+        add( nodeFillLabel,  new GBC( 0,9,4,2 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH) );
+        add( nodeFillBox, new GBC( 4,9,8,2 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH) );  
     }
 
     /**
@@ -196,25 +215,25 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
         nodeWidthSlider = new JSlider( 0, MCSettings.getMAX_NODE_WIDTH(), 5 );
         
         nodeWidthSlider.setPaintTicks(true);
-        nodeWidthSlider.setMajorTickSpacing(3);
+        nodeWidthSlider.setMajorTickSpacing(5);
         nodeWidthSlider.setPaintTrack(true);
         nodeWidthSlider.setPaintLabels(true);
         nodeWidthSlider.addChangeListener(this);
         
-        add( nodeWidthLabel, new GBC( 0,9,2,2 ).setAnchor( GBC.EAST ).setFill(GBC.BOTH).setWeight(100,100) );
-        add( nodeWidthSlider, new GBC( 2,9,4,2 ).setAnchor( GBC.WEST ).setFill(GBC.BOTH).setWeight(100,100) ); 
+        add( nodeWidthLabel, new GBC( 0,11,1,2 ).setAnchor( GBC.EAST ).setFill(GBC.BOTH) );
+        add( nodeWidthSlider, new GBC( 1,11,5,2 ).setAnchor( GBC.WEST ).setFill(GBC.BOTH).setWeight(100,100) ); 
         
         nodeHeightLabel = new JLabel( "Node height:" );
         nodeHeightSlider = new JSlider( 0, MCSettings.getMAX_NODE_HEIGHT(), 5 );
         
         nodeHeightSlider.setPaintTicks(true);
-        nodeHeightSlider.setMajorTickSpacing(3);
+        nodeHeightSlider.setMajorTickSpacing(5);
         nodeHeightSlider.setPaintTrack(true);
         nodeHeightSlider.setPaintLabels(true);
         nodeHeightSlider.addChangeListener(this);
         
-        add( nodeHeightLabel, new GBC( 6,9,2,2 ).setAnchor( GBC.EAST ).setFill(GBC.BOTH).setWeight(100,100) );
-        add( nodeHeightSlider, new GBC( 8,9,4,2 ).setAnchor( GBC.WEST ).setFill(GBC.BOTH).setWeight(100,100) ); 
+        add( nodeHeightLabel, new GBC( 6,11,1,2 ).setAnchor( GBC.EAST ).setFill(GBC.BOTH) );
+        add( nodeHeightSlider, new GBC( 7,11,5,2 ).setAnchor( GBC.WEST ).setFill(GBC.BOTH).setWeight(100,100) ); 
         
     }
 
@@ -224,12 +243,13 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
     private void addContainedStopsTextArea(){         
         containedStopsTextArea = new JTextArea("Witam",10,50);
         containedStopsTextArea.setLineWrap(true);
-        containedStopsTextArea.setFont( new Font( "Serif",Font.PLAIN, 10 ) );
+        containedStopsTextArea.setFont( new Font( "Serif",Font.PLAIN, 15 ) );
+        containedStopsTextArea.setForeground(Color.BLACK);
         containedStopsTextArea.setEnabled(false);
         JScrollPane scroll = new JScrollPane( containedStopsTextArea );
         scroll.setBorder( new TitledBorder( BorderFactory.createLineBorder( Color.BLUE , 3), "Contained stops" ) );
         
-        add( scroll, new GBC( 0,11,12,7 ).setFill(GBC.BOTH).setAnchor(GBC.CENTER).setWeight(100,100) );
+        add( scroll, new GBC( 0,13,12,7 ).setFill(GBC.BOTH).setAnchor(GBC.CENTER).setWeight(100,100) );
     }
     
     /**
@@ -247,56 +267,51 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Object source = e.getSource();
+        Object source = e.getSource();        
         if (source == moveNodeBox) {
             selectedItems.setMovableNode( moveNodeBox.isSelected() );
-        } else if (source == removeNodeButton) {
+        }
+        
+        MapNode n = selectedItems.getSelectedNode1();
+        if( n == null ) return;
+        
+        if (source == removeNodeButton) {
             int confirm = new JOptionPane().showConfirmDialog(this, "Are yout sure yout want to remove that node?","Remove node", JOptionPane.OK_CANCEL_OPTION);
             if (confirm == JOptionPane.CANCEL_OPTION || confirm == JOptionPane.CLOSED_OPTION) {
                 return;
             }
-            MapNode n = selectedItems.getSelectedNode1();
-            int id = -1;
-            if (n != null) {
-                id = n.getID();
-            }
+            int id = n.getID();            
             selectedItems.getGraph().removeMapNodeByID(id);
             selectedItems.setSelectedNode1(null);
         }else if( source == contractNodeButton ){
-            MapNode n = selectedItems.getSelectedNode1();
-            if( n == null ) return;
+            if( n.countEdges() != 2 || n.countNeighbours() != 2 ){
+                JOptionPane.showMessageDialog(this, "The contracted node must have 2 neighbours and be conbtractable!", "Cannot contract node",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             else{
-                if( n.countEdges() != 2 || n.countNeighbours() != 2 ){
-                    JOptionPane.showMessageDialog(this, "The contracted node must have 2 neighbours and be conbtractable!", "Cannot contract node",
-                            JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-                else{
-                    new EdgeContraction( selectedItems.getGraph() ).removeDeg2NodeFromGraph(n);
-                    selectedItems.setSelectedNode1(null);
-                }
-            }               
+                new EdgeContraction( selectedItems.getGraph() ).removeDeg2NodeFromGraph(n);
+                selectedItems.setSelectedNode1(null);
+            }                         
            
         }else if( source == glueNodeButton ){
             
             
-        }else if( source == textVisibleBox ){
-            MapNode n = selectedItems.getSelectedNode1();
-            if( n == null ) return;
+        }else if( source == textVisibleBox ){            
             n.setTextVisilbe(textVisibleBox.isSelected());            
         }else if( source == textBoldBox ){
-            MapNode n = selectedItems.getSelectedNode1();
-            if( n == null ) return;
-            int fontformat = n.getTextFormat();
-            n.setTextFormat(fontformat ^ Font.BOLD );
+            int fontformat = n.getTextFormat() | Font.BOLD;
+            if( textBoldBox.isSelected() == false ){
+                fontformat ^= Font.BOLD;
+            }            
+            n.setTextFormat( fontformat );
+            n.setTextBold( textBoldBox.isSelected() );
         }else if( source == structureNameAcceptButton ){
-            MapNode n = selectedItems.getSelectedNode1();
-            if( n == null ) return;
             n.setStructureName( structureNameTextField.getText() );
         }else if( source == nodeColorBox ){
-            MapNode n = selectedItems.getSelectedNode1();
-            if( n == null ) return;
-            n.setColor( UsefulFunctions.parseColor( (String)nodeColorBox.getSelectedItem() ) );
+            n.setColor(UsefulFunctions.parseColor( (String)nodeColorBox.getSelectedItem() ) );
+        }else if( source == nodeFillBox ){
+            n.setFillColor(UsefulFunctions.parseColor( (String)nodeFillBox.getSelectedItem() ) );
         }
         
         getParentFrame().getParentFrame().repaint();
@@ -347,6 +362,9 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
 
     private JLabel nodeColorLabel = null;
     private JComboBox nodeColorBox = null;
+    
+    private JLabel nodeFillLabel = null;
+    private JComboBox nodeFillBox = null;
 
     private JLabel nodeWidthLabel = null;
     private JSlider nodeWidthSlider = null;

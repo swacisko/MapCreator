@@ -301,7 +301,7 @@ public class MapNode extends MapStructure implements Drawable {
     
     private ArrayList<String> containedStopsIds = new ArrayList<>();
     
-    private Pair<Integer,Integer> textOffset = new Pair<>( -15,-15 );
+    private Pair<Integer,Integer> textOffset = MCSettings.getINITIAL_TEXT_OFFSET();
 
     private int textAngle = 0;  
     private boolean textVisilbe = true;

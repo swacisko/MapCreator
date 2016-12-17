@@ -31,7 +31,7 @@ public class DrawingModule {
 
     public DrawingModule(DrawingModuleInterface s) {
         svg = s;
-        initialSVGFileName = "./DrawingFolder/" + svg.getName();        
+        //initialSVGFileName = "./DrawingFolder/" + svg.getName();        
         //createLBCandRUC();
     }
 
@@ -345,41 +345,35 @@ public class DrawingModule {
     private void drawNodeText(MapNode n, Color c){        
         svg.setColor(c);
         String s = n.getStructureName();
-        s += ":" + n.getContainedStopsIds().size();
+        //s += ":" + n.getContainedStopsIds().size();
         Point p = UsefulFunctions.convertToPoint( normalizeCoordinates( n.getCoords() ) );
         Pair<Integer,Integer> offset = n.getTextOffset();
-        p.x += offset.getST();
-        p.y += offset.getND();
+        if( (svg instanceof SVG) == false ){
+            p.x += (int) ( MCSettings.getSvgToSwingFactor() * offset.getST() );
+            p.y += (int) ( MCSettings.getSvgToSwingFactor() * offset.getND() );
+        }else{
+            p.x += offset.getST();
+            p.y += offset.getND();
+        }
         svg.addText(p,s, n.getTextFontSize(), n.getTextFormat(), n.getTextAngle());
     }
 
     private void setDrawingNodeParameters(MapNode n) {
         if (n.getDrawingWidth() != 0) {
             svg.setStrokeWidth(n.getDrawingWidth());
-            //svg.setCircleStrokeWidth(n.getDrawingWidth());
-            //svg.setEllipseStrokeWidth(n.getDrawingWidth());
         }
         if (n.getHoverWidth() != 0) {
             svg.setStrokeWidth(n.getDrawingWidth());
-          //  svg.setCircleStrokeWidthHover(n.getHoverWidth());
-           // svg.setEllipseStrokeWidthHover(n.getHoverWidth());
         }
         if (n.getHoverColor() != null) {
             svg.setColor(n.getColor());
             svg.setFill( n.getFillColor() );
-            /*svg.setCircleFillHover(UsefulFunctions.parseColor(n.getHoverColor()));
-            svg.setCircleStrokeColorHover(UsefulFunctions.parseColor(n.getHoverColor()));
-            svg.setEllipseColorHover(UsefulFunctions.parseColor(n.getHoverColor()));
-            svg.setEllipseStrokeColorHover(UsefulFunctions.parseColor(n.getHoverColor()));*/
         }
         if (n.getColor() != null) {
-            svg.setColor(n.getColor());
+            svg.setColor(n.getColor());            
+        }
+        if( n.getFillColor() != null ){
             svg.setFill( n.getFillColor() );
-            //svg.setCircleFill(UsefulFunctions.parseColor(n.getColor()));
-           // svg.setCircleStrokeColor(UsefulFunctions.parseColor(n.getColor()));
-
-              //  svg.setEllipseColor( UsefulFunctions.parseColor(n.getColor()) );
-            //   svg.setEllipseStrokeColor( UsefulFunctions.parseColor(n.getColor()) );
         }
     }
 
@@ -394,7 +388,7 @@ public class DrawingModule {
         for (MapNode n : graph.getNodes()) {
             setDrawingNodeParameters(n);
 
-            int dW = MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH()*getNodeDrawingWidthHighlightCoefficient(n) / 4;
+            int dW = MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH()*getNodeDrawingWidthHighlightCoefficient(n) / 2;
             if (insignificantNodes.contains(n.getID())) {
                 dW = 3;
             }
@@ -583,18 +577,21 @@ public class DrawingModule {
                     polyline.add(new Point(Math.round(c + deltax), Math.round(d + deltay)));
                     polyline.add(new Point(Math.round(x + deltax), Math.round(y + deltay)));
 
+                    float factor = 1f;
+                    if( (svg instanceof SVG) == false ) factor *= MCSettings.getSvgToSwingFactor();
+                        
                     if (reversed) {
                         float val = rightHighlightOffset.get(new Pair<>(nA.getID(), nB.getID()));
-                        val -= MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH();
+                        val -= factor * MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH();
                         rightHighlightOffset.remove(new Pair<>(nA.getID(), nB.getID()));
                         rightHighlightOffset.put(new Pair<>(nA.getID(), nB.getID()), val);
                     } else {
                         float val = leftHighlightOffset.get(new Pair<>(nA.getID(), nB.getID()));
-                        val -= MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH();
+                        
+                        val -= factor * MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH();
                         leftHighlightOffset.remove(new Pair<>(nA.getID(), nB.getID()));
                         leftHighlightOffset.put(new Pair<>(nA.getID(), nB.getID()), val);
                     }
-
                 }
 
                 Color c = MCSettings.getRouteToHighlightColor( entry.getKey() );
@@ -606,7 +603,10 @@ public class DrawingModule {
                 svg.setPolylineColorHover(UsefulFunctions.parseColor(c));
                 svg.setPolylineWidthHover(MCSettings.getINITIAL_ROUTE_HIGHLIGHT_HOVER_WIDTH());
                 svg.setPolylineColor(UsefulFunctions.parseColor(c));*/
-                svg.setStrokeWidth( MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH() );
+                
+                float strokeWidth = MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH();
+                svg.setStrokeWidth( (int) strokeWidth );                
+                
                 svg.setColor( c );
                 addPolyline(polyline);
 
@@ -650,15 +650,20 @@ public class DrawingModule {
         for (Map.Entry< Pair<Integer, Integer>, Integer> entry : highlights.entrySet()) {
             int offset = entry.getValue();
             float val;
+            float factor = 1;
+            if( (svg instanceof SVG) == false ){
+                factor *= MCSettings.getSvgToSwingFactor();
+            }
+            
             if (offset % 2 == 0) {
                 offset /= 2;
-                val = MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH() * offset;
-                val -= ((float) MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH()) / 2;
+                val = factor * MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH() * offset;                               
+                val -= ( factor * MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH()) / 2;
                 leftHighlightOffset.put(entry.getKey(), val);
                 rightHighlightOffset.put(entry.getKey(), val);
             } else {
                 offset /= 2;
-                val = MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH() * offset;
+                val = factor * MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH() * offset;
                 leftHighlightOffset.put(entry.getKey(), val);
                 rightHighlightOffset.put(entry.getKey(), val);
             }

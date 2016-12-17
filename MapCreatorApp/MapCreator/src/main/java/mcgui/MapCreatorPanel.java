@@ -5,6 +5,7 @@
  */
 package mcgui;
 
+import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,6 +16,7 @@ import mcalgorithms.ForceAlgorithm;
 import mcalgorithms.GraphGlueing;
 import mcalgorithms.MapGraphCreator;
 import mcgraphs.MapGraph;
+import mcmapdrawing.DrawingModule;
 import mcmapdrawing.SVG;
 import mctemplates.MCSettings;
 
@@ -29,6 +31,18 @@ public class MapCreatorPanel extends JPanel{
          setSize( DEFAULT_WIDTH, DEFAULT_HEIGHT );  
          
          setLayout( new GridLayout(5,1) );
+         
+         saveMapButton = new JButton( "SAVE MAP IN SVG" );
+         saveMapButton.setBackground( Color.WHITE );
+         saveMapButton.setForeground( Color.RED );
+         saveMapButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MapGraph graph = selectedItems.getGraph();
+                if( graph == null ) return;
+                new DrawingModule( new SVG(3000,3000) ).drawGraphOnMap( graph , MCSettings.getSvgFileName() );
+            }
+        });
          
          basicMapButton = new JButton( "Draw basic map" );
          basicMapButton.addActionListener( new ActionListener() {
@@ -96,7 +110,7 @@ public class MapCreatorPanel extends JPanel{
          
          
          
-         add( new JPanel() );
+         add( saveMapButton );
          add( basicMapButton );
          add( gluedMapButton );
          add( contractedMapButton );
@@ -153,6 +167,7 @@ public class MapCreatorPanel extends JPanel{
     private JButton contractedMapButton = null;
     private JButton forcespacedMapButton = null;
     private JButton centralizedAttractionButton = null;
+    private JButton saveMapButton = null;
     
     private ManagerFrame parentFrame = null;
     

@@ -5,10 +5,12 @@
  */
 package mcgui;
 
+import javax.swing.JDialog;
+
 /**
- * MRSFrame is MainRoutesFrame. Here we can select routes we want to highlight on the scheme.
+ * APSDialog is AlgorithmsParametersDialog. Here we can change values of parameters in particular algorithms
  * @author swacisko
  */
-public class MRSFrame {
+public class APSDialog extends JDialog {
     
 }

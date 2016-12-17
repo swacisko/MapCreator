@@ -81,9 +81,14 @@ public class MCSettings {
 
     
     private static int MAX_NODE_HEIGHT = 30;
-    private static int INITIAL_TEXT_FONT_SIZE = 5;
+    private static int INITIAL_TEXT_FONT_SIZE = 25;
+    
+    private static Pair<Integer,Integer> INITIAL_TEXT_OFFSET = new Pair<>( -30,-15 );
 
     
+    private static float svgToSwingFactor = 0.5f;
+
+     
     
     
     /**
@@ -101,7 +106,9 @@ public class MCSettings {
 
     private static String gtfsDirectoryPath = new File("").getAbsolutePath();
     private static String mapsDirectoryPath = new File("").getAbsolutePath() + "/DrawingFolder/";
+    private static String svgFileName = "Test";
 
+    
     /**
      * This is the list of routes ids i want to highlight on the graph. If i
      * want to draw all routes in routes.txt file, then this can be empty
@@ -119,6 +126,30 @@ public class MCSettings {
 
     
     //***************************************************************  GETTERS AND SETTERS AND SOME OTHER
+    
+    public static Pair<Integer, Integer> getINITIAL_TEXT_OFFSET() {        
+        return new Pair<>( INITIAL_TEXT_OFFSET.getST(), INITIAL_TEXT_OFFSET.getND() );
+    }
+
+    public static void setINITIAL_TEXT_OFFSET(Pair<Integer, Integer> INITIAL_TEXT_OFFSET) {
+        MCSettings.INITIAL_TEXT_OFFSET = INITIAL_TEXT_OFFSET;
+    }
+    
+    public static float getSvgToSwingFactor() {
+        return svgToSwingFactor;
+    }
+
+    public static void setSvgToSwingFactor(float svgToSwingFactor) {
+        MCSettings.svgToSwingFactor = svgToSwingFactor;
+    }
+    
+    public static String getSvgFileName() {
+        return svgFileName;
+    }
+
+    public static void setSvgFileName(String svgFileName) {
+        MCSettings.svgFileName = svgFileName;
+    }
     
     public static int getMAX_NODE_HEIGHT() {
         return MAX_NODE_HEIGHT;
@@ -221,6 +252,13 @@ public class MCSettings {
             }while( color == Color.WHITE || color == Color.BLACK );
             routeToHighlightColor.put( routeId, color );
         }        
+    }
+    
+    public static void removeRouteToHighlight( String routeId ){
+        if( routesToHighlight.contains( routeId ) ){
+            routesToHighlight.remove( routeId );
+            routeToHighlightColor.remove( routeId );
+        }
     }
 
     public static ArrayList<String> getRoutesToHighlight() {

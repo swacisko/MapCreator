@@ -5,6 +5,7 @@ import java.awt.Point;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import mctemplates.MCSettings;
 import mctemplates.UsefulFunctions;
 
 //TO DO:
@@ -15,27 +16,29 @@ import mctemplates.UsefulFunctions;
 public class SVG implements DrawingModuleInterface {
 
     public SVG() {
-
+        
     }
 
     //konstruktor ustawiający wymiary rysunku
     public SVG(int widthp, int heightp) {
+        this();
         width = widthp;
         height = heightp;
     }
 
     //konstruktor ustawiający nazwę plików
     public SVG(String fileNamep) {
+        this();
         fileName = fileNamep;
 
     }
 
     //konstruktor ustawiający wymiary rysunku i nazwę plików
     public SVG(int widthp, int heightp, String fileNamep) {
+        this();
         width = widthp;
         height = heightp;
         fileName = fileNamep;
-
     }
 
     //wszystkie potrzebne rzeczy na początek plików
@@ -58,10 +61,12 @@ public class SVG implements DrawingModuleInterface {
         writerHTML.println();
         writerHTML.println("<svg width=\"" + width + "\" height=\"" + height + "\">");
 
-        addPolylineStyle();
+       // MCSettings.setINITIAL_ROUTE_HIGHLIGHT_WIDTH( 2* MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH() );
+        
+        /*addPolylineStyle();
         addCircleStyle();
         addRectangleStyle();
-        addEllipseStyle();
+        addEllipseStyle();*/
     }
 
     //wszystkie potrzebne rzeczy na koniec plików
@@ -75,6 +80,8 @@ public class SVG implements DrawingModuleInterface {
         writerHTML.println("</body>");
         writerHTML.println("</html>");
         writerHTML.close();
+        
+      //  MCSettings.setINITIAL_ROUTE_HIGHLIGHT_WIDTH( MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH() / 2 );
     }
 
     @Override
@@ -146,8 +153,10 @@ public class SVG implements DrawingModuleInterface {
     public void addText(Point p, String text, int fontsize, int format, int angle) {
         this.fontsize = fontsize;        
         // SHOULDN'T IT BE HERE fillColor instead of color?
-        writerSVG.println("   <text x=\"" + p.x + "\" y=\"" + p.y + "\" fill=\"" + color + "\">" + text + "</text>");
-        writerHTML.println("   <text x=\"" + p.x + "\" y=\"" + p.y + "\" fill=\"" + color + "\">" + text + "</text>");
+        writerSVG.println("   <text x=\"" + p.x + "\" y=\"" + p.y + "\" fill=\"" + color + "\" font-size=\"" + fontsize + "\""
+                + " transform=\"rotate("+ angle + " " + p.x + " " + p.y + ")\"> " + text + "</text>");
+        writerHTML.println("   <text x=\"" + p.x + "\" y=\"" + p.y + "\" fill=\"" + color + "\" font-size=\"" + fontsize + "\""
+                + " transform=\"rotate("+ angle + " " + p.x + " " + p.y + ")\"> " + text + "</text>");
     }
 
     

@@ -25,6 +25,7 @@ import mcgraphs.MapGraph;
 import mcgraphs.MapNode;
 import mcmapdrawing.DrawingModule;
 import mcmapdrawing.DrawingModuleInterface;
+import mctemplates.MCSettings;
 import mctemplates.Pair;
 import mctemplates.UsefulFunctions;
 
@@ -58,11 +59,11 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
     
     @Override
     public void addEllipse(Point p, int w, int h) {
-        Ellipse2D ellipse = new Ellipse2D.Double( p.x- (w/4) ,p.y -(h/4) ,w/2 ,h/2 );        
+        Ellipse2D ellipse = new Ellipse2D.Double( p.x- (w/2) ,p.y -(h/2) ,w ,h );        
         graphics.setColor(fillColor);
         graphics.fill(ellipse);
         graphics.setColor( color );
-        graphics.setStroke( new BasicStroke(strokeWidth/2) );
+        graphics.setStroke( new BasicStroke(strokeWidth) );
         graphics.draw( ellipse );
         
     }
@@ -76,14 +77,14 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
     public void addLine(Point beg, Point end) {
         Line2D line = new Line2D.Double( beg, end );
         graphics.setColor( color );
-        graphics.setStroke( new BasicStroke(strokeWidth/2) );
+        graphics.setStroke( new BasicStroke(strokeWidth) );
         graphics.draw( line );
     }
 
     @Override
     public void addPolyline(ArrayList<Point> polyline) {
         graphics.setColor( color );
-        graphics.setStroke( new BasicStroke(strokeWidth/2) );
+        graphics.setStroke( new BasicStroke(strokeWidth) );
         int[] x = new int[ polyline.size() ];
         int[] y = new int[ polyline.size() ];
         for( int i=0; i<polyline.size(); i++ ){
@@ -106,7 +107,7 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
         AffineTransform at = new AffineTransform();
         at.setToRotation( 2 * Math.PI * angleWidth / 360f, p.x, p.y );
         graphics.setTransform(at);
-        graphics.setFont( new Font( "Serif",format,2*fontsize ) );
+        graphics.setFont( new Font( "Serif",format, (int) ( 0.7f * fontsize * MCSettings.getSvgToSwingFactor() ) ) );
         graphics.drawString(text,p.x,p.y);
     }
 
@@ -117,7 +118,7 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
     
     @Override
     public void setStrokeWidth(int width) {
-        strokeWidth = width;
+        strokeWidth = (int)( width * MCSettings.getSvgToSwingFactor() );
     }
     
     @Override
@@ -192,8 +193,8 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
                 Pair<Integer,Integer> coords = module.normalizeCoordinates( n.getCoords() );
                 float radius = Math.max( n.getWidth(), n.getHeight() );
                 Pair<Float,Float> pf = new Pair<>( (float)p.x, (float)p.y );
-                float dist = UsefulFunctions.getDistance( new Pair<Float,Float>( (float)coords.getST(), (float)coords.getND() ), pf );
-                if( dist < radius ) return n;
+                float dist = UsefulFunctions.getDistance( new Pair<>( (float)coords.getST(), (float)coords.getND() ), pf );
+                if( dist < radius*Math.max( n.getDrawingWidth(),1 ) ) return n;
             }
             
             return null;
@@ -213,9 +214,7 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
                 System.out.println( "NULL !" );
                 return;
             }
-            else if( selectedItems.getSelectedNode1() != null ){
-                selectedItems.setSelectedNode2(n);
-            }else{
+            else{
                 selectedItems.setSelectedNode1(n);
             }
             

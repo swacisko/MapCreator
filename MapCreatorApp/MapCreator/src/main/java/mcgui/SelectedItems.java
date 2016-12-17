@@ -69,11 +69,35 @@ public class SelectedItems {
      * @return return true if i can move the node
      */
     public boolean isMovableNode() {
-        return isMovableNode;
+        return movableNode;
     }
 
     public void setMovableNode(boolean moveOption) {
-        this.isMovableNode = moveOption;
+        this.movableNode = moveOption;
+    }
+    
+    /**
+     * 
+     * @return returns true if i am in {@link SelectedEdgePanel} and want to select edge. Otherwise return false, and i can select nodes
+     */
+    public boolean isEdgeSelection() {
+        return edgeSelection;
+    }
+
+    public void setEdgeSelection(boolean edgeSelection) {
+        this.edgeSelection = edgeSelection;
+    }
+    
+    public boolean isNodeSelection(){
+        return !isEdgeSelection();
+    }
+    
+    public boolean isJustSelected() {
+        return justSelected;
+    }
+
+    public void setJustSelected(boolean justSelected) {
+        this.justSelected = justSelected;
     }
 
     private MapGraph graph = null;
@@ -85,6 +109,9 @@ public class SelectedItems {
     /**
      * This value is true if i can move the node
      */
-    private boolean isMovableNode = false;
+    private boolean movableNode = false;
+    private boolean edgeSelection = false;
+    
+    private boolean justSelected = false;
 
 }

@@ -25,6 +25,7 @@ import mcgraphs.MapGraph;
 import mcgraphs.MapNode;
 import mcmapdrawing.DrawingModule;
 import mcmapdrawing.DrawingModuleInterface;
+import mctemplates.Drawable;
 import mctemplates.MCSettings;
 import mctemplates.Pair;
 import mctemplates.UsefulFunctions;
@@ -44,7 +45,7 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
          setLayout( new FlowLayout());         
          setBorder( BorderFactory.createLineBorder(Color.RED, 3, true) );
          
-         addMouseMotionListener( new MouseMotionHandler() );
+         addMouseMotionListener( new MouseMotionHandler(this) );
          addMouseListener( new MouseHandler() );
          
     }
@@ -225,10 +226,30 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
     }
     
     class MouseMotionHandler implements MouseMotionListener{
+        
+        public MouseMotionHandler( JPanel parent ){
+            this.parent = parent;
+        }
 
         @Override
         public void mouseDragged(MouseEvent e) {
-            
+            if( selectedItems.isMovableNode() == false ) return;
+            MapGraph graph = selectedItems.getGraph();
+            MapNode node = selectedItems.getSelectedNode1();
+            if( graph == null || node == null ) return;
+            Pair< Pair<Float,Float>, Pair<Float,Float> > lbcruc = module.getLBCandRUC( new ArrayList<Drawable>(graph.getNodes()) );
+            Pair<Float,Float> LBC = lbcruc.getST();
+            Pair<Float,Float> RUC = lbcruc.getND();
+            float dW = RUC.getST() - LBC.getST();
+            float dH = RUC.getND() - LBC.getND();
+            float width = parent.getWidth();
+            float height = parent.getHeight();
+            Point p = e.getPoint();
+            p.x /= width;
+            p.y = (int)height - p.y;
+            p.y /= height;
+            node.setCoords( new Pair<>( LBC.getST() + p.x*dW, LBC.getND() + p.y*dH ) );
+            getParentFrame().repaint();
         }
 
         @Override
@@ -236,6 +257,8 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
             
         }
         
+        
+        private JPanel parent = null;
     }
     
 }

@@ -23,6 +23,8 @@ public class MapEdge extends MapStructure {
         setHoverColor(MCSettings.getINITIAL_EDGE_HOVER_COLOR() );
         setDrawingWidth(MCSettings.getINITIAL_EDGE_WIDTH() );
         setHoverWidth(MCSettings.getINITIAL_EDGE_HOVER_WIDTH() );
+        
+        setTextFontSize( (3*MCSettings.getINITIAL_TEXT_FONT_SIZE() / 4) );
     }
 
     public void setEnds(Pair<MapNode, MapNode> p) {

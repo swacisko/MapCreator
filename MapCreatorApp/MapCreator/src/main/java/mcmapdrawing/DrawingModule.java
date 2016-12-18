@@ -73,7 +73,7 @@ public class DrawingModule {
     }
 
     private void modifyLBCandRUC() {
-        float ratio = 0.05f; // dziwne jest, ze nawet jak zmienie wartosci wzglednie o 1 tysieczna to i tak rysunek sie mocno wygina
+        float ratio = MCSettings.getLBCRUCModificationFactor(); // dziwne jest, ze nawet jak zmienie wartosci wzglednie o 1 tysieczna to i tak rysunek sie mocno wygina
         float dW = RUC.getST() - LBC.getST();
         float dH = RUC.getND() - LBC.getND();
 
@@ -177,10 +177,13 @@ public class DrawingModule {
             n.setCoords(res);
         }
     }
-    // dla zadanej listy struktur zwraca RUC i LBC
-    // struktury w liscie structures musza implementowac Drawable
-    // zwraca pare <LBC,RUC>
-    private Pair< Pair<Float, Float>, Pair<Float, Float>> getLBCandRUC(ArrayList<Drawable> structures) {
+    
+    /**
+     * Calculates the LBC and RUC of given drawable structures
+     * @param structures List of Drawable structures for which i should find LBC and RUC
+     * @return return pair (LBC,RUC)
+     */
+    public Pair< Pair<Float, Float>, Pair<Float, Float>> getLBCandRUC(ArrayList<Drawable> structures) {
         Pair<Float, Float> LBC = new Pair<>(Float.MAX_VALUE, Float.MAX_VALUE);
         Pair<Float, Float> RUC = new Pair<>(Float.MIN_VALUE, Float.MIN_VALUE);
 
@@ -424,6 +427,7 @@ public class DrawingModule {
             //svg.setPolylineColorHover(UsefulFunctions.parseColor(e.getHoverColor()));
         }
     }
+  
 
     /**
      * Draws contained stops in edges, and their names
@@ -443,6 +447,14 @@ public class DrawingModule {
             for( int i=1; i<=L; i++ ){
                 int radius = 5;
                 addEllipse( (int) (begCoords.getST() + i*vec.getST() ) , (int)( begCoords.getND() + i*vec.getND() ) ,radius,radius);
+                Stop st = MCDatabase.getStopOfID( e.getContainedForwardStopsIds().get(i-1) );
+                String text = e.getContainedForwardStopsIds().get(i-1);
+                if( st != null ) text = st.getStopName();
+                Pair<Integer,Integer> offset = e.getTextOffset();
+                int offx = offset.getST();
+                int offy = offset.getND();
+                svg.addText( new Point( (int) (begCoords.getST() + i*vec.getST() ) + offx , (int)( begCoords.getND() + i*vec.getND() ) + offy ),
+                      text, e.getTextFontSize(), e.getTextFormat(), e.getTextAngle()  );
             }
         }
     }

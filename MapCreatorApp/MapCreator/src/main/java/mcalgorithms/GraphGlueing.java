@@ -20,7 +20,8 @@ import mctemplates.UsefulFunctions;
 import org.hibernate.util.StringHelper;
 
 /**
- *
+ * This class is responsible for glueing graph - multiple stops in close proximity should be treated as one stop (we don't care whether there are 10 stops around the
+ * roundabout, we only want to know that there is one). 
  * @author swacisko
  *
  *

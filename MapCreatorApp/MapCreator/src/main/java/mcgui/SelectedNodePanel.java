@@ -68,6 +68,7 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
             res += MCDatabase.getStopOfID(s).getStopName() + "\n";
         }
         
+        containedStopsTextArea.setFont( new Font( "Serif",Font.PLAIN, 15 ) );
         containedStopsTextArea.setText(res);        
         nodeColorBox.setSelectedItem( UsefulFunctions.parseColor( n.getColor() ) );
         nodeFillBox.setSelectedItem( UsefulFunctions.parseColor( n.getFillColor()) );
@@ -247,10 +248,16 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
         containedStopsTextArea.setFont( new Font( "Serif",Font.PLAIN, 15 ) );
         containedStopsTextArea.setForeground(Color.BLACK);
         containedStopsTextArea.setEnabled(false);
-        JScrollPane scroll = new JScrollPane( containedStopsTextArea );
-        scroll.setBorder( new TitledBorder( BorderFactory.createLineBorder( Color.BLUE , 3), "Contained stops" ) );
         
-        add( scroll, new GBC( 0,13,12,7 ).setFill(GBC.BOTH).setAnchor(GBC.CENTER).setWeight(100,100) );
+        containedStopsTextArea.setBorder( new TitledBorder( BorderFactory.createLineBorder( Color.BLUE , 3), "Contained stops" ) );
+        add( containedStopsTextArea, new GBC( 0,13,12,7 ).setFill(GBC.BOTH).setAnchor(GBC.CENTER).setWeight(100,100) );
+        //JScrollPane scroll = new JScrollPane( containedStopsTextArea );
+        //scroll.setBorder( new TitledBorder( BorderFactory.createLineBorder( Color.BLUE , 3), "Contained stops" ) );
+        //add( scroll, new GBC( 0,13,12,7 ).setFill(GBC.BOTH).setAnchor(GBC.CENTER).setWeight(100,100) );
+        
+        
+        
+        
     }
     
     /**

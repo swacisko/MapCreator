@@ -88,6 +88,9 @@ public class MCSettings {
     
     private static float svgToSwingFactor = 0.5f;
 
+    private static float LBCRUCModificationFactor = 0.05f;
+
+   
    
     /**
      * Initial width is useless - width of svg is changed so that it's shape is
@@ -124,6 +127,14 @@ public class MCSettings {
 
     
     //***************************************************************  GETTERS AND SETTERS AND SOME OTHER
+    
+    public static float getLBCRUCModificationFactor() {
+        return LBCRUCModificationFactor;
+    }
+
+    public static void setLBCRUCModificationFactor(float LBCRUCModificationFactor) {
+        MCSettings.LBCRUCModificationFactor = LBCRUCModificationFactor;
+    }
     
     public static Pair<Integer, Integer> getINITIAL_TEXT_OFFSET() {        
         return new Pair<>( INITIAL_TEXT_OFFSET.getST(), INITIAL_TEXT_OFFSET.getND() );

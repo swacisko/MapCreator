@@ -59,22 +59,12 @@ public class EdgeContraction {
         MapNode leftNode = leftPair.getST();
         if( leftNode.getID() == node.getID()){                   
             leftNode = leftPair.getND();
-            /*MapNode temp = leftPair.getST(); // ale ustawiam teraz tak kolejnosc, aby ST lewej rawdzi pokazywalo na cos, a ND lewej na wierzcholek node
-            leftPair.setST( leftPair.getND() );
-            leftPair.setND(temp);
-            Collections.reverse( leftEdge.getContainedForwardStopsIds());
-            Collections.reverse( leftEdge.getContainedBackwardStopsIds() );*/
             leftEdge.swapEnds();
         }
         
         MapNode rightNode = rightPair.getND();
         if( rightNode.getID() == node.getID() ){
             rightNode = rightPair.getST();
-            /*MapNode temp = rightPair.getST();
-            rightPair.setST( rightPair.getND() );
-            rightPair.setND(temp);
-            Collections.reverse( rightEdge.getContainedForwardStopsIds() );
-            Collections.reverse( rightEdge.getContainedBackwardStopsIds() );*/
             rightEdge.swapEnds();
         }      
         
@@ -85,7 +75,8 @@ public class EdgeContraction {
         ArrayList<String> rightEdgeForwardList = rightEdge.getContainedForwardStopsIds();        
         ArrayList<String> newForwardList = new ArrayList<>();
         newForwardList.addAll(leftEdgeForwardList ); // najpierw dodaje lewa liste
-        newForwardList.addAll( node.getContainedStopsIds() );
+        //newForwardList.addAll( node.getContainedStopsIds() );
+        newForwardList.add( node.getStructureName() ); // here i should add node's structure name, not all stops (they have the same name anyway, no need to double it)
         newForwardList.addAll(rightEdgeForwardList ); // pozniej dodaje prawa liste
         newEdge.setContainedForwardStopsIds(newForwardList );
         
@@ -94,7 +85,8 @@ public class EdgeContraction {
         ArrayList<String> newBackwardList = new ArrayList<>();
         newBackwardList.addAll( rightEdgeBackwardList ); // tuta najpierw dodaje prawa liste (bo to backward)
         Collections.reverse( node.getContainedStopsIds() ); // musze odwrocic oczywiscie kolejnosc przystankow w danym wierzcholku
-        newBackwardList.addAll( node.getContainedStopsIds() );
+        //newBackwardList.addAll( node.getContainedStopsIds() );
+        newBackwardList.add( node.getStructureName() );
         newBackwardList.addAll( leftEdgeBackwardList ); // a pozniej lewa
         newEdge.setContainedBackwardStopsIds(newBackwardList);
         

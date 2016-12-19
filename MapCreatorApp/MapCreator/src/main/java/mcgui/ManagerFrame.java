@@ -74,7 +74,7 @@ public class ManagerFrame extends JFrame {
         selectEdgeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                switchToSelectedEdgePanel();
+                switchToSelectedEdgePanel();                
             }
         });
         
@@ -100,6 +100,12 @@ public class ManagerFrame extends JFrame {
     }
     
     private void switchToPanel( JPanel panel ){
+        if( panel == edgePanel ){ // if i switch to selected edge panel i can select edges
+            selectedItems.setEdgeSelection(true);
+        }else{ // otherwise i can select nodes
+            selectedItems.setEdgeSelection(false);
+        }
+        
         remove(currentPanel);
         currentPanel = panel;
         add(currentPanel, new GBC( 8,2,4,10 ).setAnchor( GBC.CENTER ).setFill( GBC.BOTH ).setWeight(100,100) );

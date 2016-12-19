@@ -329,6 +329,14 @@ public class UsefulFunctions {
         return colors;
     }
     
+    public static String[] getColorsAsStrings(){
+        String[] cols = new String[ colors.length ];
+        for( int i=0; i<cols.length; i++ ){
+            cols[i] = UsefulFunctions.parseColor( colors[i] );
+        }
+        return cols;
+    }
+    
     /**
      * Converts pair to integers
      * @param p pair to be converted

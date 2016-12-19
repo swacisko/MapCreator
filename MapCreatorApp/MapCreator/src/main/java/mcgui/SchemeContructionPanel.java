@@ -21,6 +21,7 @@ import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
+import mcgraphs.MapEdge;
 import mcgraphs.MapGraph;
 import mcgraphs.MapNode;
 import mcmapdrawing.DrawingModule;
@@ -46,7 +47,7 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
          setBorder( BorderFactory.createLineBorder(Color.RED, 3, true) );
          
          addMouseMotionListener( new MouseMotionHandler(this) );
-         addMouseListener( new MouseHandler() );
+         addMouseListener( new MouseHandler(this) );
          
     }
     
@@ -153,6 +154,37 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
         this.parentFrame = parentFrame;
     }
     
+    private void moveNodeToPosition( Point p ){
+        if( selectedItems.isMovableNode() == false ) return;
+            MapGraph graph = selectedItems.getGraph();
+            MapNode node = selectedItems.getSelectedNode1();
+            if( graph == null || node == null ) return;
+            Pair< Pair<Float,Float>, Pair<Float,Float> > lbcruc = module.getLBCandRUC( new ArrayList<Drawable>(graph.getNodes()) );
+            Pair<Float,Float> LBC = lbcruc.getST();
+            Pair<Float,Float> RUC = lbcruc.getND();
+            float dW = RUC.getST() - LBC.getST();
+            float dH = RUC.getND() - LBC.getND();
+            float width = getWidth();
+            float height = getHeight();
+            
+           // System.out.println( "LBC = " + LBC + "\nRUC = " + RUC );
+           // System.out.println( "dW = " + dW + "   dH = " + dH );
+            
+           // System.out.println( "Event point = " + p );
+            
+            
+            float X = p.x / width;
+            float Y = height - p.y;
+            Y /= height;
+            
+          //  System.out.println( "After transformation point (X,Y) = (" + X + "," + Y + ")" );
+          //  System.out.println( "parent: width = " + width + "  height = " + height );
+            
+            node.setCoords( new Pair<>( LBC.getST() + X*dW, LBC.getND() + Y*dH ) );
+            
+          //  System.out.println( "denormalized coords = " + node.getCoords() );       
+        
+    }
     
 
 //******************************************** CLASS FIELDS
@@ -186,6 +218,10 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
     
     class MouseHandler extends MouseAdapter{
         
+        public MouseHandler( JPanel parent ){
+            this.parent = parent;
+        }
+        
         private MapNode getMapNodeOnPosition( Point p ){
             if( selectedItems.getGraph() == null ) return null;
             if( selectedItems.getGraph().getNodes() == null ) return null;
@@ -203,7 +239,38 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
         
         @Override
         public void mousePressed(MouseEvent event){
+            MapNode n = getMapNodeOnPosition( event.getPoint() );
+            System.out.println( "Point:\t" + event.getPoint() );
+            if( n == null ){
+                if( selectedItems.isMovableNode() ){
+                    moveNodeToPosition( event.getPoint() );
+                }
+                else{
+                    selectedItems.setSelectedNode1(null);
+                    System.out.println( "NULL !" );
+                    return;
+                }
+                
+            }
+            else{
+                //System.out.println( "Map node selected, name = " + n.getStructureName() + "   coords: " + n.getCoords() );
+                if( selectedItems.isEdgeSelection() ){
+                    if( selectedItems.getSelectedNode1() == null ){
+                        selectedItems.setSelectedNode1(n);
+                    }else{
+                        MapNode n2 = selectedItems.getSelectedNode1();
+                        MapEdge e = selectedItems.getGraph().getMapEdgeWithNeighbours( n.getID(), n2.getID() );
+                        selectedItems.setSelectedEdge(e);
+                    }                    
+                }else{
+                    selectedItems.setSelectedNode1(n);
+                }
+                
+                
+            }
             
+            
+            getParentFrame().repaint();
         }
         
         @Override
@@ -223,6 +290,8 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
             getParentFrame().repaint();
         }
         
+        private JPanel parent = null;
+        
     }
     
     class MouseMotionHandler implements MouseMotionListener{
@@ -233,22 +302,8 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
 
         @Override
         public void mouseDragged(MouseEvent e) {
-            if( selectedItems.isMovableNode() == false ) return;
-            MapGraph graph = selectedItems.getGraph();
-            MapNode node = selectedItems.getSelectedNode1();
-            if( graph == null || node == null ) return;
-            Pair< Pair<Float,Float>, Pair<Float,Float> > lbcruc = module.getLBCandRUC( new ArrayList<Drawable>(graph.getNodes()) );
-            Pair<Float,Float> LBC = lbcruc.getST();
-            Pair<Float,Float> RUC = lbcruc.getND();
-            float dW = RUC.getST() - LBC.getST();
-            float dH = RUC.getND() - LBC.getND();
-            float width = parent.getWidth();
-            float height = parent.getHeight();
-            Point p = e.getPoint();
-            p.x /= width;
-            p.y = (int)height - p.y;
-            p.y /= height;
-            node.setCoords( new Pair<>( LBC.getST() + p.x*dW, LBC.getND() + p.y*dH ) );
+            moveNodeToPosition( e.getPoint() );
+            
             getParentFrame().repaint();
         }
 

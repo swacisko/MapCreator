@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import javax.swing.JOptionPane;
 import mcalgorithms.EdgeContraction;
 import mcalgorithms.ForceAlgorithm;
 import mcalgorithms.GraphGlueing;
@@ -452,7 +453,10 @@ public class DrawingModule {
                 if( st != null ) text = st.getStopName();
                 Pair<Integer,Integer> offset = e.getTextOffset();
                 int offx = offset.getST();
+                if( (svg instanceof SVG) == false ) offx *= MCSettings.getSvgToSwingFactor();                
                 int offy = offset.getND();
+                if( (svg instanceof SVG) == false ) offy *= MCSettings.getSvgToSwingFactor();
+                svg.setColor( e.getTextColor() );
                 svg.addText( new Point( (int) (begCoords.getST() + i*vec.getST() ) + offx , (int)( begCoords.getND() + i*vec.getND() ) + offy ),
                       text, e.getTextFontSize(), e.getTextFormat(), e.getTextAngle()  );
             }
@@ -523,7 +527,7 @@ public class DrawingModule {
     private void drawNodeTexts( MapGraph graph ){
         for( MapNode n : graph.getNodes() ){
             if( n.isTextVisilbe() ){
-                drawNodeText(n, MCSettings.getTEXT_COLOR());
+                drawNodeText(n, n.getTextColor());
             }
         }
     }
@@ -559,6 +563,10 @@ public class DrawingModule {
                 for (int i = 1; i < gp.getPathSequence().size(); i++) {
                     MapNode nA = graph.getMapNodeByID(gp.getPathSequence().get(i - 1));
                     MapNode nB = graph.getMapNodeByID(gp.getPathSequence().get(i));
+                    
+                    if( nA == null || nB == null ){
+                        JOptionPane.showMessageDialog(null, "nA or nB = null", "NULL ERROR", JOptionPane.ERROR_MESSAGE );
+                    }
 
                     boolean reversed = false;
                     if (nA.getID() > nB.getID()) {

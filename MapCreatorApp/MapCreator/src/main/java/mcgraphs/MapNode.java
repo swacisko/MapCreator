@@ -210,75 +210,6 @@ public class MapNode extends MapStructure implements Drawable {
         this.height = height;
     }
         
-    public Pair<Integer, Integer> getTextOffset() {
-        return textOffset;
-    }
-
-    public void setTextOffset(Pair<Integer, Integer> textOffset) {
-        this.textOffset = textOffset;
-    }
-    
-    /**
-     * This function changes {@link #textOffset} by adding x to its X coordinate and y to its Y coordinate
-     * @param x the value of horizontal offset to add
-     * @param y the value of vertical offset to add
-     */
-    public void updateTextOffset( int x, int y ){
-        int X = textOffset.getST();
-        int Y = textOffset.getND();
-        textOffset.setST( X+x );
-        textOffset.setND( Y+y );
-    }
-    
-    
-    
-    /**
-     * 
-     * @return returns angle at which node text should be written
-     */
-    public int getTextAngle() {
-        return textAngle;
-    }
-
-    public void setTextAngle(int textAngle) {
-        this.textAngle = textAngle;
-    }
-
-    /**
-     * 
-     * @return return whether text should be visible
-     */
-    public boolean isTextVisilbe() {
-        return textVisilbe;
-    }
-
-    public void setTextVisilbe(boolean textVisilbe) {
-        this.textVisilbe = textVisilbe;
-    }
-    
-    public int getTextFontSize() {
-        return textFontSize;
-    }
-
-    public void setTextFontSize(int textFontSize) {
-        this.textFontSize = textFontSize;
-    }
-    
-    public boolean isTextBold() {
-        return textBold;
-    }
-
-    public void setTextBold(boolean textBold) {
-        this.textBold = textBold;
-    }
-
-    public int getTextFormat() {
-        return textFormat;
-    }
-
-    public void setTextFormat(int textFormat) {
-        this.textFormat = textFormat;
-    }
     
     public Color getFillColor() {
         return fillColor;
@@ -301,15 +232,9 @@ public class MapNode extends MapStructure implements Drawable {
     
     private ArrayList<String> containedStopsIds = new ArrayList<>();
     
-    private Pair<Integer,Integer> textOffset = MCSettings.getINITIAL_TEXT_OFFSET();
-
-    private int textAngle = 0;  
-    private boolean textVisilbe = true;
-    private int textFontSize = MCSettings.getINITIAL_TEXT_FONT_SIZE();
-    private boolean textBold = false;
-    private int textFormat = Font.PLAIN;
+    
     private Color fillColor = MCSettings.getINITIAL_FILL_COLOR();
-
+    
     
     
    

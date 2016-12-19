@@ -105,6 +105,16 @@ public class MapGraph {
         
         return edgesMap.get( id );
     }
+    
+    public MapEdge getMapEdgeWithNeighbours( int id1, int id2 ){
+        for( MapEdge e : edges ){
+            Pair<MapNode,MapNode> ends = e.getEnds();
+            if( (ends.getST().getID() == id1 && ends.getND().getID() == id2) || ( ends.getST().getID() == id2 && ends.getND().getID() == id1 ) ){
+                return e;
+            }
+        }
+        return null;
+    }
 
     public void removeMapEdge(int index) {
         if (index >= edges.size()) {

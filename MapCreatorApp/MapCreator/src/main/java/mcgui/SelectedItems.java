@@ -5,6 +5,7 @@
  */
 package mcgui;
 
+import mcgraphs.MapEdge;
 import mcgraphs.MapGraph;
 import mcgraphs.MapNode;
 
@@ -31,24 +32,11 @@ public class SelectedItems {
         this.selectedNode1 = selectedNode1;
     }
 
-    /**
-     *
-     * @return returns second selected node. Selecting an edge we have to select
-     * two nodes. This function return the second one
-     */
-    public MapNode getSelectedNode2() {
-        return selectedNode2;
-    }
-
-    public void setSelectedNode2(MapNode selectedNode2) {
-        this.selectedNode2 = selectedNode2;
-    }
-
-    public MapNode getSelectedEdge() {
+    public MapEdge getSelectedEdge() {
         return selectedEdge;
     }
 
-    public void setSelectedEdge(MapNode selectedEdge) {
+    public void setSelectedEdge(MapEdge selectedEdge) {
         this.selectedEdge = selectedEdge;
     }
 
@@ -103,8 +91,7 @@ public class SelectedItems {
     private MapGraph graph = null;
 
     private MapNode selectedNode1 = null;
-    private MapNode selectedNode2 = null;
-    private MapNode selectedEdge = null;
+    private MapEdge selectedEdge = null;
 
     /**
      * This value is true if i can move the node

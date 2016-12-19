@@ -177,6 +177,14 @@ public class MapStructure {
         this.textFormat = textFormat;
     }
     
+    public Color getTextColor() {
+        return textColor;
+    }
+
+    public void setTextColor(Color textColor) {
+        this.textColor = textColor;
+    }
+    
     
      
 
@@ -204,6 +212,8 @@ public class MapStructure {
     private int textFontSize = MCSettings.getINITIAL_TEXT_FONT_SIZE();
     private boolean textBold = false;
     private int textFormat = Font.PLAIN;
+    private Color textColor = MCSettings.getTEXT_COLOR();
+
     
     
 }

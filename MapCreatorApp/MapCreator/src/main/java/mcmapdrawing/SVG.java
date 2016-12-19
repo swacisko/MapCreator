@@ -1,6 +1,7 @@
 package mcmapdrawing;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Point;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -16,7 +17,7 @@ import mctemplates.UsefulFunctions;
 public class SVG implements DrawingModuleInterface {
 
     public SVG() {
-        
+
     }
 
     //konstruktor ustawiający wymiary rysunku
@@ -62,11 +63,10 @@ public class SVG implements DrawingModuleInterface {
         writerHTML.println("<svg width=\"" + width + "\" height=\"" + height + "\">");
 
        // MCSettings.setINITIAL_ROUTE_HIGHLIGHT_WIDTH( 2* MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH() );
-        
         /*addPolylineStyle();
-        addCircleStyle();
-        addRectangleStyle();
-        addEllipseStyle();*/
+         addCircleStyle();
+         addRectangleStyle();
+         addEllipseStyle();*/
     }
 
     //wszystkie potrzebne rzeczy na koniec plików
@@ -80,8 +80,8 @@ public class SVG implements DrawingModuleInterface {
         writerHTML.println("</body>");
         writerHTML.println("</html>");
         writerHTML.close();
-        
-      //  MCSettings.setINITIAL_ROUTE_HIGHLIGHT_WIDTH( MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH() / 2 );
+
+        //  MCSettings.setINITIAL_ROUTE_HIGHLIGHT_WIDTH( MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH() / 2 );
     }
 
     @Override
@@ -100,7 +100,7 @@ public class SVG implements DrawingModuleInterface {
         addLine(beg.x, beg.y, end.x, end.y);
     }
 
-        //przyjmuje jako parametr listę point (x,y)
+    //przyjmuje jako parametr listę point (x,y)
     //dodaje łamaną bez stylu do pliku HTML i łamaną z "domyślnym" (ustawionym w parametrach klasy) stylem do pliku SVG
     @Override
     public void addPolyline(ArrayList<Point> points) {
@@ -119,7 +119,7 @@ public class SVG implements DrawingModuleInterface {
         writerHTML.print("\" style=\"fill:none;stroke:" + color + ";stroke-width:" + strokeWidth + "\" />\n");
     }
 
-        //parametry: p - środek koła; r - promień
+    //parametry: p - środek koła; r - promień
     //dodaje kółko bez stylu do pliku HTML i kółko z "domyślnym" (ustawionym w parametrach klasy) stylem do pliku SVG
     @Override
     public void addCircle(Point p, int r) {
@@ -133,7 +133,7 @@ public class SVG implements DrawingModuleInterface {
         //writerHTML.println("   <circle cx=\"" + x + "\" cy=\"" + y + "\" r=\"" + r + "\" />");
     }
 
-        //c - środek elipsy, rx - promień poziomy, ry - promień pionowy
+    //c - środek elipsy, rx - promień poziomy, ry - promień pionowy
     //dodaje elipsę bez stylu do pliku HTML i elipse z "domyślnym" (ustawionym w parametrach klasy) stylem do pliku SVG
     @Override
     public void addEllipse(Point c, int rx, int ry) {
@@ -147,19 +147,23 @@ public class SVG implements DrawingModuleInterface {
         //writerHTML.println("   <ellipse cx=\"" + cx + "\" cy=\"" + cy + "\" rx=\"" + rx + "\" ry=\"" + ry + "\" />");
     }
 
-        //p - lewy dolny wierzchołek prostokąta, w którym znajduje się napis
+    //p - lewy dolny wierzchołek prostokąta, w którym znajduje się napis
     //dodaje napis w kolorze z parametrów klasy
     @Override
     public void addText(Point p, String text, int fontsize, int format, int angle) {
-        this.fontsize = fontsize;        
+        this.fontsize = fontsize;
+        if( new Font("serif",format,fontsize).isBold() ) {
+            strokeWidth = 3;
+            System.out.println( "Text " + text + " should be bold" );
+        } else {
+            strokeWidth = 1;
+        }
         // SHOULDN'T IT BE HERE fillColor instead of color?
-        writerSVG.println("   <text x=\"" + p.x + "\" y=\"" + p.y + "\" fill=\"" + color + "\" font-size=\"" + fontsize + "\""
-                + " transform=\"rotate("+ angle + " " + p.x + " " + p.y + ")\"> " + text + "</text>");
-        writerHTML.println("   <text x=\"" + p.x + "\" y=\"" + p.y + "\" fill=\"" + color + "\" font-size=\"" + fontsize + "\""
-                + " transform=\"rotate("+ angle + " " + p.x + " " + p.y + ")\"> " + text + "</text>");
+        writerSVG.println("   <text x=\"" + p.x + "\" y=\"" + p.y + "\" fill=\"" + color + "\" stroke-width=\"" + strokeWidth + "\" font-size=\"" + fontsize + "\""
+                + " transform=\"rotate(" + angle + " " + p.x + " " + p.y + ")\"> " + text + "</text>");
+        writerHTML.println("   <text x=\"" + p.x + "\" y=\"" + p.y + "\" fill=\"" + color + "\" stroke-width=\"" + strokeWidth + "\" font-size=\"" + fontsize + "\""
+                + " transform=\"rotate(" + angle + " " + p.x + " " + p.y + ")\"> " + text + "</text>");
     }
-
-    
 
     @Override
     public void setColor(Color c) {
@@ -455,7 +459,7 @@ public class SVG implements DrawingModuleInterface {
         for (int i = 1; i < s; i++) {
             writerHTML.print(" " + x.get(i) + "," + y.get(i));
         }
-		//writerHTML.print( "\" />\n" );
+        //writerHTML.print( "\" />\n" );
 
         writerHTML.print("\" style=\"fill:none;stroke:" + polylineColor + ";stroke-width:2\" />\n");
     }
@@ -571,7 +575,7 @@ public class SVG implements DrawingModuleInterface {
         writerHTML.println("");
     }
 
-	//p - lewy górny wierzchołek prostokąta
+    //p - lewy górny wierzchołek prostokąta
     //dodaje prostokąt bez stylu do pliku HTML i prostokąt z "domyślnym" (ustawionym w parametrach klasy) stylem do pliku SVG
     public void addRectanglePlain(Point p, int width, int height) {
         addRectanglePlain((int) p.getX(), (int) p.getY(), width, height);
@@ -583,7 +587,7 @@ public class SVG implements DrawingModuleInterface {
         writerHTML.println("   <rect x=\"" + x + "\" y=\"" + y + "\" width=\"" + width + "\" height=\"" + height + "\" />");
     }
 
-	//p - lewy górny wierzchołek prostokąta
+    //p - lewy górny wierzchołek prostokąta
     //dodaje prostokąt ze stylem (czerwone z czarnym brzegiem)
     public void addRectangle(Point p, int width, int height) {
         addRectangle((int) p.getX(), (int) p.getY(), width, height);
@@ -612,7 +616,7 @@ public class SVG implements DrawingModuleInterface {
         writerHTML.println("   <rect class=\"" + className + "\" x=\"" + x + "\" y=\"" + y + "\" width=\"" + width + "\" height=\"" + height + "\" />");
     }
 
-	//p - lewy górny wierzchołek prostokąta, rx,ry - jak bardzo zaokrąglone rogi
+    //p - lewy górny wierzchołek prostokąta, rx,ry - jak bardzo zaokrąglone rogi
     //dodaje prostokąt z zaokrąglonymi rogami bez stylu do pliku HTML i prostokąt z "domyślnym" (ustawionym w parametrach klasy) stylem do pliku SVG
     public void addRectangleRoundPlain(Point p, int rx, int ry, int width, int height) {
         addRectangleRoundPlain((int) p.getX(), (int) p.getY(), rx, ry, width, height);
@@ -624,7 +628,7 @@ public class SVG implements DrawingModuleInterface {
         writerHTML.println("   <rect x=\"" + x + "\" y=\"" + y + "\" rx=\"" + rx + "\" ry=\"" + ry + "\" width=\"" + width + "\" height=\"" + height + "\" />");
     }
 
-	//p - lewy górny wierzchołek prostokąta, rx,ry - jak bardzo zaokrąglone rogi
+    //p - lewy górny wierzchołek prostokąta, rx,ry - jak bardzo zaokrąglone rogi
     //dodaje prostokąt z zaokrąglonymi rogami ze stylem (czerwone z czarnym brzegiem)
     public void addRectangleRound(Point p, int rx, int ry, int width, int height) {
         addRectangleRound((int) p.getX(), (int) p.getY(), rx, ry, width, height);
@@ -718,7 +722,7 @@ public class SVG implements DrawingModuleInterface {
     }
 
 //NAPISY
-	//p - lewy dolny wierzchołek prostokąta, w którym znajduje się napis
+    //p - lewy dolny wierzchołek prostokąta, w którym znajduje się napis
     //dodaje napis
     public void addText(Point p, String text, String color) {
         addText((int) p.getX(), (int) p.getY(), text, color);

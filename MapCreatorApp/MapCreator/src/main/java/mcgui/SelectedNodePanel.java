@@ -153,7 +153,7 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
         textSizeSlider.setMajorTickSpacing( 10 );
         textSizeSlider.setPaintLabels(true);
         textSizeSlider.setPaintTrack(true);
-        textSizeSlider.addChangeListener(this);
+        textSizeSlider.addChangeListener(this); 
         textSizeLabel = new JLabel( "Text size:" );
         
         textAngleSlider = new JSlider( 0,360,0 );
@@ -163,6 +163,10 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
         textAngleSlider.setPaintTrack(true);
         textAngleSlider.addChangeListener(this);
         textAngleLabel = new JLabel( "Text angle:" );
+        
+        textColorLabel = new JLabel( "Text color" );
+        textColorBox = new JComboBox( UsefulFunctions.getColorsAsStrings() );
+        textColorBox.addActionListener(this);
         
         strPanel.add( structureNameLabel, new GBC( 0,0,4,1 ).setAnchor( GBC.EAST ).setFill(GBC.BOTH).setWeight(100,100) );
         strPanel.add( structureNameTextField, new GBC( 4,0,6,1 ).setAnchor( GBC.WEST ).setFill(GBC.BOTH).setWeight(100,100) );
@@ -180,25 +184,24 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
         strPanel.add( textAngleLabel, new GBC( 0,4,4,1 ).setAnchor( GBC.EAST ).setFill(GBC.BOTH).setWeight(100,100));
         strPanel.add( textAngleSlider, new GBC( 4,4,8,1 ).setAnchor( GBC.WEST ).setFill(GBC.BOTH).setWeight(100,100));
         
+        strPanel.add( textColorLabel,  new GBC( 0,5,4,1 ).setAnchor( GBC.EAST ).setFill(GBC.BOTH).setWeight(100,100) );
+        strPanel.add( textColorBox,  new GBC( 4,5,8,1 ).setAnchor( GBC.WEST ).setFill(GBC.BOTH).setWeight(100,100) );
+        
         add(strPanel, new GBC( 0,2,12,5 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100));
     }
 
+        
     /**
      * Adds nodeColor ComboBox
      */
     private void addNodeColorBox() {
-        nodeColorLabel = new JLabel( "Node color:" );
-        Color[] colors = UsefulFunctions.getColors();
-        String[] cols = new String[ colors.length ];
-        for( int i=0; i<cols.length; i++ ){
-            cols[i] = UsefulFunctions.parseColor( colors[i] );
-        }
+        nodeColorLabel = new JLabel( "Node color:" );        
         
-        nodeColorBox = new JComboBox( cols );
+        nodeColorBox = new JComboBox( UsefulFunctions.getColorsAsStrings() );
         nodeColorBox.addActionListener(this);
         
         nodeFillLabel = new JLabel( "Node fill color:" );
-        nodeFillBox = new JComboBox( cols );
+        nodeFillBox = new JComboBox( UsefulFunctions.getColorsAsStrings() );
         nodeFillBox.addActionListener(this);
                
         add( nodeColorLabel, new GBC( 0,7,4,2 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH) );
@@ -321,6 +324,9 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
         }else if( source == nodeFillBox ){
             n.setFillColor(UsefulFunctions.parseColor( (String)nodeFillBox.getSelectedItem() ) );
         }
+        else if( source == textColorBox ){
+            n.setTextColor( UsefulFunctions.parseColor( (String)textColorBox.getSelectedItem() ) );
+        }
         
         getParentFrame().getParentFrame().repaint();
     }
@@ -388,6 +394,8 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
     private JLabel textAngleLabel = null;
     private JSlider textAngleSlider = null;
     private JCheckBox textBoldBox = null;
+    private JLabel textColorLabel = null;
+    private JComboBox textColorBox = null;
     
     private ManagerFrame parentFrame = null;
 

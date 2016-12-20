@@ -64,13 +64,15 @@ public class MCSettings {
     private static int INITIAL_EDGE_WIDTH = 2;
     private static int INITIAL_EDGE_HOVER_WIDTH = 2;
     
+    
     private static Color INITIAL_NODE_COLOR = Color.BLACK;
     private static Color INITIAL_NODE_HOVER_COLOR = INITIAL_HOVER_COLOR;
     private static int INITIAL_NODE_WIDTH = 4;
     private static int INITIAL_NODE_HOVER_WIDTH = 12;
     private static Color INITIAL_FILL_COLOR = Color.ORANGE;
+    private static int CONTAINED_STOPS_DRAWING_SIZE = INITIAL_NODE_WIDTH - 1;
 
-        
+            
     private static Color TEXT_COLOR = Color.BLACK;
 
     private static int INITIAL_ROUTE_HIGHLIGHT_WIDTH = 4*INITIAL_EDGE_WIDTH;
@@ -129,6 +131,15 @@ public class MCSettings {
 
     
     //***************************************************************  GETTERS AND SETTERS AND SOME OTHER
+    
+    public static int getCONTAINED_STOPS_DRAWING_SIZE() {
+        return CONTAINED_STOPS_DRAWING_SIZE;
+    }
+
+    public static void setCONTAINED_STOPS_DRAWING_SIZE(int CONTAINED_STOPS_DRAWING_SIZE) {
+        MCSettings.CONTAINED_STOPS_DRAWING_SIZE = CONTAINED_STOPS_DRAWING_SIZE;
+    }
+
     
     public static float getLBCRUCModificationFactor() {
         return LBCRUCModificationFactor;

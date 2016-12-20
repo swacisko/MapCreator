@@ -105,12 +105,14 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
      * @param angleWidth 
      */
     @Override
-    public void addText(Point p, String text, int fontsize, int format, int angleWidth) {        
+    public void addText(Point p, String text, int fontsize, int format, int angleWidth) { 
+        graphics.setColor(color);
         AffineTransform at = new AffineTransform();
         at.setToRotation( 2 * Math.PI * angleWidth / 360f, p.x, p.y );
-        graphics.setTransform(at);
+        graphics.setTransform(at);        
         graphics.setFont( new Font( "Serif",format, (int) ( 0.7f * fontsize * MCSettings.getSvgToSwingFactor() ) ) );
         graphics.drawString(text,p.x,p.y);
+        graphics.setTransform(new AffineTransform());
     }
 
     @Override

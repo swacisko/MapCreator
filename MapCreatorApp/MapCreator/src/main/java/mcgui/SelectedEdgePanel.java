@@ -23,8 +23,8 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import mcgraphs.MapEdge;
-import mcgraphs.MapNode;
 import mcgtfsstructures.MCDatabase;
+import mcgtfsstructures.Stop;
 import mctemplates.MCSettings;
 import mctemplates.UsefulFunctions;
 
@@ -53,9 +53,11 @@ public class SelectedEdgePanel extends JPanel implements ActionListener, ChangeL
         if( e == null ) return;
         String res = "";
         for( String s : e.getContainedForwardStopsIds() ){
-            String stopName = MCDatabase.getStopOfID(s).getStopName();
-            if( stopName == null ) stopName = s;
-            res += stopName + "\n";
+            Stop st = MCDatabase.getStopOfID(s);    
+            String temp;
+            if( st == null ) temp = s;
+            else temp = st.getStopName();
+            res += temp + "\n";
         }
         
         containedStopsTextArea.setFont( new Font( "Serif",Font.PLAIN, 15 ) );
@@ -102,7 +104,7 @@ public class SelectedEdgePanel extends JPanel implements ActionListener, ChangeL
         
         add( textVisibleBox,  new GBC( 0,1,6,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
         add( textBoldBox,  new GBC( 6,1,6,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
-        add( new JLabel("Move node text: "), new GBC( 0,2,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
+        add( new JLabel("Move edge text: "), new GBC( 0,2,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
         add( getTextMoveButton("U",0,-2),  new GBC( 4,2,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
         add( getTextMoveButton("D",0,2),  new GBC( 6,2,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100));
         add( getTextMoveButton("L",-2,0),  new GBC( 8,2,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
@@ -156,7 +158,11 @@ public class SelectedEdgePanel extends JPanel implements ActionListener, ChangeL
         if( edge == null ) return;
         
         else if( source == textColorBox ){
-            
+            edge.setTextColor(UsefulFunctions.parseColor((String)textColorBox.getSelectedItem() ) );
+        }else if( source == textVisibleBox ){
+            edge.setTextVisilbe( textVisibleBox.isSelected() );
+        }else if( source == textBoldBox ){
+            edge.setTextBold( textBoldBox.isSelected() );
         }
         
         getParentFrame().getParentFrame().repaint();

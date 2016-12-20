@@ -446,18 +446,18 @@ public class DrawingModule {
             vec.setST( vec.getST() / (L+1) );
             vec.setND( vec.getND() / (L+1)  );
             for( int i=1; i<=L; i++ ){
-                int radius = 5;
+                int radius = e.getContainedStopsDrawingSize();               
                 addEllipse( (int) (begCoords.getST() + i*vec.getST() ) , (int)( begCoords.getND() + i*vec.getND() ) ,radius,radius);
                 Stop st = MCDatabase.getStopOfID( e.getContainedForwardStopsIds().get(i-1) );
                 String text = e.getContainedForwardStopsIds().get(i-1);
                 if( st != null ) text = st.getStopName();
                 Pair<Integer,Integer> offset = e.getTextOffset();
-                int offx = offset.getST();
+                float offx = offset.getST();
                 if( (svg instanceof SVG) == false ) offx *= MCSettings.getSvgToSwingFactor();                
-                int offy = offset.getND();
+                float offy = offset.getND();
                 if( (svg instanceof SVG) == false ) offy *= MCSettings.getSvgToSwingFactor();
                 svg.setColor( e.getTextColor() );
-                svg.addText( new Point( (int) (begCoords.getST() + i*vec.getST() ) + offx , (int)( begCoords.getND() + i*vec.getND() ) + offy ),
+                svg.addText( new Point( (int) (begCoords.getST() + i*vec.getST() + offx ) , (int)( begCoords.getND() + i*vec.getND() + offy ) ),
                       text, e.getTextFontSize(), e.getTextFormat(), e.getTextAngle()  );
             }
         }

@@ -39,9 +39,9 @@ public class DrawingModule {
     public void beginSVG() {
         svg.begin();
         /*svg.addPolylineStyle();
-        svg.addCircleStyle();
-        svg.addRectangleStyle();
-        svg.addEllipseStyle();*/
+         svg.addCircleStyle();
+         svg.addRectangleStyle();
+         svg.addEllipseStyle();*/
     }
 
     public void endSVG() {
@@ -127,13 +127,13 @@ public class DrawingModule {
         float ratio = dW / dH;
         float H = svg.getHeight();
         float W = svg.getWidth();
-        //if( W >= ratio*H ){
-            svg.setSize( Math.round( (ratio*H) ), svg.getHeight() );
-       // }
-       // else{
-       //     svg.setSize( svg.getWidth(), Math.round( ( W / ratio ) ) );
-       // }
-        //   System.out.println( "width = " + svg.getWidth() + "   height = " + svg.getHeight() );
+        if( W >= ratio*H ){
+            svg.setSize(Math.round((ratio * H)), svg.getHeight());
+        }
+        else{
+            svg.setSize( svg.getWidth(), Math.round( ( W / ratio ) ) );
+        }
+           //System.out.println( "width = " + svg.getWidth() + "   height = " + svg.getHeight() );
     }
 
     /**
@@ -143,7 +143,7 @@ public class DrawingModule {
      * @param coords Coordinates of a point we want to locate on the map
      * @return returns svg-coordinates corresponding to coords
      */
-    public Pair<Integer, Integer> normalizeCoordinates( Pair<Float, Float> coords) {
+    public Pair<Integer, Integer> normalizeCoordinates(Pair<Float, Float> coords) {
         float x = coords.getST();
         float y = coords.getND();
 
@@ -167,21 +167,23 @@ public class DrawingModule {
 
         int x2 = Math.round((W * x) / dW);
         int y2 = Math.round((H * y) / dH);
-        
+
         return new Pair<>(x2, y2);
     }
 
-    private void normalizeGraphCoordinates( MapGraph graph ){
-        for( MapNode n : graph.getNodes() ){
-            Pair<Integer,Integer> newcoords = normalizeCoordinates( n.getCoords() );
-            Pair<Float,Float> res = new Pair<>( (float)newcoords.getST(), (float)newcoords.getND() );
+    private void normalizeGraphCoordinates(MapGraph graph) {
+        for (MapNode n : graph.getNodes()) {
+            Pair<Integer, Integer> newcoords = normalizeCoordinates(n.getCoords());
+            Pair<Float, Float> res = new Pair<>((float) newcoords.getST(), (float) newcoords.getND());
             n.setCoords(res);
         }
     }
-    
+
     /**
      * Calculates the LBC and RUC of given drawable structures
-     * @param structures List of Drawable structures for which i should find LBC and RUC
+     *
+     * @param structures List of Drawable structures for which i should find LBC
+     * and RUC
      * @return return pair (LBC,RUC)
      */
     public Pair< Pair<Float, Float>, Pair<Float, Float>> getLBCandRUC(ArrayList<Drawable> structures) {
@@ -226,18 +228,18 @@ public class DrawingModule {
                 ArrayList<Integer> y = new ArrayList<>(); // tego nie powinno byc - bedzie do czasu gdy Asia zrobic funkcje dodawania lini dla par
 
                 for (Shape sh : shapeById) {
-                    Pair<Integer, Integer> norm = normalizeCoordinates( sh.getCoords() );
+                    Pair<Integer, Integer> norm = normalizeCoordinates(sh.getCoords());
                     x.add(norm.getST());
                     y.add(norm.getND());
                 }
 
                 /*svg.setPolylineWidth(3);
-                svg.setPolylineColor(UsefulFunctions.parseColor(UsefulFunctions.getNextColor()));*/
+                 svg.setPolylineColor(UsefulFunctions.parseColor(UsefulFunctions.getNextColor()));*/
                 svg.setStrokeWidth(3);
                 svg.setColor(UsefulFunctions.getNextColor());
                 ArrayList<Point> list = new ArrayList<>();
-                for( int i=0; i<x.size();i++ ){
-                    list.add( new Point( x.get(i), y.get(i) ) );
+                for (int i = 0; i < x.size(); i++) {
+                    list.add(new Point(x.get(i), y.get(i)));
                 }
                 addPolyline(list);
 
@@ -253,7 +255,7 @@ public class DrawingModule {
         for (Stop s : stops) {
             float x = Float.parseFloat(s.getStopLon());
             float y = Float.parseFloat(s.getStopLat());
-            Pair<Integer, Integer> p = normalizeCoordinates( new Pair<>(x, y));
+            Pair<Integer, Integer> p = normalizeCoordinates(new Pair<>(x, y));
             svg.addCircle(new Point(p.getST(), p.getND()), 3);
             //   System.out.println( "Dodalem przystanek o id = " + s.getStopId() + "   x = " + p.getST() + "  y = " + p.getND() );
         }
@@ -280,7 +282,6 @@ public class DrawingModule {
         endSVG();
     }
 
-    
     public void drawDatabaseGraph() {
         System.out.println("Zaczynam tworzyc podstawowy graf z danych GTFS");
         graph = new MapGraphCreator().createMapGraphFromGtfsDatabase(MCSettings.getDRAWING_ROUTE_TYPE());
@@ -346,20 +347,20 @@ public class DrawingModule {
         drawForceSpacedGraph();
     }
 
-    private void drawNodeText(MapNode n, Color c){        
+    private void drawNodeText(MapNode n, Color c) {
         svg.setColor(c);
         String s = n.getStructureName();
         //s += ":" + n.getContainedStopsIds().size();
-        Point p = UsefulFunctions.convertToPoint( normalizeCoordinates( n.getCoords() ) );
-        Pair<Integer,Integer> offset = n.getTextOffset();
-        if( (svg instanceof SVG) == false ){
-            p.x += (int) ( MCSettings.getSvgToSwingFactor() * offset.getST() );
-            p.y += (int) ( MCSettings.getSvgToSwingFactor() * offset.getND() );
-        }else{
+        Point p = UsefulFunctions.convertToPoint(normalizeCoordinates(n.getCoords()));
+        Pair<Integer, Integer> offset = n.getTextOffset();
+        if ((svg instanceof SVG) == false) {
+            p.x += (int) (MCSettings.getSvgToSwingFactor() * offset.getST());
+            p.y += (int) (MCSettings.getSvgToSwingFactor() * offset.getND());
+        } else {
             p.x += offset.getST();
             p.y += offset.getND();
         }
-        svg.addText(p,s, n.getTextFontSize(), n.getTextFormat(), n.getTextAngle());
+        svg.addText(p, s, n.getTextFontSize(), n.getTextFormat(), n.getTextAngle());
     }
 
     private void setDrawingNodeParameters(MapNode n) {
@@ -371,13 +372,13 @@ public class DrawingModule {
         }
         if (n.getHoverColor() != null) {
             svg.setColor(n.getColor());
-            svg.setFill( n.getFillColor() );
+            svg.setFill(n.getFillColor());
         }
         if (n.getColor() != null) {
-            svg.setColor(n.getColor());            
+            svg.setColor(n.getColor());
         }
-        if( n.getFillColor() != null ){
-            svg.setFill( n.getFillColor() );
+        if (n.getFillColor() != null) {
+            svg.setFill(n.getFillColor());
         }
     }
 
@@ -387,37 +388,35 @@ public class DrawingModule {
      * @param graph Nodes from this graph will be drawn
      * @return return the same graph to enable chain call
      */
-    private MapGraph drawGraphNodesOnMap(MapGraph graph){        
+    private MapGraph drawGraphNodesOnMap(MapGraph graph) {
         Set<Integer> insignificantNodes = createInsignificantNodes(graph);
         for (MapNode n : graph.getNodes()) {
             setDrawingNodeParameters(n);
 
-            int dW = MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH()*getNodeDrawingWidthHighlightCoefficient(n) / 2;
+            int dW = MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH() * getNodeDrawingWidthHighlightCoefficient(n) / 2;
             if (insignificantNodes.contains(n.getID())) {
                 dW = 3;
             }
 
             if ((n.getContainedStopsIds().size() >= 4) || (insignificantNodes.contains(n.getID()) == false)) {
-                addEllipse(UsefulFunctions.convertToPoint(normalizeCoordinates( n.getCoords())), 3*n.getWidth() +dW, 2*n.getHeight() + dW );
+                addEllipse(UsefulFunctions.convertToPoint(normalizeCoordinates(n.getCoords())), 3 * n.getWidth() + dW, 2 * n.getHeight() + dW);
             } else if (n.countEdges() == 1 || (n.countEdges() < 4 && n.isContractable() == false)) {
-                addEllipse(UsefulFunctions.convertToPoint(normalizeCoordinates( n.getCoords())), n.getWidth() +dW , n.getHeight() + dW );
+                addEllipse(UsefulFunctions.convertToPoint(normalizeCoordinates(n.getCoords())), n.getWidth() + dW, n.getHeight() + dW);
             } else {
-                addEllipse(UsefulFunctions.convertToPoint(normalizeCoordinates( n.getCoords())), n.getWidth() + dW, n.getHeight() + dW );
+                addEllipse(UsefulFunctions.convertToPoint(normalizeCoordinates(n.getCoords())), n.getWidth() + dW, n.getHeight() + dW);
             }
         }
-        
+
         return graph;
     }
 
-    
-
     private void setDrawingEdgeParameters(MapEdge e) {
         if (e.getHoverWidth() != 0) {
-            
+
             //svg.setPolylineWidthHover(e.getHoverWidth());
         }
         if (e.getDrawingWidth() != 0) {
-            svg.setStrokeWidth( e.getDrawingWidth() );
+            svg.setStrokeWidth(e.getDrawingWidth());
             //svg.setPolylineWidth(e.getDrawingWidth());
         }
         if (e.getColor() != null) {
@@ -428,41 +427,46 @@ public class DrawingModule {
             //svg.setPolylineColorHover(UsefulFunctions.parseColor(e.getHoverColor()));
         }
     }
-  
 
     /**
      * Draws contained stops in edges, and their names
      */
-    private void drawEdgeContainedStops( MapGraph graph ){
-        for( MapEdge e : graph.getEdges() ){
-            Pair<MapNode,MapNode> ends = e.getEnds();
+    private void drawEdgeContainedStops(MapGraph graph){
+        for (MapEdge e : graph.getEdges()) {
+            Pair<MapNode, MapNode> ends = e.getEnds();
             MapNode beg = ends.getST();
             MapNode end = ends.getND();
-            Pair<Integer,Integer> begCoords = normalizeCoordinates( beg.getCoords() );
-            Pair<Integer,Integer> endCoords = normalizeCoordinates( end.getCoords() );
+            Pair<Integer, Integer> begCoords = normalizeCoordinates(beg.getCoords());
+            Pair<Integer, Integer> endCoords = normalizeCoordinates(end.getCoords());
             ArrayList<String> containedStops = e.getContainedForwardStopsIds();
             int L = containedStops.size();
-            Pair<Float,Float> vec = new Pair<>( (float)endCoords.getST() - begCoords.getST(), (float)endCoords.getND() - begCoords.getND() );
-            vec.setST( vec.getST() / (L+1) );
-            vec.setND( vec.getND() / (L+1)  );
-            for( int i=1; i<=L; i++ ){
-                int radius = e.getContainedStopsDrawingSize();               
-                addEllipse( (int) (begCoords.getST() + i*vec.getST() ) , (int)( begCoords.getND() + i*vec.getND() ) ,radius,radius);
-                Stop st = MCDatabase.getStopOfID( e.getContainedForwardStopsIds().get(i-1) );
-                String text = e.getContainedForwardStopsIds().get(i-1);
-                if( st != null ) text = st.getStopName();
-                Pair<Integer,Integer> offset = e.getTextOffset();
+            Pair<Float, Float> vec = new Pair<>((float) endCoords.getST() - begCoords.getST(), (float) endCoords.getND() - begCoords.getND());
+            vec.setST(vec.getST() / (L + 1));
+            vec.setND(vec.getND() / (L + 1));
+            for (int i = 1; i <= L; i++) {
+                int radius = e.getContainedStopsDrawingSize();
+                addEllipse((int) (begCoords.getST() + i * vec.getST()), (int) (begCoords.getND() + i * vec.getND()), radius, radius);
+                Stop st = MCDatabase.getStopOfID(e.getContainedForwardStopsIds().get(i - 1));
+                String text = e.getContainedForwardStopsIds().get(i - 1);
+                if (st != null) {
+                    text = st.getStopName();
+                }
+                Pair<Integer, Integer> offset = e.getTextOffset();
                 float offx = offset.getST();
-                if( (svg instanceof SVG) == false ) offx *= MCSettings.getSvgToSwingFactor();                
                 float offy = offset.getND();
-                if( (svg instanceof SVG) == false ) offy *= MCSettings.getSvgToSwingFactor();
-                svg.setColor( e.getTextColor() );
-                svg.addText( new Point( (int) (begCoords.getST() + i*vec.getST() + offx ) , (int)( begCoords.getND() + i*vec.getND() + offy ) ),
-                      text, e.getTextFontSize(), e.getTextFormat(), e.getTextAngle()  );
+                if ((svg instanceof SVG) == false) {
+                    offx *= MCSettings.getSvgToSwingFactor();
+                    offy *= MCSettings.getSvgToSwingFactor();
+                }
+                svg.setColor(e.getTextColor());
+                if (MCSettings.isDrawContainedStopsTexts()) {
+                    svg.addText(new Point((int) (begCoords.getST() + i * vec.getST() + offx), (int) (begCoords.getND() + i * vec.getND() + offy)),
+                            text, e.getTextFontSize(), e.getTextFormat(), e.getTextAngle());
+                }
             }
         }
     }
-    
+
     private MapGraph drawGraphEdgesOnMap(MapGraph graph) {
         ArrayList<Point> polyline = new ArrayList<>();
 
@@ -470,8 +474,8 @@ public class DrawingModule {
             polyline.clear();
             MapNode n1 = e.getEnds().getST();
             MapNode n2 = e.getEnds().getND();
-            polyline.add(UsefulFunctions.convertToPoint(normalizeCoordinates( n1.getCoords())));
-            polyline.add(UsefulFunctions.convertToPoint(normalizeCoordinates( n2.getCoords())));
+            polyline.add(UsefulFunctions.convertToPoint(normalizeCoordinates(n1.getCoords())));
+            polyline.add(UsefulFunctions.convertToPoint(normalizeCoordinates(n2.getCoords())));
 
             setDrawingEdgeParameters(e);
 
@@ -482,8 +486,10 @@ public class DrawingModule {
 
     // rysuje zadany graf do pliku svg
     public MapGraph drawGraphOnMap(MapGraph graph, String svgname) {
-        if( graph == null ) return null;
-        
+        if (graph == null) {
+            return null;
+        }
+
         createLBCandRUC(graph);
         //normalizeGraphCoordinates( graph);
 
@@ -500,21 +506,24 @@ public class DrawingModule {
         endSVG();
         return graph;
     }
-    
+
     /**
-     * Draws text we want to show on map. This includes among the others structure names of nodes and route names of edges. This function is called after 
-     * drawing edges and nodes to avoid text being shadowed by other node
-     * @param graph 
+     * Draws text we want to show on map. This includes among the others
+     * structure names of nodes and route names of edges. This function is
+     * called after drawing edges and nodes to avoid text being shadowed by
+     * other node
+     *
+     * @param graph
      */
-    private void drawTextsOnMap(MapGraph graph){
+    private void drawTextsOnMap(MapGraph graph) {
         drawEdgeTexts(graph);
         drawNodeTexts(graph);
     }
-    
-    private void drawEdgeTexts(MapGraph graph){
-        
+
+    private void drawEdgeTexts(MapGraph graph) {
+
     }
-    
+
     /**
      * Writes every information we want to write, concerned with the edge.
      *
@@ -523,10 +532,10 @@ public class DrawingModule {
     private void drawEdgeText(MapEdge edge) {
 
     }
-    
-    private void drawNodeTexts( MapGraph graph ){
-        for( MapNode n : graph.getNodes() ){
-            if( n.isTextVisilbe() ){
+
+    private void drawNodeTexts(MapGraph graph) {
+        for (MapNode n : graph.getNodes()) {
+            if (n.isTextVisilbe()) {
                 drawNodeText(n, n.getTextColor());
             }
         }
@@ -563,9 +572,9 @@ public class DrawingModule {
                 for (int i = 1; i < gp.getPathSequence().size(); i++) {
                     MapNode nA = graph.getMapNodeByID(gp.getPathSequence().get(i - 1));
                     MapNode nB = graph.getMapNodeByID(gp.getPathSequence().get(i));
-                    
-                    if( nA == null || nB == null ){
-                        JOptionPane.showMessageDialog(null, "nA or nB = null", "NULL ERROR", JOptionPane.ERROR_MESSAGE );
+
+                    if (nA == null || nB == null) {
+                        JOptionPane.showMessageDialog(null, "nA or nB = null", "NULL ERROR", JOptionPane.ERROR_MESSAGE);
                     }
 
                     boolean reversed = false;
@@ -576,8 +585,8 @@ public class DrawingModule {
                         nB = temp;
                     }
 
-                    Pair<Float, Float> coordsA = UsefulFunctions.parsePairToFloat(normalizeCoordinates( nA.getCoords()));
-                    Pair<Float, Float> coordsB = UsefulFunctions.parsePairToFloat(normalizeCoordinates( nB.getCoords()));
+                    Pair<Float, Float> coordsA = UsefulFunctions.parsePairToFloat(normalizeCoordinates(nA.getCoords()));
+                    Pair<Float, Float> coordsB = UsefulFunctions.parsePairToFloat(normalizeCoordinates(nB.getCoords()));
 
                     if (coordsA == null || coordsB == null) {
                         System.out.println("coordsA = " + coordsA + "\ncoordsB = " + coordsB);
@@ -588,7 +597,7 @@ public class DrawingModule {
                     Pair<Float, Float> perpVec = UsefulFunctions.getNormalizedPerpendicularVector(coordsA, coordsB);
                     if (reversed) {
                         perpVec = UsefulFunctions.getNormalizedPerpendicularVector(coordsB, coordsA);
-                       // perpVec.setST( -perpVec.getST() );
+                        // perpVec.setST( -perpVec.getST() );
                         //  perpVec.setND( -perpVec.getND() );
                     }
 
@@ -619,8 +628,10 @@ public class DrawingModule {
                     polyline.add(new Point(Math.round(x + deltax), Math.round(y + deltay)));
 
                     float factor = 1f;
-                    if( (svg instanceof SVG) == false ) factor *= MCSettings.getSvgToSwingFactor();
-                        
+                    if ((svg instanceof SVG) == false) {
+                        factor *= MCSettings.getSvgToSwingFactor();
+                    }
+
                     if (reversed) {
                         float val = rightHighlightOffset.get(new Pair<>(nA.getID(), nB.getID()));
                         val -= factor * MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH();
@@ -628,27 +639,26 @@ public class DrawingModule {
                         rightHighlightOffset.put(new Pair<>(nA.getID(), nB.getID()), val);
                     } else {
                         float val = leftHighlightOffset.get(new Pair<>(nA.getID(), nB.getID()));
-                        
+
                         val -= factor * MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH();
                         leftHighlightOffset.remove(new Pair<>(nA.getID(), nB.getID()));
                         leftHighlightOffset.put(new Pair<>(nA.getID(), nB.getID()), val);
                     }
                 }
 
-                Color c = MCSettings.getRouteToHighlightColor( entry.getKey() );
-                
+                Color c = MCSettings.getRouteToHighlightColor(entry.getKey());
+
                 /*while (c.equals(Color.WHITE) || c.equals(Color.BLACK)) {
-                    c = UsefulFunctions.getNextColor();
-                }                
-                svg.setPolylineWidth(MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH() );
-                svg.setPolylineColorHover(UsefulFunctions.parseColor(c));
-                svg.setPolylineWidthHover(MCSettings.getINITIAL_ROUTE_HIGHLIGHT_HOVER_WIDTH());
-                svg.setPolylineColor(UsefulFunctions.parseColor(c));*/
-                
+                 c = UsefulFunctions.getNextColor();
+                 }                
+                 svg.setPolylineWidth(MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH() );
+                 svg.setPolylineColorHover(UsefulFunctions.parseColor(c));
+                 svg.setPolylineWidthHover(MCSettings.getINITIAL_ROUTE_HIGHLIGHT_HOVER_WIDTH());
+                 svg.setPolylineColor(UsefulFunctions.parseColor(c));*/
                 float strokeWidth = MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH();
-                svg.setStrokeWidth( (int) strokeWidth );                
-                
-                svg.setColor( c );
+                svg.setStrokeWidth((int) strokeWidth);
+
+                svg.setColor(c);
                 addPolyline(polyline);
 
             }
@@ -692,14 +702,14 @@ public class DrawingModule {
             int offset = entry.getValue();
             float val;
             float factor = 1;
-            if( (svg instanceof SVG) == false ){
+            if ((svg instanceof SVG) == false) {
                 factor *= MCSettings.getSvgToSwingFactor();
             }
-            
+
             if (offset % 2 == 0) {
                 offset /= 2;
-                val = factor * MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH() * offset;                               
-                val -= ( factor * MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH()) / 2;
+                val = factor * MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH() * offset;
+                val -= (factor * MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH()) / 2;
                 leftHighlightOffset.put(entry.getKey(), val);
                 rightHighlightOffset.put(entry.getKey(), val);
             } else {
@@ -738,7 +748,7 @@ public class DrawingModule {
     }
 
     private void addCircle(int x, int y, int r) {
-        svg.addCircle(new Point(x,y), r);
+        svg.addCircle(new Point(x, y), r);
     }
 
     private void addCircle(Point p, int r) {
@@ -746,7 +756,7 @@ public class DrawingModule {
     }
 
     private void addEllipse(int x, int y, int width, int height) {
-        svg.addEllipse( new Point(x,y), width, height);
+        svg.addEllipse(new Point(x, y), width, height);
     }
 
     private void addEllipse(Point p, int width, int height) {

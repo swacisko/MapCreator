@@ -166,8 +166,12 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
             Pair<Float,Float> RUC = lbcruc.getND();
             float dW = RUC.getST() - LBC.getST();
             float dH = RUC.getND() - LBC.getND();
-            float width = getWidth();
-            float height = getHeight();
+            
+            float ratio = MCSettings.getLBCRUCModificationFactor(); 
+            float width = getWidth()*(1 - ratio*dW);
+            float height = getHeight()*(1 - ratio*dH);
+            
+            
             
            // System.out.println( "LBC = " + LBC + "\nRUC = " + RUC );
            // System.out.println( "dW = " + dW + "   dH = " + dH );
@@ -175,7 +179,9 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
            // System.out.println( "Event point = " + p );
             
             
+            p.x -= ratio*dW;
             float X = p.x / width;
+            p.y += ratio*dH;
             float Y = height - p.y;
             Y /= height;
             
@@ -242,14 +248,14 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
         @Override
         public void mousePressed(MouseEvent event){
             MapNode n = getMapNodeOnPosition( event.getPoint() );
-            System.out.println( "Point:\t" + event.getPoint() );
+            //System.out.println( "Point:\t" + event.getPoint() );
             if( n == null ){
                 if( selectedItems.isMovableNode() ){
                     moveNodeToPosition( event.getPoint() );
                 }
                 else{
                     selectedItems.setSelectedNode1(null);
-                    System.out.println( "NULL !" );
+                    //System.out.println( "NULL !" );
                     return;
                 }
                 
@@ -277,7 +283,7 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
         
         @Override
         public void mouseClicked( MouseEvent event ){
-            MapNode n = getMapNodeOnPosition( event.getPoint() );
+            /*MapNode n = getMapNodeOnPosition( event.getPoint() );
             System.out.println( "Point:\t" + event.getPoint() );
             if( n == null ){
                 selectedItems.setSelectedNode1(null);
@@ -289,7 +295,7 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
             }
             
             System.out.println( "Map node selected, name = " + n.getStructureName() + "   coords: " + n.getCoords() );
-            getParentFrame().repaint();
+            getParentFrame().repaint();*/
         }
         
         private JPanel parent = null;

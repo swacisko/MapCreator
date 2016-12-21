@@ -16,6 +16,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.TitledBorder;
+import mcgtfsstructures.MCDatabase;
+import mcgtfsstructures.Route;
 import mctemplates.MCSettings;
 import mctemplates.UsefulFunctions;
 
@@ -40,7 +42,7 @@ public class CSPanel extends JPanel {
         graphColors.setBorder( new TitledBorder( BorderFactory.createLineBorder(Color.GREEN, 3, true), "Graph colors" ) );
         graphColors.setLayout(  new GridBagLayout() );
         
-        addLabelAndComboBox( "Node color:",0,graphColors, new ActionListener() {
+        addLabelAndComboBox( "Node color:",0,graphColors,UsefulFunctions.parseColor(MCSettings.getINITIAL_NODE_COLOR()), new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JComboBox combo = (JComboBox) e.getSource();
@@ -48,7 +50,7 @@ public class CSPanel extends JPanel {
             }
         } );
         
-        addLabelAndComboBox( "Fill color:",1,graphColors, new ActionListener() {
+        addLabelAndComboBox( "Fill color:",1,graphColors,UsefulFunctions.parseColor(MCSettings.getINITIAL_FILL_COLOR()), new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JComboBox combo = (JComboBox) e.getSource();
@@ -56,7 +58,7 @@ public class CSPanel extends JPanel {
             }
         } );
         
-        addLabelAndComboBox( "Edge color:",2,graphColors, new ActionListener() {
+        addLabelAndComboBox( "Edge color:",2,graphColors, UsefulFunctions.parseColor(MCSettings.getINITIAL_EDGE_COLOR()), new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JComboBox combo = (JComboBox) e.getSource();
@@ -64,7 +66,7 @@ public class CSPanel extends JPanel {
             }
         } );
         
-        addLabelAndComboBox( "Text color:",3 ,graphColors, new ActionListener() {
+        addLabelAndComboBox( "Text color:",3 ,graphColors,UsefulFunctions.parseColor(MCSettings.getTEXT_COLOR()), new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JComboBox combo = (JComboBox) e.getSource();
@@ -80,7 +82,7 @@ public class CSPanel extends JPanel {
         routesTypeColor.setBorder( new TitledBorder( BorderFactory.createLineBorder(Color.yellow, 3, true), "Route-type colors" ) );
         routesTypeColor.setLayout(  new GridBagLayout() );
         
-        addLabelAndComboBox( "Tram color:",0 ,routesTypeColor, new ActionListener() {
+        addLabelAndComboBox( "Tram color:",0 ,routesTypeColor,UsefulFunctions.parseColor(MCSettings.getTRAM_COLOR()), new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JComboBox combo = (JComboBox) e.getSource();
@@ -88,7 +90,7 @@ public class CSPanel extends JPanel {
             }
         });
         
-        addLabelAndComboBox( "BUS color:",0 ,routesTypeColor, new ActionListener() {
+        addLabelAndComboBox( "BUS color:",1 ,routesTypeColor,UsefulFunctions.parseColor(MCSettings.getBUS_COLOR()), new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JComboBox combo = (JComboBox) e.getSource();
@@ -96,7 +98,7 @@ public class CSPanel extends JPanel {
             }
         });
         
-        addLabelAndComboBox( "METRO color:",0 ,routesTypeColor, new ActionListener() {
+        addLabelAndComboBox( "METRO color:",2 ,routesTypeColor, UsefulFunctions.parseColor(MCSettings.getMETRO_COLOR()), new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JComboBox combo = (JComboBox) e.getSource();
@@ -104,7 +106,7 @@ public class CSPanel extends JPanel {
             }
         });
         
-        addLabelAndComboBox( "Rail color:",0 ,routesTypeColor, new ActionListener() {
+        addLabelAndComboBox( "Rail color:",3 ,routesTypeColor, UsefulFunctions.parseColor(MCSettings.getRAIL_COLOR()), new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JComboBox combo = (JComboBox) e.getSource();
@@ -122,9 +124,18 @@ public class CSPanel extends JPanel {
         Map<String,Color> highlightMap = MCSettings.getRouteToHighlightColor();
         int rowNumber = 0;
         for( Map.Entry<String,Color> entry : highlightMap.entrySet() ){            
-            final String temp = entry.getKey();
+            String name = entry.getKey();
+            Route route = MCDatabase.getRouteOfID(name);
+            if( route == null ) continue;
+            if( route.getRouteLongName().equals("") == false ){
+                 name += ". Long name: " + route.getRouteLongName();
+            }else if( route.getRouteShortName().equals("") == false ){
+                name += ". Short name: " + route.getRouteShortName();
+            }
+            final String colorTemp = UsefulFunctions.parseColor( entry.getValue() );
+            final String temp = name;
             
-            addLabelAndComboBox(temp, rowNumber, highlightedRoutesColor, new ActionListener() {
+            addLabelAndComboBox(name, rowNumber, highlightedRoutesColor, colorTemp, new ActionListener() {
                 
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -138,7 +149,7 @@ public class CSPanel extends JPanel {
                 
         JScrollPane scroll = new JScrollPane(highlightedRoutesColor);
         scroll.setBorder( new TitledBorder( BorderFactory.createLineBorder(Color.MAGENTA, 3, true), "Highlighted routes colors" ) );
-        add(scroll, new GBC( 0,10,10,5 ).setAnchor(GBC.EAST).setFill(GBC.BOTH).setWeight(100,100) );
+        add(scroll, new GBC( 0,10,10,5 ).setAnchor(GBC.CENTER).setFill(GBC.BOTH).setWeight(100,100) );
     }
     
     /**
@@ -148,12 +159,13 @@ public class CSPanel extends JPanel {
      * @param row row, in which the box should be added
      * @param panel panel to which label and combo should be added
      */
-    private void addLabelAndComboBox( final String name, final int row, final JPanel panel, ActionListener listener ){
+    private void addLabelAndComboBox( final String name, final int row, final JPanel panel, String selectedItem, ActionListener listener ){
         JLabel label = new JLabel(name);
         JComboBox combo = new JComboBox( UsefulFunctions.getColorsAsStrings() );
+        combo.setSelectedItem( selectedItem );
         combo.addActionListener(listener);
         panel.add( label, new GBC( 0,row,2,1 ).setAnchor(GBC.EAST).setFill(GBC.BOTH).setWeight(100,100) );
-        panel.add( combo, new GBC( 2,row,4,1 ).setAnchor(GBC.EAST).setFill(GBC.BOTH).setWeight(100,100) );
+        panel.add( combo, new GBC( 2,row,4,1 ).setAnchor(GBC.WEST).setFill(GBC.BOTH).setWeight(100,100) );
     }
     
     

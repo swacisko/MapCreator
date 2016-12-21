@@ -316,7 +316,7 @@ public class UsefulFunctions {
 
     private static int currentColor = 0;
     private static Color[] colors = {
-        Color.BLACK, Color.BLUE, Color.CYAN, Color.LIGHT_GRAY, Color.GRAY,Color.DARK_GRAY, Color.GREEN, Color.MAGENTA, Color.ORANGE, 
+        Color.BLACK, Color.BLUE, Color.CYAN, Color.GRAY, Color.GREEN, Color.MAGENTA, Color.ORANGE, 
         Color.PINK, Color.RED, Color.WHITE, Color.YELLOW
     };
     

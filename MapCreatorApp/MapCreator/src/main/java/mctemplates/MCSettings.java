@@ -64,33 +64,39 @@ public class MCSettings {
     private static Color INITIAL_EDGE_HOVER_COLOR = INITIAL_HOVER_COLOR;
     private static int INITIAL_EDGE_WIDTH = 2;
     private static int INITIAL_EDGE_HOVER_WIDTH = 2;
-    
-    
+    private static final int MAX_EDGE_WIDTH = 15;
+
+        
     private static Color INITIAL_NODE_COLOR = Color.BLACK;
     private static Color INITIAL_NODE_HOVER_COLOR = INITIAL_HOVER_COLOR;
     private static int INITIAL_NODE_WIDTH = 4;
+    private static int INITIAL_NODE_HEIGHT = 4;
+
     private static int INITIAL_NODE_HOVER_WIDTH = 12;
     private static Color INITIAL_FILL_COLOR = Color.ORANGE;
+    
     private static int CONTAINED_STOPS_DRAWING_SIZE = INITIAL_NODE_WIDTH - 1;
+    private static boolean drawContainedStopsTexts = true;
 
-            
+               
     private static Color TEXT_COLOR = Color.BLACK;
 
     private static int INITIAL_ROUTE_HIGHLIGHT_WIDTH = 4*INITIAL_EDGE_WIDTH;
     private static int INITIAL_ROUTE_HIGHLIGHT_HOVER_WIDTH = 4*INITIAL_EDGE_HOVER_WIDTH;
 
-    private static int MAX_TEXT_FONT = 70;
+    private static final int MAX_TEXT_FONT = 90;
     
     
-    private static int MAX_NODE_WIDTH = 30;
-
-    
+    private static int MAX_NODE_WIDTH = 30;   
     private static int MAX_NODE_HEIGHT = 30;
     private static int INITIAL_TEXT_FONT_SIZE = 40;
-    
-    private static Pair<Integer,Integer> INITIAL_TEXT_OFFSET = new Pair<>( -30,-15 );
 
     
+    
+    private static Pair<Integer,Integer> INITIAL_TEXT_OFFSET = new Pair<>( -30,-15 );
+    private static final Pair<Integer,Integer> MAX_TEXT_OFFSET = new Pair<>( -100,-100 );
+    private static boolean drawBackgroundTexts = true;
+
     private static float svgToSwingFactor = 0.35f;
 
     private static float LBCRUCModificationFactor = 0.05f;
@@ -132,6 +138,40 @@ public class MCSettings {
 
     
     //***************************************************************  GETTERS AND SETTERS AND SOME OTHER
+    
+    
+    public static int getINITIAL_NODE_HEIGHT() {
+        return INITIAL_NODE_HEIGHT;
+    }
+
+    public static void setINITIAL_NODE_HEIGHT(int INITIAL_NODE_HEIGHT) {
+        MCSettings.INITIAL_NODE_HEIGHT = INITIAL_NODE_HEIGHT;
+    }
+    
+    public static boolean isDrawContainedStopsTexts() {
+        return drawContainedStopsTexts;
+    }
+
+    public static void setDrawContainedStopsTexts(boolean drawContainedStopsTexts) {
+        MCSettings.drawContainedStopsTexts = drawContainedStopsTexts;
+    }
+    
+    public static boolean isDrawBackgroundTexts() {
+        return drawBackgroundTexts;
+    }
+
+    public static void setDrawBackgroundTexts(boolean drawBackgroundTexts) {
+        MCSettings.drawBackgroundTexts = drawBackgroundTexts;
+    }
+    
+    
+    public static Pair<Integer, Integer> getMAX_TEXT_OFFSET() {
+        return MAX_TEXT_OFFSET;
+    }
+    
+    public static int getMAX_EDGE_WIDTH() {
+        return MAX_EDGE_WIDTH;
+    }
     
     public static Map<String, Color> getRouteToHighlightColor() {
         return routeToHighlightColor;
@@ -225,10 +265,6 @@ public class MCSettings {
     
     public static int getMAX_TEXT_FONT() {
         return MAX_TEXT_FONT;
-    }
-
-    public static void setMAX_TEXT_FONT(int MAX_TEXT_FONT) {
-        MCSettings.MAX_TEXT_FONT = MAX_TEXT_FONT;
     }
     
     public static Color getTEXT_COLOR() {

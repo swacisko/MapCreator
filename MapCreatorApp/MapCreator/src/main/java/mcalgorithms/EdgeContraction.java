@@ -131,7 +131,7 @@ public class EdgeContraction {
         if( e1.getEnds().getST().getID() != e2.getEnds().getST().getID() ){
             e1.swapEnds();
         }
-        e1.setContainedBackwardStopsIds( e2.getContainedForwardStopsIds() );        
+        e1.getContainedForwardStopsIds().addAll( e2.getContainedForwardStopsIds() );        
         graph.removeMapEdgeByID( e2.getID() );     
     }
     

@@ -49,6 +49,7 @@ public class MCSettings {
     private static Color BUS_COLOR = Color.BLUE;
 
     private static float SPRING_COEF = 1; // ta wartosc powinna byc dodatnia, poniewaz wierzcholki powinny sie przyciagac - chyba ze dlugosc krawedzi jest za mala
+
     private static float COULOMB_COEF = -1 * (1e3f); // uwaga - ta wartosc musi byc ujemna poniewaz wierzcholki powinny sie odpychac!!
     private static float INITIAL_NODE_CHARGE = 1f; // ladunek poczatkowy dla kazdego wierzcholka. Rzeczywisty ladunek wierzcholka jest ta wartoscia powiekszona o liczbe jego przystankow
     private static float STOP_THRESHOLD = 5f;
@@ -132,6 +133,14 @@ public class MCSettings {
     
     //***************************************************************  GETTERS AND SETTERS AND SOME OTHER
     
+    public static Map<String, Color> getRouteToHighlightColor() {
+        return routeToHighlightColor;
+    }
+
+    public static void setRouteToHighlightColor(Map<String, Color> routeToHighlightColor) {
+        MCSettings.routeToHighlightColor = routeToHighlightColor;
+    }
+    
     public static int getCONTAINED_STOPS_DRAWING_SIZE() {
         return CONTAINED_STOPS_DRAWING_SIZE;
     }
@@ -206,13 +215,14 @@ public class MCSettings {
         MCSettings.INITIAL_TEXT_FONT_SIZE = INITIAL_TEXT_FONT_SIZE;
     }
     
-      public static int getMAX_NODE_WIDTH() {
+    public static int getMAX_NODE_WIDTH() {
         return MAX_NODE_WIDTH;
     }
 
     public static void setMAX_NODE_WIDTH(int MAX_NODE_WIDTH) {
         MCSettings.MAX_NODE_WIDTH = MAX_NODE_WIDTH;
     }
+    
     public static int getMAX_TEXT_FONT() {
         return MAX_TEXT_FONT;
     }

@@ -31,6 +31,8 @@ public class MyDialog extends JFrame implements ActionListener {
         Dimension d = t.getScreenSize();
         setSize(d.width/3, (2*d.height/3));
         
+        setLocationByPlatform(true);
+        
         setLayout( new BorderLayout() );
         
         scroll = new JScrollPane(panel);

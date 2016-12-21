@@ -8,6 +8,7 @@ package mctemplates;
 import java.awt.Color;
 import java.awt.Point;
 import java.io.File;
+import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -315,8 +316,8 @@ public class UsefulFunctions {
 
     private static int currentColor = 0;
     private static Color[] colors = {
-        Color.RED, Color.BLACK, Color.YELLOW, Color.BLUE, Color.GREEN, Color.ORANGE, Color.WHITE, Color.GRAY, Color.MAGENTA, Color.CYAN,
-        Color.PINK
+        Color.BLACK, Color.BLUE, Color.CYAN, Color.LIGHT_GRAY, Color.GRAY,Color.DARK_GRAY, Color.GREEN, Color.MAGENTA, Color.ORANGE, 
+        Color.PINK, Color.RED, Color.WHITE, Color.YELLOW
     };
     
     public static float getDistance( Pair<Float,Float> p, Pair<Float,Float> q){

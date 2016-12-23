@@ -50,8 +50,20 @@ public class SelectedEdgePanel extends JPanel implements ActionListener, ChangeL
     
     private void updateComponentData(){
         MapEdge e = selectedItems.getSelectedEdge();
-        if( e == null ) return;
-        String res = "";
+        if( e == null ) {
+            containedStopsTextArea.setText("");
+            textAngleSlider.setValue( textAngleSlider.getMinimum() );
+            textVisibleBox.setSelected( false );
+            textBoldBox.setSelected( false );
+            textSizeSlider.setValue( textSizeSlider.getMinimum() );
+            return;
+        }
+        
+        
+        
+        containedStopsTextArea.setFont( new Font( "Serif",Font.PLAIN, 15 ) );
+        containedStopsTextArea.setBackground(Color.BLACK);
+        String res = e.getEnds().getST().getStructureName() + "  <--->  " + e.getEnds().getND().getStructureName() + "\n\n";
         for( String s : e.getContainedForwardStopsIds() ){
             Stop st = MCDatabase.getStopOfID(s);    
             String temp;
@@ -59,11 +71,9 @@ public class SelectedEdgePanel extends JPanel implements ActionListener, ChangeL
             else temp = st.getStopName();
             res += temp + "\n";
         }
-        
-        containedStopsTextArea.setFont( new Font( "Serif",Font.PLAIN, 15 ) );
         containedStopsTextArea.setText(res);        
         textAngleSlider.setValue( e.getTextAngle() );
-        textVisibleBox.setSelected( e.isTextVisilbe() );
+        textVisibleBox.setSelected( e.isTextVisible() );
         textBoldBox.setSelected( e.isTextBold() );
         textSizeSlider.setValue( e.getTextFontSize() );
     }
@@ -160,7 +170,7 @@ public class SelectedEdgePanel extends JPanel implements ActionListener, ChangeL
         else if( source == textColorBox ){
             edge.setTextColor(UsefulFunctions.parseColor((String)textColorBox.getSelectedItem() ) );
         }else if( source == textVisibleBox ){
-            edge.setTextVisilbe( textVisibleBox.isSelected() );
+            edge.setTextVisible( textVisibleBox.isSelected() );
         }else if( source == textBoldBox ){
             edge.setTextBold( textBoldBox.isSelected() );
         }

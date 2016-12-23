@@ -56,30 +56,39 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
         MapNode n = selectedItems.getSelectedNode1();
         if( n == null ) {
             structureNameTextField.setText( "" );
+            containedStopsTextArea.setText("");
+            nodeColorBox.setSelectedItem( UsefulFunctions.parseColor( Color.BLACK ) );
+            nodeFillBox.setSelectedItem( UsefulFunctions.parseColor( Color.BLACK ) );
+            nodeHeightSlider.setValue( nodeHeightSlider.getMinimum() );
+            nodeWidthSlider.setValue( nodeWidthSlider.getMinimum() );
+            textAngleSlider.setValue( textAngleSlider.getMinimum() );
+            textVisibleBox.setSelected(false);
+            textBoldBox.setSelected(false);
+            textSizeSlider.setValue( textSizeSlider.getMinimum() );
             return;
         }
+                  
         
-        if( selectedItems.isJustSelected() ){
-            structureNameTextField.setText( n.getStructureName() );            
-        }
-        
-        String res = "";
+        moveNodeBox.setSelected( selectedItems.isMovableNode() );
+                
+        containedStopsTextArea.setFont( new Font( "Serif",Font.BOLD, 25 ) );
+        containedStopsTextArea.setBackground(Color.BLACK);
+        String res = n.getStructureName() + "\n\nContained stops:\n";     
+        containedStopsTextArea.setFont( new Font( "Serif",Font.PLAIN, 15 ) );
         for( String s : n.getContainedStopsIds() ){
             res += MCDatabase.getStopOfID(s).getStopName() + "\n";
-        }
+        }  
+        containedStopsTextArea.setText(res);    
         
-        containedStopsTextArea.setFont( new Font( "Serif",Font.PLAIN, 15 ) );
-        containedStopsTextArea.setText(res);        
         nodeColorBox.setSelectedItem( UsefulFunctions.parseColor( n.getColor() ) );
         nodeFillBox.setSelectedItem( UsefulFunctions.parseColor( n.getFillColor()) );
         nodeHeightSlider.setValue( n.getHeight() );
         nodeWidthSlider.setValue( n.getWidth() );
         textAngleSlider.setValue( n.getTextAngle() );
-        textVisibleBox.setSelected( n.isTextVisilbe() );
+        textVisibleBox.setSelected( n.isTextVisible() );
         textBoldBox.setSelected( n.isTextBold() );
         textSizeSlider.setValue( n.getTextFontSize() );
         
-        selectedItems.setJustSelected(false);
     }
 
     /**
@@ -136,7 +145,7 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
         strPanel.setBorder( new TitledBorder( BorderFactory.createLineBorder( Color.BLACK,3 ), "StructureName settings" ) );
         strPanel.setLayout( new GridBagLayout() );
         
-        structureNameLabel = new JLabel( "Structure Name:" );
+        structureNameLabel = new JLabel( "Change structure name:" );
         structureNameTextField = new JTextField();        
         
         structureNameAcceptButton = new JButton( "Accept" );
@@ -252,14 +261,8 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
         containedStopsTextArea.setForeground(Color.BLACK);
         containedStopsTextArea.setEnabled(false);
         
-        containedStopsTextArea.setBorder( new TitledBorder( BorderFactory.createLineBorder( Color.BLUE , 3), "Contained stops" ) );
+        containedStopsTextArea.setBorder( new TitledBorder( BorderFactory.createLineBorder( Color.BLUE , 3), "Stops" ) );
         add( containedStopsTextArea, new GBC( 0,13,12,7 ).setFill(GBC.BOTH).setAnchor(GBC.CENTER).setWeight(100,100) );
-        //JScrollPane scroll = new JScrollPane( containedStopsTextArea );
-        //scroll.setBorder( new TitledBorder( BorderFactory.createLineBorder( Color.BLUE , 3), "Contained stops" ) );
-        //add( scroll, new GBC( 0,13,12,7 ).setFill(GBC.BOTH).setAnchor(GBC.CENTER).setWeight(100,100) );
-        
-        
-        
         
     }
     
@@ -309,7 +312,7 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
             
             
         }else if( source == textVisibleBox ){            
-            n.setTextVisilbe(textVisibleBox.isSelected());            
+            n.setTextVisible(textVisibleBox.isSelected());            
         }else if( source == textBoldBox ){
             int fontformat = n.getTextFormat() | Font.BOLD;
             if( textBoldBox.isSelected() == false ){

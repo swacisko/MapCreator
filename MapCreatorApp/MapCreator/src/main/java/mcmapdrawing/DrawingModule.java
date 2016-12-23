@@ -127,11 +127,16 @@ public class DrawingModule {
         float ratio = dW / dH;
         float H = svg.getHeight();
         float W = svg.getWidth();
-        if( W >= ratio*H ){
-            svg.setSize(Math.round((ratio * H)), svg.getHeight());
+        if( (svg instanceof SVG) == false ){       
+            if( W >= ratio*H ){
+                svg.setSize(Math.round((ratio * H)), svg.getHeight());
+            }
+            else{
+                svg.setSize( svg.getWidth(), Math.round( ( W / ratio ) ) );
+            }
         }
         else{
-            svg.setSize( svg.getWidth(), Math.round( ( W / ratio ) ) );
+            svg.setSize(Math.round((ratio * H)), svg.getHeight());
         }
            //System.out.println( "width = " + svg.getWidth() + "   height = " + svg.getHeight() );
     }
@@ -459,7 +464,7 @@ public class DrawingModule {
                     offy *= MCSettings.getSvgToSwingFactor();
                 }
                 svg.setColor(e.getTextColor());
-                if (MCSettings.isDrawContainedStopsTexts()) {
+                if (MCSettings.isDrawContainedStopsTexts() && e.isTextVisible()) {
                     svg.addText(new Point((int) (begCoords.getST() + i * vec.getST() + offx), (int) (begCoords.getND() + i * vec.getND() + offy)),
                             text, e.getTextFontSize(), e.getTextFormat(), e.getTextAngle());
                 }
@@ -535,7 +540,7 @@ public class DrawingModule {
 
     private void drawNodeTexts(MapGraph graph) {
         for (MapNode n : graph.getNodes()) {
-            if (n.isTextVisilbe()) {
+            if (n.isTextVisible()) {
                 drawNodeText(n, n.getTextColor());
             }
         }

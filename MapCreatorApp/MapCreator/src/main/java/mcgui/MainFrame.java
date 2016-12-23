@@ -9,9 +9,17 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import mcgraphs.MapGraph;
 import mcmapdrawing.DrawingModule;
+import mcmapdrawing.SVG;
+import mctemplates.MCSettings;
 
 /**
  * This class is the main frame of MapCreator's GUI. Here you can click to choose what do you want to change, select, draw, etc.
@@ -42,7 +50,11 @@ public class MainFrame extends JFrame {
         managerFrame.setSize( d.width / 3, d.height/2 );
         managerFrame.setVisible(true);
         managerFrame.setDefaultCloseOperation( JFrame.HIDE_ON_CLOSE );
-        
+                
+    }
+    
+    public void showManager(){
+        managerFrame.setVisible(true);
     }
         
     @Override
@@ -55,4 +67,5 @@ public class MainFrame extends JFrame {
     private SchemeContructionPanel schemePanel = null;
     private DrawingModule module = null;
     private ManagerFrame managerFrame = null;
+    
 }

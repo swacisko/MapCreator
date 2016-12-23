@@ -145,12 +145,12 @@ public class MapStructure {
      * 
      * @return return whether text should be visible
      */
-    public boolean isTextVisilbe() {
-        return textVisilbe;
+    public boolean isTextVisible() {
+        return textVisible;
     }
 
-    public void setTextVisilbe(boolean textVisilbe) {
-        this.textVisilbe = textVisilbe;
+    public void setTextVisible(boolean textVisilbe) {
+        this.textVisible = textVisilbe;
     }
     
     public int getTextFontSize() {
@@ -208,7 +208,7 @@ public class MapStructure {
     private Pair<Integer,Integer> textOffset = MCSettings.getINITIAL_TEXT_OFFSET();
 
     private int textAngle = 0;  
-    private boolean textVisilbe = true;
+    private boolean textVisible = true;
     private int textFontSize = MCSettings.getINITIAL_TEXT_FONT_SIZE();
     private boolean textBold = false;
     private int textFormat = Font.PLAIN;

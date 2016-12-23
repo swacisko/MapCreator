@@ -12,6 +12,9 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
@@ -20,12 +23,15 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import javax.swing.BorderFactory;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import mcgraphs.MapEdge;
 import mcgraphs.MapGraph;
 import mcgraphs.MapNode;
 import mcmapdrawing.DrawingModule;
 import mcmapdrawing.DrawingModuleInterface;
+import mcmapdrawing.SVG;
 import mctemplates.Drawable;
 import mctemplates.MCSettings;
 import mctemplates.Pair;
@@ -49,6 +55,44 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
          addMouseMotionListener( new MouseMotionHandler(this) );
          addMouseListener( new MouseHandler(this) );
          
+         addPopupMenu();
+         
+         
+    }
+    
+    private void addPopupMenu(){        
+        popupMenu = new JPopupMenu( "Popup menu" );
+        JMenuItem item = new JMenuItem( "Show manager" );
+        item.addActionListener( new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                getParentFrame().showManager();
+            }
+        } );
+        popupMenu.add(item);
+        
+        item = new JMenuItem( "Save file in svg" );
+        item.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MapGraph graph = selectedItems.getGraph();
+                if( graph == null ) return;
+                new DrawingModule( new SVG(MCSettings.getINITIAL_SVG_WIDTH(), MCSettings.getINITIAL_SVG_HEIGHT()) ).drawGraphOnMap( graph , MCSettings.getSvgFileName() );
+            }
+        });
+        popupMenu.add(item);     
+        
+        final JMenuItem moveNodeItem = new JMenuItem("Move node");
+        moveNodeItem.addActionListener( new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                selectedItems.setMovableNode( !selectedItems.isMovableNode() );
+                moveNodeItem.setSelected( selectedItems.isMovableNode() );
+            }
+        } );
+        popupMenu.add(moveNodeItem);
+        
+        setComponentPopupMenu(popupMenu);
     }
     
     @Override
@@ -216,8 +260,8 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
     private int textSize = -1;
     private int textAngle = 0;
     private int strokeWidth = 0;
+    JPopupMenu popupMenu = null;
     
-
     
     
     
@@ -233,7 +277,7 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
         private MapNode getMapNodeOnPosition( Point p ){
             if( selectedItems.getGraph() == null ) return null;
             if( selectedItems.getGraph().getNodes() == null ) return null;
-            System.out.println( "szukam wierzcholka" );
+            //System.out.println( "szukam wierzcholka" );
             for( MapNode n : selectedItems.getGraph().getNodes() ){
                 Pair<Integer,Integer> coords = module.normalizeCoordinates( n.getCoords() );
                 float radius = Math.max( n.getWidth(), n.getHeight() );
@@ -276,8 +320,7 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
                 
                 
             }
-            
-            
+                       
             getParentFrame().repaint();
         }
         

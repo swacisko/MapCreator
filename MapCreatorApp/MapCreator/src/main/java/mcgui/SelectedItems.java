@@ -57,11 +57,14 @@ public class SelectedItems {
      * @return return true if i can move the node
      */
     public boolean isMovableNode() {
-        return movableNode;
+        return movableNode;        
     }
 
     public void setMovableNode(boolean moveOption) {
         this.movableNode = moveOption;
+        if( movableNode == true ){
+            edgeSelection = false;
+        }
     }
     
     /**
@@ -74,6 +77,9 @@ public class SelectedItems {
 
     public void setEdgeSelection(boolean edgeSelection) {
         this.edgeSelection = edgeSelection;
+        if( edgeSelection == true ){
+            movableNode = false;
+        }
     }
     
     public boolean isNodeSelection(){

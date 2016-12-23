@@ -40,7 +40,7 @@ public class MapCreatorPanel extends JPanel{
             public void actionPerformed(ActionEvent e) {
                 MapGraph graph = selectedItems.getGraph();
                 if( graph == null ) return;
-                new DrawingModule( new SVG(3000,3000) ).drawGraphOnMap( graph , MCSettings.getSvgFileName() );
+                new DrawingModule( new SVG(MCSettings.getINITIAL_SVG_WIDTH(), MCSettings.getINITIAL_SVG_HEIGHT()) ).drawGraphOnMap( graph , MCSettings.getSvgFileName() );
             }
         });
          
@@ -117,6 +117,7 @@ public class MapCreatorPanel extends JPanel{
          add( forcespacedMapButton );
         // add( centralizedAttractionButton );
     }
+    
     
     private void repaintAll(){
         parentFrame.getParentFrame().repaint();

@@ -98,6 +98,10 @@ public class SelectedItems {
         this.routeEnds = routeEnds;
     }
     
+    public void clearRouteEnds(){
+        routeEnds.clear();
+    }
+    
     private MapGraph graph = null;
 
     private MapNode selectedNode1 = null;

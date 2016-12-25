@@ -20,7 +20,7 @@ public class MCDatabase {
     public static void init() {
         System.out.println( "Inicjalizacja wewnetrznej bazy danych" );
         stops = GTFSInput.getAllStops();
-        routes = GTFSInput.getAllRoutes(); // getAllStops musi byc pr
+        routes = GTFSInput.getAllRoutes();
         shapes = GTFSInput.getAllShapes();
         trips = GTFSInput.getAllTrips();
         stoptimes = GTFSInput.getAllStopTimes();

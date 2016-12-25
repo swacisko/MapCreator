@@ -794,9 +794,9 @@ public class DrawingModule {
             int y = 0;
             
             for( int i=0; i<routeIds.size(); i++ ){               
-                Color color = MCSettings.getRouteToHighlightColor( routeIds.get(i) );
-                svg.setFill(color);
-                svg.setColor( color );
+                Color fillcolor = MCSettings.getRouteToHighlightColor( routeIds.get(i) );
+                svg.setFill(fillcolor);
+                svg.setColor(fillcolor );
                 
                 int length = routeIds.get(i).length();
                 float widthFactor = -0.5f + (float)length / 2;
@@ -804,7 +804,8 @@ public class DrawingModule {
                 svg.addRectangle( new Point( coords.getST() + offsetX + (int)x, coords.getND() + offsetY + (int)y  ),
                        (int)(singleSquareSize*(1+widthFactor)), singleSquareSize);
                 
-                svg.setColor( Color.BLACK );
+                svg.setColor(fillcolor == Color.BLUE ? Color.WHITE : Color.BLACK );
+                
                 svg.addText( new Point( coords.getST() + offsetX + (int)x + (int)( (0.2f)* singleSquareSize ), 
                         coords.getND() + offsetY + (int)(y+singleSquareSize) - (int)( (0.15f )* singleSquareSize ) ),
                         routeIds.get(i), fontsize, Font.BOLD,0 );

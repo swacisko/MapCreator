@@ -131,6 +131,7 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
         button.addActionListener( new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if( selectedItems.getSelectedNode1() == null ) return;
                 selectedItems.getSelectedNode1().updateTextOffset( xdiff, ydiff );
                 getParentFrame().getParentFrame().repaint();
             }

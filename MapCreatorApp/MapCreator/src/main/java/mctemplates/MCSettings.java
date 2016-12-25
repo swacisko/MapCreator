@@ -129,6 +129,7 @@ public class MCSettings {
      */
     private static ArrayList<String> routesToHighlight = new ArrayList<>();
     private static Map<String,Color> routeToHighlightColor = new HashMap<>();
+    private static int ROUTES_TO_HIGHLIGHT_TYPE = 0;
 
     /**
      * If this variable is set to true, then on the scheme all routes and stops

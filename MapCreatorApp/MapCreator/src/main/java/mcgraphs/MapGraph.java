@@ -317,7 +317,7 @@ public class MapGraph {
                     break;
                 }
                 case 8:{
-                    DrawingModule dm = new DrawingModule( new SVG(1000,1000,"Przed algorytmem silowym") );
+                    DrawingModule dm = new DrawingModule( new SVG(1000,1000,"Przed algorytmem silowym"),null );
                     dm.drawGraphOnMap( this,"" );
                     
                     new ForceAlgorithm(this, new SVG(1000,1000)).convertGraph();
@@ -326,7 +326,7 @@ public class MapGraph {
                         System.out.println( "ID = " + n.getID() + "   coords = " + n.getCoords() );
                     }
                     
-                    dm = new DrawingModule( new SVG(1000,1000,"Po algorytmie silowym") );
+                    dm = new DrawingModule( new SVG(1000,1000,"Po algorytmie silowym"), null );
                     dm.drawGraphOnMap( this,"" );
                     
                     break;

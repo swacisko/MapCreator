@@ -96,13 +96,13 @@ public class GTFSInput {
     public static Map<String, String> getDataMap(ArrayList<String> pattern, ArrayList<String> data) {
         if (pattern.size() != data.size()) {
             System.out.println("pattern.size() != data.size()    in getDataMap, GTFSInput.java");
-            return null;
+            return new HashMap<>();
         }
 
         Map<String, String> mapa = new HashMap<>();
         for (int i = 0; i < pattern.size(); i++) {
             if (!pattern.get(i).equals("")) {
-                mapa.put(pattern.get(i), data.get(i));
+                mapa.put(pattern.get(i).intern(), data.get(i).intern());
             }
         }
         return mapa;
@@ -117,6 +117,7 @@ public class GTFSInput {
         if (lista.size() > 0) {
             pattern = processFileData(lista.get(0));
         }
+                
         for (int i = 1; i < lista.size(); i++) {
             ArrayList<String> singleData = processFileData(lista.get(i));
             Map<String, String> m = getDataMap(pattern, singleData);

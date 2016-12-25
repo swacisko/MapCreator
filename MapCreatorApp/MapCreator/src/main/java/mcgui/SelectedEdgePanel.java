@@ -154,6 +154,7 @@ public class SelectedEdgePanel extends JPanel implements ActionListener, ChangeL
         button.addActionListener( new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if( selectedItems.getSelectedEdge() == null ) return;
                 selectedItems.getSelectedEdge().updateTextOffset( xdiff, ydiff );
                 getParentFrame().getParentFrame().repaint();
             }

@@ -26,9 +26,12 @@ public class RoutePathCreator {
         this.graph = graph;        
     }
     
-    
-    public Map< String, ArrayList<GraphPath> > createRoutePaths(){
-        ArrayList<String> routes = MCSettings.getRoutesToHighlight();
+    /**
+     * Creates a map in which for route ids there are associated lists of graph paths
+     * @param routes list of routes for which we want to create paths
+     * @return returns a map in which for route ids there are associated lists of graph paths
+     */
+    public Map< String, ArrayList<GraphPath> > createRoutePaths( ArrayList<String> routes ){
         
         createStructureMap();
         Map< String,ArrayList<GraphPath> > res = new HashMap<>();

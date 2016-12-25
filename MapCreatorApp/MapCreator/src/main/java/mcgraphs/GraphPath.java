@@ -34,20 +34,7 @@ public class GraphPath {
 
         boolean identical = true;
         for (int i = 0; i < L; i++) {
-            if (pathSequence.get(i).equals( p.getPathSequence().get(L - 1 - i)) == false ) {
-                identical = false;
-                break;
-            }
-        }
-        if (identical) {            
-            return true;
-        }
-        
-        
-        Collections.reverse(pathSequence);
-        identical = true;
-        for (int i = 0; i < L; i++) {
-            if (pathSequence.get(i).equals( p.getPathSequence().get(L - 1 - i)) == false ) {
+            if (pathSequence.get(i).equals(p.getPathSequence().get(L - 1 - i)) == false) {
                 identical = false;
                 break;
             }
@@ -55,16 +42,30 @@ public class GraphPath {
         if (identical) {
             return true;
         }
-        
-      //  System.out.println( "Paths " + toString() + " and " + p + " are not identical" );
+
+        Collections.reverse(pathSequence);
+        identical = true;
+        for (int i = 0; i < L; i++) {
+            if (pathSequence.get(i).equals(p.getPathSequence().get(L - 1 - i)) == false) {
+                identical = false;
+                break;
+            }
+        }
+        if (identical) {
+            return true;
+        }
+
+        //  System.out.println( "Paths " + toString() + " and " + p + " are not identical" );
         return false;
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;      
+        int hash = 7;
         int VAL = 0;
-        for( Integer d : pathSequence ) VAL += d;        
+        for (Integer d : pathSequence) {
+            VAL += d;
+        }
         hash = 67 * hash + VAL;
         return hash;
     }
@@ -86,18 +87,31 @@ public class GraphPath {
     public void setPathSequence(ArrayList<Integer> pathSequence) {
         this.pathSequence = pathSequence;
     }
-    
-    public boolean isEmpty(){
+
+    public boolean isEmpty() {
         return pathSequence.size() == 0;
     }
-    
-    public int getPathEndValue(){
-        return pathSequence.get( pathSequence.size()-1 );
+
+    public int getPathBegValue() {
+        if (pathSequence.isEmpty()) {
+            return -1;
+        }
+        return pathSequence.get(0);
     }
+
+    public int getPathEndValue() {
+        if (pathSequence.isEmpty()) {
+            return -1;
+        }
+        return pathSequence.get(pathSequence.size() - 1);
+    }
+
     @Override
-    public String toString(){
+    public String toString() {
         String s = "";
-        for( Integer d : pathSequence ) s += d + " ";
+        for (Integer d : pathSequence) {
+            s += d + " ";
+        }
         return s;
     }
 

@@ -101,6 +101,8 @@ public class MCSettings {
 
     private static float LBCRUCModificationFactor = 0.05f;
 
+    private static Pair<Integer,Integer> INITIAL_ROUTE_END_GROUP_OFFSET = new Pair<>( 30,0 );
+    private static int INITIAL_SINGLE_SQUARE_SIZE = 35;
    
    
     /**
@@ -139,6 +141,22 @@ public class MCSettings {
     
     //***************************************************************  GETTERS AND SETTERS AND SOME OTHER
     
+     public static Pair<Integer, Integer> getINITIAL_ROUTE_END_GROUP_OFFSET() {
+        return INITIAL_ROUTE_END_GROUP_OFFSET;
+    }
+
+    public static void setINITIAL_ROUTE_END_GROUP_OFFSET(Pair<Integer, Integer> ROUTE_END_GROUP_OFFSET) {
+        MCSettings.INITIAL_ROUTE_END_GROUP_OFFSET = ROUTE_END_GROUP_OFFSET;
+    }
+
+    public static int getINITIAL_SINGLE_SQUARE_SIZE() {
+        return INITIAL_SINGLE_SQUARE_SIZE;
+    }
+
+    public static void setINITIAL_SINGLE_SQUARE_SIZE(int INITIAL_SINGLE_SQUARE_SIZE) {
+        MCSettings.INITIAL_SINGLE_SQUARE_SIZE = INITIAL_SINGLE_SQUARE_SIZE;
+    }
+
     
     public static int getINITIAL_NODE_HEIGHT() {
         return INITIAL_NODE_HEIGHT;

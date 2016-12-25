@@ -38,8 +38,7 @@ public class MainFrame extends JFrame {
         Dimension d = t.getScreenSize();
         setSize(d.width, d.height);
                 
-        schemePanel = new SchemeContructionPanel( d.width - 30, d.height-30 );
-        schemePanel.setSelectedItems(selectedItems);
+        schemePanel = new SchemeContructionPanel( d.width - 30, d.height-30, selectedItems );
         schemePanel.setParentFrame(this);
         setLayout( new BorderLayout() );
         JScrollPane scroll = new JScrollPane( schemePanel );
@@ -65,7 +64,6 @@ public class MainFrame extends JFrame {
         
     private SelectedItems selectedItems = new SelectedItems();
     private SchemeContructionPanel schemePanel = null;
-    private DrawingModule module = null;
     private ManagerFrame managerFrame = null;
     
 }

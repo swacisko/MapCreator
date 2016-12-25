@@ -49,6 +49,14 @@ public interface DrawingModuleInterface {
     public void addText( Point p, String text, int fontisze, int format, int angle );
     
     /**
+     * Draws a rectangle
+     * @param p
+     * @param width
+     * @param height 
+     */
+    public void addRectangle( Point p, int width, int height );
+    
+    /**
      * Sets color of the object we want to draw. I.e. before calling one of the functions: {@link #addCircle(java.awt.Point, int)}, {@link #addEllipse(java.awt.Point, int, int)},
      * {@link #addLine(java.awt.Point, java.awt.Point, int) }, {@link #addPolyline(java.util.ArrayList, int) }, {@link #addText(java.lang.String, java.awt.Point, int) }
      * it sets the color of stroke or font of next objects and/or texts.

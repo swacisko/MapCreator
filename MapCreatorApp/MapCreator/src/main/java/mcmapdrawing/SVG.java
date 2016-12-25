@@ -154,7 +154,7 @@ public class SVG implements DrawingModuleInterface {
         this.fontsize = fontsize;
         if( new Font("serif",format,fontsize).isBold() ) {
             strokeWidth = 3;
-            System.out.println( "Text " + text + " should be bold" );
+           // System.out.println( "Text " + text + " should be bold" );
         } else {
             strokeWidth = 1;
         }
@@ -217,6 +217,27 @@ public class SVG implements DrawingModuleInterface {
     public String getName() {
         return fileName;
     }
+    
+    /**
+     * Draws a rectangle
+     * @param p Left upper corner of the rectangle
+     * @param width width of the rectangle
+     * @param height height of the rectangle
+     */
+    @Override
+    public void addRectangle(Point p, int width, int height) {
+        addRectangle((int) p.getX(), (int) p.getY(), width, height);
+    }
+
+    //dodaje prostokąt ze stylem (czerwone z czarnym brzegiem)
+    public void addRectangle(int x, int y, int width, int height) {
+        writerSVG.println("   <rect x=\"" + x + "\" y=\"" + y + "\" width=\"" + width + "\" height=\"" + height + "\" style=\""
+                + "fill:" + fillColor + ";stroke:" + color + ";stroke-width:" + strokeWidth + "\" />");
+        writerHTML.println("   <rect x=\"" + x + "\" y=\"" + y + "\" width=\"" + width + "\" height=\"" + height + "\" style=\""
+                + "fill:" + fillColor + ";stroke:" + color + ";stroke-width:" + strokeWidth + "\" />");
+    }
+    
+    
 
     private String fillColor;
     private String color;
@@ -587,18 +608,7 @@ public class SVG implements DrawingModuleInterface {
         writerHTML.println("   <rect x=\"" + x + "\" y=\"" + y + "\" width=\"" + width + "\" height=\"" + height + "\" />");
     }
 
-    //p - lewy górny wierzchołek prostokąta
-    //dodaje prostokąt ze stylem (czerwone z czarnym brzegiem)
-    public void addRectangle(Point p, int width, int height) {
-        addRectangle((int) p.getX(), (int) p.getY(), width, height);
-    }
-
-    //dodaje prostokąt ze stylem (czerwone z czarnym brzegiem)
-    public void addRectangle(int x, int y, int width, int height) {
-        writerSVG.println("   <rect x=\"" + x + "\" y=\"" + y + "\" width=\"" + width + "\" height=\"" + height + "\" style=\"fill:red;stroke:black;stroke-width:5\" />");
-        writerHTML.println("   <rect x=\"" + x + "\" y=\"" + y + "\" width=\"" + width + "\" height=\"" + height + "\" style=\"fill:red;stroke:black;stroke-width:5\" />");
-    }
-
+    
     /* dodaje prostokąt
      * p - lewy górny wierzchołek prostokąta; width,height - długości boków prostokąta; className - nazwa klasy stylu 
      * wcześniej należy dodać styl danej klasy poprzez funkcję:

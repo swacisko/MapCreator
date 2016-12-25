@@ -5,9 +5,12 @@
  */
 package mcgui;
 
+import java.util.HashMap;
+import java.util.Map;
 import mcgraphs.MapEdge;
 import mcgraphs.MapGraph;
 import mcgraphs.MapNode;
+import mcmapdrawing.RouteEndGroup;
 
 /**
  *
@@ -86,14 +89,15 @@ public class SelectedItems {
         return !isEdgeSelection();
     }
     
-    public boolean isJustSelected() {
-        return justSelected;
+
+    public Map<Integer, RouteEndGroup> getRouteEnds() {
+        return routeEnds;
     }
 
-    public void setJustSelected(boolean justSelected) {
-        this.justSelected = justSelected;
+    public void setRouteEnds(Map<Integer, RouteEndGroup> routeEnds) {
+        this.routeEnds = routeEnds;
     }
-
+    
     private MapGraph graph = null;
 
     private MapNode selectedNode1 = null;
@@ -105,6 +109,8 @@ public class SelectedItems {
     private boolean movableNode = false;
     private boolean edgeSelection = false;
     
-    private boolean justSelected = false;
 
+    private Map<Integer, RouteEndGroup> routeEnds = new HashMap<>();
+
+    
 }

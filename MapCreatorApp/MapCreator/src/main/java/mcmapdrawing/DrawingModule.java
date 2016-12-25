@@ -1,6 +1,7 @@
 package mcmapdrawing;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Point;
 import java.io.File;
 import mcgraphs.MapNode;
@@ -15,7 +16,6 @@ import java.util.HashMap;
 
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import javax.swing.JOptionPane;
 import mcalgorithms.EdgeContraction;
@@ -30,7 +30,8 @@ import mctemplates.UsefulFunctions;
 
 public class DrawingModule {
 
-    public DrawingModule(DrawingModuleInterface s) {
+    public DrawingModule(DrawingModuleInterface s, Map<Integer,RouteEndGroup> routeEnds ) {
+        this.routeEnds = routeEnds;
         svg = s;
         //initialSVGFileName = "./DrawingFolder/" + svg.getName();        
         //createLBCandRUC();
@@ -127,18 +128,16 @@ public class DrawingModule {
         float ratio = dW / dH;
         float H = svg.getHeight();
         float W = svg.getWidth();
-        if( (svg instanceof SVG) == false ){       
-            if( W >= ratio*H ){
+        if ((svg instanceof SVG) == false) {
+            if (W >= ratio * H) {
                 svg.setSize(Math.round((ratio * H)), svg.getHeight());
+            } else {
+                svg.setSize(svg.getWidth(), Math.round((W / ratio)));
             }
-            else{
-                svg.setSize( svg.getWidth(), Math.round( ( W / ratio ) ) );
-            }
-        }
-        else{
+        } else {
             svg.setSize(Math.round((ratio * H)), svg.getHeight());
         }
-           //System.out.println( "width = " + svg.getWidth() + "   height = " + svg.getHeight() );
+        //System.out.println( "width = " + svg.getWidth() + "   height = " + svg.getHeight() );
     }
 
     /**
@@ -436,7 +435,7 @@ public class DrawingModule {
     /**
      * Draws contained stops in edges, and their names
      */
-    private void drawEdgeContainedStops(MapGraph graph){
+    private void drawEdgeContainedStops(MapGraph graph) {
         for (MapEdge e : graph.getEdges()) {
             Pair<MapNode, MapNode> ends = e.getEnds();
             MapNode beg = ends.getST();
@@ -505,6 +504,7 @@ public class DrawingModule {
         drawGraphEdgesOnMap(graph);
         drawRoutesToHighlightOnGraph(graph);
         drawGraphNodesOnMap(graph);
+        drawRouteEndsOnGraph(graph);
         drawEdgeContainedStops(graph);
         drawTextsOnMap(graph);
 
@@ -551,7 +551,8 @@ public class DrawingModule {
         for (MapNode n : graph.getNodes()) {
             insNodes.add(n.getID());
         }
-        Map<String, ArrayList<GraphPath>> paths = new RoutePathCreator(graph).createRoutePaths();
+        ArrayList<String> routes = MCSettings.getRoutesToHighlight();
+        Map<String, ArrayList<GraphPath>> paths = new RoutePathCreator(graph).createRoutePaths(routes);
         for (Map.Entry<String, ArrayList<GraphPath>> entry : paths.entrySet()) {
             for (GraphPath gp : entry.getValue()) {
                 for (Integer d : gp.getPathSequence()) {
@@ -564,7 +565,7 @@ public class DrawingModule {
 
     private void drawRoutesToHighlightOnGraph(MapGraph graph) {
         ArrayList<String> routes = MCSettings.getRoutesToHighlight();
-        Map<String, ArrayList<GraphPath>> paths = new RoutePathCreator(graph).createRoutePaths();
+        Map<String, ArrayList<GraphPath>> paths = new RoutePathCreator(graph).createRoutePaths(routes);
         createHighlights(paths);
 
         for (Map.Entry<String, ArrayList<GraphPath>> entry : paths.entrySet()) {
@@ -653,13 +654,6 @@ public class DrawingModule {
 
                 Color c = MCSettings.getRouteToHighlightColor(entry.getKey());
 
-                /*while (c.equals(Color.WHITE) || c.equals(Color.BLACK)) {
-                 c = UsefulFunctions.getNextColor();
-                 }                
-                 svg.setPolylineWidth(MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH() );
-                 svg.setPolylineColorHover(UsefulFunctions.parseColor(c));
-                 svg.setPolylineWidthHover(MCSettings.getINITIAL_ROUTE_HIGHLIGHT_HOVER_WIDTH());
-                 svg.setPolylineColor(UsefulFunctions.parseColor(c));*/
                 float strokeWidth = MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH();
                 svg.setStrokeWidth((int) strokeWidth);
 
@@ -748,6 +742,92 @@ public class DrawingModule {
         return M;
     }
 
+    private void createRouteEnds(MapGraph graph){
+        if( routeEnds == null || routeEnds.isEmpty() == false ) return;
+        ArrayList<String> routes = MCSettings.getRoutesToHighlight();
+        Map<String, ArrayList<GraphPath>> paths = new RoutePathCreator(graph).createRoutePaths(routes);
+        routeEnds.clear();
+        for (Map.Entry<String, ArrayList<GraphPath>> entry : paths.entrySet()) {
+            for (GraphPath path : entry.getValue()) {
+                if (routeEnds.get(path.getPathBegValue()) == null) {
+                    routeEnds.put(path.getPathBegValue(), new RouteEndGroup(path.getPathBegValue()));
+                }
+
+                if (routeEnds.get(path.getPathEndValue()) == null) {
+                    routeEnds.put(path.getPathEndValue(), new RouteEndGroup(path.getPathEndValue()));
+                }
+
+                routeEnds.get(path.getPathBegValue()).addRouteEnd(entry.getKey());
+                routeEnds.get(path.getPathEndValue()).addRouteEnd(entry.getKey());
+            }
+        }        
+        
+        for( Map.Entry<Integer,RouteEndGroup> entry : routeEnds.entrySet() ){
+            entry.getValue().makeUniqueRouteIds();
+        }
+    }
+
+    private void drawRouteEndsOnGraph(MapGraph graph) {
+        if( routeEnds == null ) return;
+        createRouteEnds(graph);
+        for (MapNode n : graph.getNodes()) {
+            int id = n.getID();
+            if (routeEnds.get(id) == null) {
+                continue;
+            }
+            
+            RouteEndGroup group = routeEnds.get(id);
+            Pair<Integer,Integer> coords = normalizeCoordinates( n.getCoords() );
+            int offsetX = group.getOffset().getST();
+            int offsetY = group.getOffset().getND();
+            ArrayList<String> routeIds = group.getRouteIds();
+            int columns = group.getColumns();
+            int singleSquareSize = group.getSingleSquareSize();
+            int fontsize = (int)( 1.15f*singleSquareSize);            
+            if( (svg instanceof SVG) == false ){
+                singleSquareSize *= MCSettings.getSvgToSwingFactor();
+                offsetX *= MCSettings.getSvgToSwingFactor();
+                offsetY *= MCSettings.getSvgToSwingFactor();
+            }
+            
+            int x = 0;
+            int y = 0;
+            
+            for( int i=0; i<routeIds.size(); i++ ){               
+                Color color = MCSettings.getRouteToHighlightColor( routeIds.get(i) );
+                svg.setFill(color);
+                svg.setColor( color );
+                
+                int length = routeIds.get(i).length();
+                float widthFactor = -0.5f + (float)length / 2;
+                
+                svg.addRectangle( new Point( coords.getST() + offsetX + (int)x, coords.getND() + offsetY + (int)y  ),
+                       (int)(singleSquareSize*(1+widthFactor)), singleSquareSize);
+                
+                svg.setColor( Color.BLACK );
+                svg.addText( new Point( coords.getST() + offsetX + (int)x + (int)( (0.2f)* singleSquareSize ), 
+                        coords.getND() + offsetY + (int)(y+singleSquareSize) - (int)( (0.15f )* singleSquareSize ) ),
+                        routeIds.get(i), fontsize, Font.BOLD,0 );
+                                 
+                x += singleSquareSize * ( 1 + widthFactor );
+                if( (i+1)%columns == 0 ){
+                    x = 0;
+                    y += singleSquareSize;
+                }          
+                
+            }
+        }
+
+    }
+
+    public Map<Integer, RouteEndGroup> getRouteEnds() {
+        return routeEnds;
+    }
+
+    public void setRouteEnds(Map<Integer, RouteEndGroup> routeEnds) {
+        this.routeEnds = routeEnds;
+    }
+
     private void addPolyline(ArrayList<Point> list) {
         svg.addPolyline(list);
     }
@@ -783,4 +863,5 @@ public class DrawingModule {
     private Map< Pair<Integer, Integer>, Float> leftHighlightOffset = new HashMap<>();
     private Map< Pair<Integer, Integer>, Float> rightHighlightOffset = new HashMap<>();
 
+    Map<Integer, RouteEndGroup> routeEnds = new HashMap<>();
 }

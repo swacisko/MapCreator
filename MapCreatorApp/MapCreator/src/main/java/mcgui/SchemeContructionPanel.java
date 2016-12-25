@@ -12,9 +12,9 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
@@ -22,6 +22,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
+import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -31,6 +32,7 @@ import mcgraphs.MapGraph;
 import mcgraphs.MapNode;
 import mcmapdrawing.DrawingModule;
 import mcmapdrawing.DrawingModuleInterface;
+import mcmapdrawing.RouteEndGroup;
 import mcmapdrawing.SVG;
 import mctemplates.Drawable;
 import mctemplates.MCSettings;
@@ -44,10 +46,10 @@ import mctemplates.UsefulFunctions;
 public class SchemeContructionPanel extends JPanel implements DrawingModuleInterface{
 
     
-    public SchemeContructionPanel( int width, int height ){
+    public SchemeContructionPanel( int width, int height, SelectedItems items ){
          setSize( width, height );  
-         
-         module = new DrawingModule(this);
+         selectedItems = items;
+         module = new DrawingModule(this, items.getRouteEnds());
          
          setLayout( new FlowLayout());         
          setBorder( BorderFactory.createLineBorder(Color.RED, 3, true) );
@@ -77,7 +79,8 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
             public void actionPerformed(ActionEvent e) {
                 MapGraph graph = selectedItems.getGraph();
                 if( graph == null ) return;
-                new DrawingModule( new SVG(MCSettings.getINITIAL_SVG_WIDTH(), MCSettings.getINITIAL_SVG_HEIGHT()) ).drawGraphOnMap( graph , MCSettings.getSvgFileName() );
+                new DrawingModule( new SVG(MCSettings.getINITIAL_SVG_WIDTH(), MCSettings.getINITIAL_SVG_HEIGHT()), selectedItems.getRouteEnds() )
+                        .drawGraphOnMap( graph , MCSettings.getSvgFileName() );
             }
         });
         popupMenu.add(item);     
@@ -98,6 +101,7 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
     @Override
     public void paintComponent( Graphics g ){
         graphics = (Graphics2D) g;
+        if( selectedItems == null || selectedItems.getGraph() == null ) return;
         module.drawGraphOnMap( selectedItems.getGraph(), "Graph drawing" );
     }
     
@@ -238,6 +242,21 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
         
     }
     
+    /**
+     * Draws a rectangle
+     * @param p left upper corner of the rectangle
+     * @param width width of the rectangle
+     * @param height  height of the rectangle
+     */
+    @Override
+    public void addRectangle(Point p, int width, int height) {
+        Rectangle rect = new Rectangle(p.x, p.y, width, height);
+        graphics.setColor(fillColor);
+        graphics.setStroke( new BasicStroke(strokeWidth) );
+        graphics.fill(rect);
+        graphics.setColor(color);
+        graphics.draw(rect);
+    }
 
 //******************************************** CLASS FIELDS
     
@@ -261,6 +280,8 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
     private int textAngle = 0;
     private int strokeWidth = 0;
     JPopupMenu popupMenu = null;
+
+   
     
     
     
@@ -288,6 +309,7 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
             
             return null;
         }
+        
         
         @Override
         public void mousePressed(MouseEvent event){
@@ -326,19 +348,21 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
         
         @Override
         public void mouseClicked( MouseEvent event ){
-            /*MapNode n = getMapNodeOnPosition( event.getPoint() );
-            System.out.println( "Point:\t" + event.getPoint() );
-            if( n == null ){
-                selectedItems.setSelectedNode1(null);
-                System.out.println( "NULL !" );
-                return;
-            }
-            else{
-                selectedItems.setSelectedNode1(n);
+            if( event.getClickCount() >= 3 ){
+                MapNode node = getMapNodeOnPosition( event.getPoint() );
+                Map<Integer, RouteEndGroup> routeEnds = selectedItems.getRouteEnds();
+                if( node == null || routeEnds == null ) return;
+                else{
+                    RouteEndGroup group = routeEnds.get( node.getID() );
+                    if( group == null ) return;
+                    MyDialog dialog = new MyDialog();
+                    dialog.switchToPanel( new RouteEndGroupPanel(group), "Route ends" );
+                    
+                    getParentFrame().repaint();
+                }
             }
             
-            System.out.println( "Map node selected, name = " + n.getStructureName() + "   coords: " + n.getCoords() );
-            getParentFrame().repaint();*/
+            
         }
         
         private JPanel parent = null;

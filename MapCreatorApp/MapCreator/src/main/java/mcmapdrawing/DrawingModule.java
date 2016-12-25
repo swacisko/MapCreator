@@ -25,13 +25,14 @@ import mcalgorithms.MapGraphCreator;
 import mcalgorithms.RoutePathCreator;
 import mcgraphs.GraphPath;
 import mcgraphs.MapEdge;
+import mcgui.SelectedItems;
 import mctemplates.MCSettings;
 import mctemplates.UsefulFunctions;
 
 public class DrawingModule {
 
-    public DrawingModule(DrawingModuleInterface s, Map<Integer,RouteEndGroup> routeEnds ) {
-        this.routeEnds = routeEnds;
+    public DrawingModule(DrawingModuleInterface s, SelectedItems items ) {
+        selectedItems = items;
         svg = s;
         //initialSVGFileName = "./DrawingFolder/" + svg.getName();        
         //createLBCandRUC();
@@ -508,6 +509,8 @@ public class DrawingModule {
         drawEdgeContainedStops(graph);
         drawTextsOnMap(graph);
 
+        drawAlignmentRectangle(); // this should not be int drawGraph!!!
+        
         endSVG();
         return graph;
     }
@@ -743,6 +746,7 @@ public class DrawingModule {
     }
 
     private void createRouteEnds(MapGraph graph){
+        Map<Integer, RouteEndGroup> routeEnds = selectedItems.getRouteEnds();
         if( routeEnds == null || routeEnds.isEmpty() == false ) return;
         ArrayList<String> routes = MCSettings.getRoutesToHighlight();
         Map<String, ArrayList<GraphPath>> paths = new RoutePathCreator(graph).createRoutePaths(routes);
@@ -768,6 +772,7 @@ public class DrawingModule {
     }
 
     private void drawRouteEndsOnGraph(MapGraph graph) {
+        Map<Integer, RouteEndGroup> routeEnds = selectedItems.getRouteEnds();
         if( routeEnds == null ) return;
         createRouteEnds(graph);
         for (MapNode n : graph.getNodes()) {
@@ -820,13 +825,36 @@ public class DrawingModule {
         }
 
     }
+    
+    public void drawAlignmentRectangle(){
+        if( selectedItems == null || selectedItems.getAlignmentBeg() == null || selectedItems.getAlignmentEnd() == null ) return;
+        Point beg = new Point( selectedItems.getAlignmentBeg() );
+        Point end = new Point( selectedItems.getAlignmentEnd() );
+        
+        if (beg.x > end.x) {
+            int temp = beg.x;
+            beg.x = end.x;
+            end.x = temp;
+        }
+
+        if (beg.y > end.y) {
+            int temp = beg.y;
+            beg.y = end.y;
+            end.y = temp;
+        }
+        
+        svg.setColor(Color.red);
+        svg.setFill( null );
+        svg.setStrokeWidth(1);
+        svg.addRectangle(beg,end.x - beg.x, end.y - beg.y);
+    }
 
     public Map<Integer, RouteEndGroup> getRouteEnds() {
-        return routeEnds;
+        return selectedItems.getRouteEnds();
     }
 
     public void setRouteEnds(Map<Integer, RouteEndGroup> routeEnds) {
-        this.routeEnds = routeEnds;
+        selectedItems.setRouteEnds(routeEnds);
     }
 
     private void addPolyline(ArrayList<Point> list) {
@@ -864,5 +892,5 @@ public class DrawingModule {
     private Map< Pair<Integer, Integer>, Float> leftHighlightOffset = new HashMap<>();
     private Map< Pair<Integer, Integer>, Float> rightHighlightOffset = new HashMap<>();
 
-    Map<Integer, RouteEndGroup> routeEnds = new HashMap<>();
+    SelectedItems selectedItems = null;
 }

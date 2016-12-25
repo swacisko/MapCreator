@@ -8,7 +8,7 @@ package mctemplates;
 import java.awt.Color;
 import java.awt.Point;
 import java.io.File;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -126,6 +126,18 @@ public class UsefulFunctions {
         float y = p1.getND() + p2.getND();
         y /= 2;
         return new Pair<>(x, y);
+    }
+    
+    public static Pair<Float,Float> centerOfGravity( ArrayList< Pair<Float,Float> > points ){
+        if( points == null || points.isEmpty() ) return null;
+        Pair<Float,Float> res = new Pair<>(0f,0f);
+        for( Pair<Float,Float> p : points ){
+            res.setST( res.getST() + p.getST() );
+            res.setND( res.getND() + p.getND() );
+        }
+        res.setST( res.getST() / points.size() );
+        res.setND( res.getND() / points.size() );
+        return res;
     }
 
     /**

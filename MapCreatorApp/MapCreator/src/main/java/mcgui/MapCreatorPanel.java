@@ -42,7 +42,7 @@ public class MapCreatorPanel extends JPanel {
                 if (graph == null) {
                     return;
                 }
-                new DrawingModule(new SVG(MCSettings.getINITIAL_SVG_WIDTH(), MCSettings.getINITIAL_SVG_HEIGHT()), selectedItems.getRouteEnds())
+                new DrawingModule(new SVG(MCSettings.getINITIAL_SVG_WIDTH(), MCSettings.getINITIAL_SVG_HEIGHT()), selectedItems)
                         .drawGraphOnMap(graph, MCSettings.getSvgFileName());
             }
         });

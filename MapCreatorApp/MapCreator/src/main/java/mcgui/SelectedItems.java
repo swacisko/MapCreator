@@ -5,6 +5,7 @@
  */
 package mcgui;
 
+import java.awt.Point;
 import java.util.HashMap;
 import java.util.Map;
 import mcgraphs.MapEdge;
@@ -102,6 +103,34 @@ public class SelectedItems {
         routeEnds.clear();
     }
     
+    public Point getAlignmentBeg() {
+        return alignmentBeg;
+    }
+
+    public void setAlignmentBeg(Point AlignmentBeg) {
+        this.alignmentBeg = AlignmentBeg;
+    }
+    
+    public Point getAlignmentEnd() {
+        return alignmentEnd;
+    }
+
+    public void setAlignmentEnd(Point alignmentEnd) {
+        this.alignmentEnd = alignmentEnd;
+    }
+    
+    /**
+     * 
+     * @return returns {@link #layoutMouseAlignementMode}, 0 is for "do nothing", 1 is for "horizontal alignment", 2 is for "vertical alignment".
+     */
+    public int getLayoutMouseAlignementMode() {
+        return layoutMouseAlignementMode;
+    }
+
+    public void setLayoutMouseAlignementMode(int layoutMouseAlignementMode) {
+        this.layoutMouseAlignementMode = layoutMouseAlignementMode;
+    }
+    
     private MapGraph graph = null;
 
     private MapNode selectedNode1 = null;
@@ -113,6 +142,11 @@ public class SelectedItems {
     private boolean movableNode = false;
     private boolean edgeSelection = false;
     
+    private int layoutMouseAlignementMode = 0; 
+    private Point alignmentBeg = null;
+    private Point alignmentEnd = null;
+
+       
 
     private Map<Integer, RouteEndGroup> routeEnds = new HashMap<>();
 

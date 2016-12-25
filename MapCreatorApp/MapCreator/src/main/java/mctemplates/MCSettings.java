@@ -40,6 +40,10 @@ public class MCSettings {
     public static final int GONDOLA = (1 << 6);
     public static final int FUNICULAR = (1 << 7);
     public static final int ALL_TRANSPORT_MEASURES = (1 << 8) - 1;
+    
+    public static final int HORIZONTAL_ALIGNMENT = 1;
+    public static final int VERTICAL_ALIGNMENT = 2;
+    public static final int NO_ALIGNMENT = 0;
 
     private static int DRAWING_ROUTE_TYPE = TRAM;
 

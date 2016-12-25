@@ -26,7 +26,6 @@ public class Main {
         for( int i=1; i<=7; i++ ){
             MCSettings.addRouteToHighlight( ""+i );
         }
-        MCSettings.addRouteToHighlight( ""+57 );
         
         EventQueue.invokeLater(new Runnable() {
             @Override

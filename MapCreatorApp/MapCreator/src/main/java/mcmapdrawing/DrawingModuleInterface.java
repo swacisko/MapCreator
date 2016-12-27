@@ -54,7 +54,7 @@ public interface DrawingModuleInterface {
      * @param width
      * @param height 
      */
-    public void addRectangle( Point p, int width, int height );
+    public void addRectangle( Point p, int width, int height, int angle );
     
     /**
      * Sets color of the object we want to draw. I.e. before calling one of the functions: {@link #addCircle(java.awt.Point, int)}, {@link #addEllipse(java.awt.Point, int, int)},

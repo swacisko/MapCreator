@@ -79,7 +79,11 @@ public class MCSettings {
     private static int INITIAL_NODE_HOVER_WIDTH = 12;
     private static Color INITIAL_FILL_COLOR = Color.ORANGE;
     
-    private static int CONTAINED_STOPS_DRAWING_SIZE = INITIAL_NODE_WIDTH - 1;
+    private static int CONTAINED_STOPS_DRAWING_SIZE = 3*INITIAL_NODE_WIDTH;
+    private static int CONTAINED_STOPS_WIDTH = 10;
+    private static int CONTAINED_STOPS_HEIGHT = 20;
+
+    
     private static boolean drawContainedStopsTexts = true;
 
                
@@ -105,7 +109,7 @@ public class MCSettings {
 
     private static float LBCRUCModificationFactor = 0.05f;
 
-    private static Pair<Integer,Integer> INITIAL_ROUTE_END_GROUP_OFFSET = new Pair<>( 30,0 );
+    private static Pair<Integer,Integer> INITIAL_ROUTE_END_GROUP_OFFSET = new Pair<>( 50,20 );
     private static int INITIAL_SINGLE_SQUARE_SIZE = 35;
    
    
@@ -133,7 +137,7 @@ public class MCSettings {
      */
     private static ArrayList<String> routesToHighlight = new ArrayList<>();
     private static Map<String,Color> routeToHighlightColor = new HashMap<>();
-    private static int ROUTES_TO_HIGHLIGHT_TYPE = 0;
+
 
     /**
      * If this variable is set to true, then on the scheme all routes and stops
@@ -145,6 +149,23 @@ public class MCSettings {
 
     
     //***************************************************************  GETTERS AND SETTERS AND SOME OTHER
+    
+    
+    public static int getCONTAINED_STOPS_WIDTH() {
+        return CONTAINED_STOPS_WIDTH;
+    }
+
+    public static void setCONTAINED_STOPS_WIDTH(int CONTAINED_STOPS_WIDTH) {
+        MCSettings.CONTAINED_STOPS_WIDTH = CONTAINED_STOPS_WIDTH;
+    }
+
+    public static int getCONTAINED_STOPS_HEIGHT() {
+        return CONTAINED_STOPS_HEIGHT;
+    }
+
+    public static void setCONTAINED_STOPS_HEIGHT(int CONTAINED_STOPS_HEIGHT) {
+        MCSettings.CONTAINED_STOPS_HEIGHT = CONTAINED_STOPS_HEIGHT;
+    }
     
      public static Pair<Integer, Integer> getINITIAL_ROUTE_END_GROUP_OFFSET() {
         return INITIAL_ROUTE_END_GROUP_OFFSET;

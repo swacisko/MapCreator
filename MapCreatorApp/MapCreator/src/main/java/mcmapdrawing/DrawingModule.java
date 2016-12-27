@@ -448,21 +448,44 @@ public class DrawingModule {
             Pair<Float, Float> vec = new Pair<>((float) endCoords.getST() - begCoords.getST(), (float) endCoords.getND() - begCoords.getND());
             vec.setST(vec.getST() / (L + 1));
             vec.setND(vec.getND() / (L + 1));
+            
+            int width = e.getContainedStopsWidth();
+            int height = e.getContainedStopsHeight();    
+            if( (svg instanceof SVG) == false ){
+                width *= MCSettings.getSvgToSwingFactor();
+                height *= MCSettings.getSvgToSwingFactor();
+            }
+            
+            int angle = 0;
+            if( begCoords.getST().intValue() != endCoords.getST().intValue() ){
+                double alpha = Math.atan( ((double)( endCoords.getND() - begCoords.getND() )) / ( (double)( endCoords.getST() - begCoords.getST() )  ) );
+                angle = (int)Math.round(180*alpha / Math.PI);                
+            }else{
+                angle = 90;
+            }
+            
+            Pair<Integer, Integer> offset = e.getTextOffset();
+            float offx = offset.getST();
+            float offy = offset.getND();
+            if ((svg instanceof SVG) == false) {
+                offx *= MCSettings.getSvgToSwingFactor();
+                offy *= MCSettings.getSvgToSwingFactor();
+            }
+            
             for (int i = 1; i <= L; i++) {
-                int radius = e.getContainedStopsDrawingSize();
-                addEllipse((int) (begCoords.getST() + i * vec.getST()), (int) (begCoords.getND() + i * vec.getND()), radius, radius);
+                svg.setFill(e.getColor());
+                svg.setColor( Color.BLACK );
+                svg.setStrokeWidth(1);
+                //addEllipse((int) (begCoords.getST() + i * vec.getST()), (int) (begCoords.getND() + i * vec.getND()), radius, radius);
+                addRectangle( new Point((int) (begCoords.getST() + i * vec.getST()), (int) (begCoords.getND() + i * vec.getND())  ),
+                        width, height, angle);
+                
                 Stop st = MCDatabase.getStopOfID(e.getContainedForwardStopsIds().get(i - 1));
                 String text = e.getContainedForwardStopsIds().get(i - 1);
                 if (st != null) {
                     text = st.getStopName();
                 }
-                Pair<Integer, Integer> offset = e.getTextOffset();
-                float offx = offset.getST();
-                float offy = offset.getND();
-                if ((svg instanceof SVG) == false) {
-                    offx *= MCSettings.getSvgToSwingFactor();
-                    offy *= MCSettings.getSvgToSwingFactor();
-                }
+                
                 svg.setColor(e.getTextColor());
                 if (MCSettings.isDrawContainedStopsTexts() && e.isTextVisible()) {
                     svg.addText(new Point((int) (begCoords.getST() + i * vec.getST() + offx), (int) (begCoords.getND() + i * vec.getND() + offy)),
@@ -807,12 +830,12 @@ public class DrawingModule {
                 float widthFactor = -0.5f + (float)length / 2;
                 
                 svg.addRectangle( new Point( coords.getST() + offsetX + (int)x, coords.getND() + offsetY + (int)y  ),
-                       (int)(singleSquareSize*(1+widthFactor)), singleSquareSize);
+                       (int)(singleSquareSize*(1+widthFactor)), singleSquareSize,0);
                 
                 svg.setColor(fillcolor == Color.BLUE ? Color.WHITE : Color.BLACK );
                 
-                svg.addText( new Point( coords.getST() + offsetX + (int)x + (int)( (0.2f)* singleSquareSize ), 
-                        coords.getND() + offsetY + (int)(y+singleSquareSize) - (int)( (0.15f )* singleSquareSize ) ),
+                svg.addText( new Point( coords.getST() + offsetX + (int)x + (int)( (0.2f)* singleSquareSize ) - (singleSquareSize/2), 
+                        coords.getND() + offsetY + (int)(y+singleSquareSize) - (int)( (0.15f )* singleSquareSize ) - (singleSquareSize/2) ),
                         routeIds.get(i), fontsize, Font.BOLD,0 );
                                  
                 x += singleSquareSize * ( 1 + widthFactor );
@@ -843,10 +866,13 @@ public class DrawingModule {
             end.y = temp;
         }
         
+        int dW = end.x - beg.x;
+        int dH = end.y - beg.y;
+        
         svg.setColor(Color.red);
         svg.setFill( null );
         svg.setStrokeWidth(1);
-        svg.addRectangle(beg,end.x - beg.x, end.y - beg.y);
+        svg.addRectangle( new Point( beg.x + (dW/2), beg.y + (dH/2) ), dW, dH, 0 );
     }
 
     public Map<Integer, RouteEndGroup> getRouteEnds() {
@@ -875,6 +901,17 @@ public class DrawingModule {
 
     private void addEllipse(Point p, int width, int height) {
         DrawingModule.this.addEllipse((int) p.getX(), (int) p.getY(), width, height);
+    }
+    
+    /**
+     * Draws a rectangle with specified parameters
+     * @param p center of the rectangle
+     * @param width width of the rectangle
+     * @param height height of the rectangle
+     * @param angle angle at which the rectangle should be rotated, around point p
+     */
+    private void addRectangle( Point p, int width, int height, int angle ){
+        svg.addRectangle( p,width,height,angle );
     }
 
     private String initialSVGFileName = MCSettings.getMapsDirectoryPath();

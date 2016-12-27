@@ -190,7 +190,7 @@ public class MapStructure {
 
     private Color hoverColor = Color.RED;
     private int ID = -1;
-    private Color color = null;
+    private Color color = MCSettings.getINITIAL_FILL_COLOR();
     private String description = "";
     
     /**

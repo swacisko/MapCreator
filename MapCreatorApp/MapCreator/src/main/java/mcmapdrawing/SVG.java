@@ -169,7 +169,6 @@ public class SVG implements DrawingModuleInterface {
     public void setColor(Color c) {
         String color = UsefulFunctions.parseColor(c);
         this.color = color;
-        setFill(c);
 
         setPolylineColor(color);
         setCircleStrokeColor(color);
@@ -184,6 +183,7 @@ public class SVG implements DrawingModuleInterface {
         setCircleFill(color);
         setEllipseColor(color);
         setTextColor(color);
+        setRectangleColor(color);
     }
 
     public Color getFill() {
@@ -220,21 +220,26 @@ public class SVG implements DrawingModuleInterface {
     
     /**
      * Draws a rectangle
-     * @param p Left upper corner of the rectangle
+     * @param p CENTER of the rectangle
      * @param width width of the rectangle
      * @param height height of the rectangle
+     *  @param angle angle at which the rectangle will be drawn
      */
     @Override
-    public void addRectangle(Point p, int width, int height) {
-        addRectangle((int) p.getX(), (int) p.getY(), width, height);
+    public void addRectangle(Point p, int width, int height, int angle) {
+        addRectangle((int) p.getX(), (int) p.getY(), width, height,angle);
     }
 
-    //dodaje prostokąt ze stylem (czerwone z czarnym brzegiem)
-    public void addRectangle(int x, int y, int width, int height) {
-        writerSVG.println("   <rect x=\"" + x + "\" y=\"" + y + "\" width=\"" + width + "\" height=\"" + height + "\" style=\""
-                + "fill:" + fillColor + ";stroke:" + color + ";stroke-width:" + strokeWidth + "\" />");
-        writerHTML.println("   <rect x=\"" + x + "\" y=\"" + y + "\" width=\"" + width + "\" height=\"" + height + "\" style=\""
-                + "fill:" + fillColor + ";stroke:" + color + ";stroke-width:" + strokeWidth + "\" />");
+    /**
+     * Adds rectangle with CENTER in point (x,y). See {@link #addRectangle(java.awt.Point, int, int, int) }.
+     */
+    public void addRectangle(int x, int y, int width, int height, int angle) {
+        writerSVG.println("   <rect x=\"" + (x - (width/2)) + "\" y=\"" + (y - (height/2)) + "\" width=\"" + width + "\" height=\"" + height + "\" style=\""
+                + "fill:" + fillColor + ";stroke:" + color + ";stroke-width:" + strokeWidth + "\""
+                + " transform=\"rotate(" + angle + " " + x + " " + y + ") " +"\" />");
+        writerHTML.println("   <rect x=\"" + (x - (width/2)) + "\" y=\"" + (y - (height/2)) + "\" width=\"" + width + "\" height=\"" + height + "\" style=\""
+                + "fill:" + fillColor + ";stroke:" + color + ";stroke-width:" + strokeWidth + "\""
+                + " transform=\"rotate(" + angle + " " + x + " " + y + ") " +"\" />");
     }
     
     

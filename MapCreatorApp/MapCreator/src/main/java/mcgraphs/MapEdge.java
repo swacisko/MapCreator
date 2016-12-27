@@ -89,14 +89,23 @@ public class MapEdge extends MapStructure {
     public void setContainedBackwardStopsIds(ArrayList<String> containedBackwardStopsIds) {
         this.containedBackwardStopsIds = containedBackwardStopsIds;
     }
-    
-    public int getContainedStopsDrawingSize(){
-        return containedStopsDrawingSize;
+
+    public int getContainedStopsWidth() {
+        return containedStopsWidth;
+    }
+
+    public void setContainedStopsWidth(int containedStopsWidth) {
+        this.containedStopsWidth = containedStopsWidth;
+    }
+
+    public int getContainedStopsHeight() {
+        return containedStopsHeight;
+    }
+
+    public void setContainedStopsHeight(int containedStopsHeight) {
+        this.containedStopsHeight = containedStopsHeight;
     }
     
-    public void setContainedStopsDrawingSize( int size ){
-        containedStopsDrawingSize = size;
-    }
     
     /**
      * Functions returns an edge, which, apart from ID, is identical with this
@@ -115,7 +124,9 @@ public class MapEdge extends MapStructure {
     // ta lista jest przydatna do wypisywania przystankow, ktore znajduja sie na danym odcinku drogi
     // lista Forward to przystanki znajdujace sie na drodze getEnds().getST() -> getEnds().getND()
     private ArrayList<String> containedBackwardStopsIds = new ArrayList<>(); // lista Backward to kolejne przystanki na drodze getEnds().getND() -> getEnds().getST()
-    private int containedStopsDrawingSize = MCSettings.getCONTAINED_STOPS_DRAWING_SIZE();
+    private int containedStopsWidth = MCSettings.getCONTAINED_STOPS_WIDTH();
+    private int containedStopsHeight = MCSettings.getCONTAINED_STOPS_HEIGHT();
+    
     
 
 

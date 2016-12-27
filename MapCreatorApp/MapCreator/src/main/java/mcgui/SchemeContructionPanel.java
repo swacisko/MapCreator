@@ -200,20 +200,44 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
         }
         graphics.drawPolyline(x, y, polyline.size());
     }
+    
+    
+    /**
+     * Draws a rectangle
+     *
+     * @param p left upper corner of the rectangle
+     * @param width width of the rectangle
+     * @param height height of the rectangle
+     */
+    @Override
+    public void addRectangle(Point p, int width, int height, int angle) {
+        Rectangle rect = new Rectangle(p.x-(width/2), p.y-(height/2), width, height);
+        AffineTransform at = new AffineTransform();
+        at.setToRotation(2 * Math.PI * angle / 360f, p.x, p.y);
+        graphics.setTransform(at);
+        if( fillColor != null ){
+            graphics.setColor(fillColor);
+            graphics.fill(rect);
+        }        
+        graphics.setStroke(new BasicStroke(strokeWidth));        
+        graphics.setColor(color);
+        graphics.draw(rect);
+        graphics.setTransform(new AffineTransform());
+    }
 
     /**
      *
-     * @param p Beginning of the text -
-     * @param text
-     * @param fontsize
-     * @param format
-     * @param angleWidth
+     * @param p Beginning of the text - baseline of the text.
+     * @param text Text to be written
+     * @param fontsize fontsize of the text
+     * @param format style - bold or italics or plain or ...
+     * @param angle angle at which the text should be written
      */
     @Override
-    public void addText(Point p, String text, int fontsize, int format, int angleWidth) {
+    public void addText(Point p, String text, int fontsize, int format, int angle) {
         graphics.setColor(color);
         AffineTransform at = new AffineTransform();
-        at.setToRotation(2 * Math.PI * angleWidth / 360f, p.x, p.y);
+        at.setToRotation(2 * Math.PI * angle / 360f, p.x, p.y);
         graphics.setTransform(at);
         graphics.setFont(new Font("Serif", format, (int) (0.7f * fontsize * MCSettings.getSvgToSwingFactor())));
         graphics.drawString(text, p.x, p.y);
@@ -350,24 +374,6 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
 
     }
 
-    /**
-     * Draws a rectangle
-     *
-     * @param p left upper corner of the rectangle
-     * @param width width of the rectangle
-     * @param height height of the rectangle
-     */
-    @Override
-    public void addRectangle(Point p, int width, int height) {
-        Rectangle rect = new Rectangle(p.x, p.y, width, height);
-        if( fillColor != null ){
-            graphics.setColor(fillColor);
-            graphics.fill(rect);
-        }
-        graphics.setStroke(new BasicStroke(strokeWidth));        
-        graphics.setColor(color);
-        graphics.draw(rect);
-    }
 
     public void alignSelectedNodes(ArrayList<MapNode> nodes, int alignment) {
         ArrayList<Pair<Float, Float>> points = new ArrayList<>();

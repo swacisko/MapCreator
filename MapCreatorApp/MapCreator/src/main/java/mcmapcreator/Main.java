@@ -23,7 +23,7 @@ public class Main {
        // MapGraph g = new MapGraph();
        // g.testGraph();        
         
-        for( int i=1; i<=7; i++ ){
+        for( int i=1; i<=15; i++ ){
             MCSettings.addRouteToHighlight( ""+i );
         }
         

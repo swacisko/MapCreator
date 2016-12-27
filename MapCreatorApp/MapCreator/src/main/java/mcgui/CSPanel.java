@@ -9,7 +9,10 @@ import java.awt.Color;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -122,9 +125,13 @@ public class CSPanel extends JPanel {
         highlightedRoutesColor.setLayout( new GridBagLayout() );
         
         Map<String,Color> highlightMap = MCSettings.getRouteToHighlightColor();
+        Set< String > entrySet = highlightMap.keySet();
+        ArrayList<String> entryList = new ArrayList<>( entrySet );
+        Collections.sort( entryList );
+        
         int rowNumber = 0;
-        for( Map.Entry<String,Color> entry : highlightMap.entrySet() ){            
-            String name = entry.getKey();
+        for( String entry : entryList ){           
+            String name = entry;
             Route route = MCDatabase.getRouteOfID(name);
             if( route == null ) continue;
             if( route.getRouteLongName().equals("") == false ){
@@ -132,8 +139,8 @@ public class CSPanel extends JPanel {
             }else if( route.getRouteShortName().equals("") == false ){
                 name += ". Short name: " + route.getRouteShortName();
             }
-            final String colorTemp = UsefulFunctions.parseColor( entry.getValue() );
-            final String temp = name;
+            final String colorTemp = UsefulFunctions.parseColor( highlightMap.get(entry) );
+            final String temp = entry;
             
             addLabelAndComboBox(name, rowNumber, highlightedRoutesColor, colorTemp, new ActionListener() {
                 

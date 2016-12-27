@@ -398,18 +398,28 @@ public class DrawingModule {
         for (MapNode n : graph.getNodes()) {
             setDrawingNodeParameters(n);
 
-            int dW = MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH() * getNodeDrawingWidthHighlightCoefficient(n) / 2;
+            int dW = MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH() * getNodeDrawingWidthHighlightCoefficient(n);
             if (insignificantNodes.contains(n.getID())) {
                 dW = 3;
             }
-
-            if ((n.getContainedStopsIds().size() >= 4) || (insignificantNodes.contains(n.getID()) == false)) {
-                addEllipse(UsefulFunctions.convertToPoint(normalizeCoordinates(n.getCoords())), 3 * n.getWidth() + dW, 2 * n.getHeight() + dW);
-            } else if (n.countEdges() == 1 || (n.countEdges() < 4 && n.isContractable() == false)) {
-                addEllipse(UsefulFunctions.convertToPoint(normalizeCoordinates(n.getCoords())), n.getWidth() + dW, n.getHeight() + dW);
-            } else {
-                addEllipse(UsefulFunctions.convertToPoint(normalizeCoordinates(n.getCoords())), n.getWidth() + dW, n.getHeight() + dW);
+            float svgFactor = 1;
+            if( (svg instanceof SVG) == false ){
+                svgFactor = MCSettings.getSvgToSwingFactor();
             }
+
+            int width,height;
+            if ((n.getContainedStopsIds().size() >= 4) || (insignificantNodes.contains(n.getID()) == false)) {
+                width = 3 * n.getWidth() + dW;
+                height = 2 * n.getHeight() + dW;
+            } else if (n.countEdges() == 1 || (n.countEdges() < 4 && n.isContractable() == false)) {
+                width = n.getWidth() + dW;
+                height = n.getHeight() + dW;
+            } else {
+                width = 3 * n.getWidth() + dW;
+                height = 2 * n.getHeight() + dW;
+            }
+            
+            addShape( n.getShape(),UsefulFunctions.convertToPoint(normalizeCoordinates(n.getCoords())), (int)(svgFactor*width) , (int)(svgFactor*height) ,0 );
         }
 
         return graph;
@@ -450,7 +460,12 @@ public class DrawingModule {
             vec.setND(vec.getND() / (L + 1));
             
             int width = e.getContainedStopsWidth();
-            int height = e.getContainedStopsHeight();    
+            int height = e.getContainedStopsHeight();
+            if( highlights != null && highlights.get( new Pair<>( Math.min( beg.getID(), end.getID() ), Math.max( beg.getID(), end.getID() )  ) ) != null){                
+                height += MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH() * 
+                    highlights.get( new Pair<>( Math.min( beg.getID(), end.getID() ), Math.max( beg.getID(), end.getID() )  ) );
+            }
+            
             if( (svg instanceof SVG) == false ){
                 width *= MCSettings.getSvgToSwingFactor();
                 height *= MCSettings.getSvgToSwingFactor();
@@ -471,14 +486,17 @@ public class DrawingModule {
                 offx *= MCSettings.getSvgToSwingFactor();
                 offy *= MCSettings.getSvgToSwingFactor();
             }
+            int rectangleFactor = 1;// ((svg instanceof SVG) && e.getShape().equals(MCSettings.RECTANGLE) ) ? 2 : 1;
             
             for (int i = 1; i <= L; i++) {
-                svg.setFill(e.getColor());
+                svg.setFill( Color.GRAY );
                 svg.setColor( Color.BLACK );
-                svg.setStrokeWidth(1);
-                //addEllipse((int) (begCoords.getST() + i * vec.getST()), (int) (begCoords.getND() + i * vec.getND()), radius, radius);
+                svg.setStrokeWidth(3);
+                /*addEllipse((int) (begCoords.getST() + i * vec.getST()), (int) (begCoords.getND() + i * vec.getND()), radius, radius);
                 addRectangle( new Point((int) (begCoords.getST() + i * vec.getST()), (int) (begCoords.getND() + i * vec.getND())  ),
-                        width, height, angle);
+                        width, height, angle);*/
+                addShape( e.getShape(),new Point((int) (begCoords.getST() + i * vec.getST()), (int) (begCoords.getND() + i * vec.getND())  ),
+                        rectangleFactor*width, rectangleFactor*height, angle);
                 
                 Stop st = MCDatabase.getStopOfID(e.getContainedForwardStopsIds().get(i - 1));
                 String text = e.getContainedForwardStopsIds().get(i - 1);
@@ -487,6 +505,7 @@ public class DrawingModule {
                 }
                 
                 svg.setColor(e.getTextColor());
+                svg.setStrokeWidth( e.getDrawingWidth() );
                 if (MCSettings.isDrawContainedStopsTexts() && e.isTextVisible()) {
                     svg.addText(new Point((int) (begCoords.getST() + i * vec.getST() + offx), (int) (begCoords.getND() + i * vec.getND() + offy)),
                             text, e.getTextFontSize(), e.getTextFormat(), e.getTextAngle());
@@ -565,9 +584,19 @@ public class DrawingModule {
     }
 
     private void drawNodeTexts(MapGraph graph) {
-        for (MapNode n : graph.getNodes()) {
-            if (n.isTextVisible()) {
-                drawNodeText(n, n.getTextColor());
+        for (MapNode n : graph.getNodes()) {            
+            if (n.isTextVisible()){
+                if( highlights != null && (MCSettings.isDrawBackgroundTexts() == false) ){
+                    for( MapNode m : graph.getNodes() ){
+                        if( highlights.get( new Pair<>( Math.min(n.getID(), m.getID()), Math.max( n.getID(),m.getID() ) ) ) != null ){
+                            drawNodeText(n, n.getTextColor());
+                            break;
+                        }
+                    }
+                }else{
+                    drawNodeText(n, n.getTextColor());
+                }                
+                
             }
         }
     }
@@ -743,7 +772,6 @@ public class DrawingModule {
                 leftHighlightOffset.put(entry.getKey(), val);
                 rightHighlightOffset.put(entry.getKey(), val);
             }
-
         }
     }
 
@@ -829,12 +857,13 @@ public class DrawingModule {
                 int length = routeIds.get(i).length();
                 float widthFactor = -0.5f + (float)length / 2;
                 
-                svg.addRectangle( new Point( coords.getST() + offsetX + (int)x, coords.getND() + offsetY + (int)y  ),
+                float diff = widthFactor * singleSquareSize / 2;
+                svg.addRectangle( new Point( coords.getST() + offsetX + (int)(x+diff), coords.getND() + offsetY + (int)y  ),
                        (int)(singleSquareSize*(1+widthFactor)), singleSquareSize,0);
                 
                 svg.setColor(fillcolor == Color.BLUE ? Color.WHITE : Color.BLACK );
                 
-                svg.addText( new Point( coords.getST() + offsetX + (int)x + (int)( (0.2f)* singleSquareSize ) - (singleSquareSize/2), 
+                svg.addText( new Point( coords.getST() + offsetX + (int)(x) + (int)( (0.2f)* singleSquareSize ) - (singleSquareSize/2), 
                         coords.getND() + offsetY + (int)(y+singleSquareSize) - (int)( (0.15f )* singleSquareSize ) - (singleSquareSize/2) ),
                         routeIds.get(i), fontsize, Font.BOLD,0 );
                                  
@@ -895,12 +924,12 @@ public class DrawingModule {
         addCircle((int) p.getX(), (int) p.getY(), r);
     }
 
-    private void addEllipse(int x, int y, int width, int height) {
-        svg.addEllipse(new Point(x, y), width, height);
+    private void addEllipse(int x, int y, int width, int height, int angle) {
+        svg.addEllipse(new Point(x, y), width, height, angle);
     }
 
-    private void addEllipse(Point p, int width, int height) {
-        DrawingModule.this.addEllipse((int) p.getX(), (int) p.getY(), width, height);
+    private void addEllipse(Point p, int width, int height, int angle) {
+        addEllipse((int) p.getX(), (int) p.getY(), width, height, angle);
     }
     
     /**
@@ -912,6 +941,23 @@ public class DrawingModule {
      */
     private void addRectangle( Point p, int width, int height, int angle ){
         svg.addRectangle( p,width,height,angle );
+    }
+    
+    /**
+     * Draws shape on the ma
+     * @param shape {@link MCSettings#RECTANGLE} or {@link MCSettings#ELLIPSE} (so far)
+     * @param p center of the shape
+     * @param width width of the shape
+     * @param height height of the shape
+     * @param angle angle, at which the shape should be drawn
+     */
+    private void addShape( String shape, Point p, int width, int height, int angle ){
+        if( shape.equals( MCSettings.RECTANGLE ) ){
+            addRectangle(p, width, height, angle);
+            
+        }else if( shape.equals( MCSettings.ELLIPSE ) ){
+            addEllipse(p, width, height,angle);            
+        }
     }
 
     private String initialSVGFileName = MCSettings.getMapsDirectoryPath();

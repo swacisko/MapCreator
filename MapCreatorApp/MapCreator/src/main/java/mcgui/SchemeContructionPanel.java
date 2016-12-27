@@ -156,15 +156,19 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
     @Override
     public void paintComponent(Graphics g) {
         graphics = (Graphics2D) g;
-        if (selectedItems == null || selectedItems.getGraph() == null) {
+        if (selectedItems == null || selectedItems.getGraph() == null || selectedItems.getGraph().getNodes() == null ||
+                selectedItems.getGraph().getNodes().isEmpty()) {
             return;
         }
         module.drawGraphOnMap(selectedItems.getGraph(), "Graph drawing");
     }
 
     @Override
-    public void addEllipse(Point p, int w, int h) {
+    public void addEllipse(Point p, int w, int h, int angle) {       
         Ellipse2D ellipse = new Ellipse2D.Double(p.x - (w / 2), p.y - (h / 2), w, h);
+        AffineTransform at = new AffineTransform();
+        at.setToRotation(2 * Math.PI * angle / 360f, p.x, p.y);
+        graphics.setTransform(at);
         if (fillColor != null) {
             graphics.setColor(fillColor);
             graphics.fill(ellipse);
@@ -172,12 +176,12 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
         graphics.setColor(color);
         graphics.setStroke(new BasicStroke(strokeWidth));
         graphics.draw(ellipse);
-
+        graphics.setTransform(new AffineTransform());
     }
 
     @Override
     public void addCircle(Point p, int radius) {
-        addEllipse(p, radius, radius);
+        addEllipse(p, radius, radius,0);
     }
 
     @Override
@@ -251,7 +255,7 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
 
     @Override
     public void setStrokeWidth(int width) {
-        strokeWidth = (int) (width * MCSettings.getSvgToSwingFactor());
+        strokeWidth = (int) ( MCSettings.getSvgToSwingFactor() * width);
     }
 
     @Override
@@ -475,7 +479,7 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
                         return;
                     }
                     MyDialog dialog = new MyDialog();
-                    dialog.switchToPanel(new RouteEndGroupPanel(group), "Route ends");
+                    dialog.switchToPanel(new RouteEndGroupPanel(group, SchemeContructionPanel.this ), "Route ends");
 
                     getParentFrame().repaint();
                 }

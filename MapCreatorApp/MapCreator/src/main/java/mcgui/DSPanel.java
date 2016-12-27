@@ -44,6 +44,7 @@ public class DSPanel extends JPanel {
         addTextOptionsPanel();
         addDrawingSizesPanel();
         addDrawingModuleOptionsPanel();
+        addRouteEndsOptions();
     }
     
     private void addDrawingModuleOptionsPanel(){
@@ -54,14 +55,14 @@ public class DSPanel extends JPanel {
     private void addBackgroundRoutesPanel(){
         JPanel panel = new JPanel();        
         panel.setLayout(new GridLayout(2,4));
-        addCheckBox("TRAM", MCSettings.TRAM, panel );
-        addCheckBox("BUS", MCSettings.BUS, panel );
-        addCheckBox("METRO", MCSettings.METRO, panel );
-        addCheckBox("RAIL", MCSettings.RAIL, panel );
-        addCheckBox("FERRY", MCSettings.FERRY, panel );
-        addCheckBox("CABLE_CAR", MCSettings.CABLE_CAR, panel );
-        addCheckBox("GONDOLA", MCSettings.GONDOLA, panel );
-        addCheckBox("FUNICULAR", MCSettings.FUNICULAR, panel );
+        addBackgroungRouteCheckBox("TRAM", MCSettings.TRAM, panel );
+        addBackgroungRouteCheckBox("BUS", MCSettings.BUS, panel );
+        addBackgroungRouteCheckBox("METRO", MCSettings.METRO, panel );
+        addBackgroungRouteCheckBox("RAIL", MCSettings.RAIL, panel );
+        addBackgroungRouteCheckBox("FERRY", MCSettings.FERRY, panel );
+        addBackgroungRouteCheckBox("CABLE_CAR", MCSettings.CABLE_CAR, panel );
+        addBackgroungRouteCheckBox("GONDOLA", MCSettings.GONDOLA, panel );
+        addBackgroungRouteCheckBox("FUNICULAR", MCSettings.FUNICULAR, panel );
         panel.setBorder( new TitledBorder( BorderFactory.createLineBorder(Color.BLUE, 3, false), "Background routes" ) );
         add(panel);
     }
@@ -126,7 +127,7 @@ public class DSPanel extends JPanel {
     
     private void addDrawingSizesPanel(){
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(5,1));
+        panel.setLayout(new GridLayout(6,1));
         panel.setBorder( new TitledBorder( BorderFactory.createLineBorder(Color.BLUE, 3, false), "Drawing sizes" ) );
         
         JSlider slider = getJSlider( 0, MCSettings.getMAX_NODE_WIDTH(), MCSettings.getINITIAL_NODE_WIDTH(),10,  new ChangeListener() {
@@ -165,19 +166,73 @@ public class DSPanel extends JPanel {
         } ); 
         addLabelAndSlider("Initial route highlight width: ", slider, panel);
         
-        slider = getJSlider( 0, MCSettings.getMAX_NODE_WIDTH(), MCSettings.getCONTAINED_STOPS_DRAWING_SIZE(),10, new ChangeListener() {
+        slider = getJSlider( 0, MCSettings.getMAX_NODE_WIDTH(), MCSettings.getCONTAINED_STOPS_WIDTH(),10, new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
                 JSlider slider = (JSlider) e.getSource();
-                MCSettings.setCONTAINED_STOPS_DRAWING_SIZE(slider.getValue() );
+                MCSettings.setCONTAINED_STOPS_WIDTH(slider.getValue() );
             }
         } ); 
-        addLabelAndSlider("Contained stops drawing size: ", slider, panel);
+        addLabelAndSlider("Contained stops width: ", slider, panel);
+        
+        slider = getJSlider( 0, MCSettings.getMAX_NODE_WIDTH(), MCSettings.getCONTAINED_STOPS_HEIGHT(),10, new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                JSlider slider = (JSlider) e.getSource();
+                MCSettings.setCONTAINED_STOPS_HEIGHT(slider.getValue() );
+            }
+        } ); 
+        addLabelAndSlider("Contained stops height: ", slider, panel);
         
         add(panel);
     }
     
-    private void addCheckBox( String name, final int ROUTE_TYPE, JPanel panel ){
+    private void addRouteEndsOptions(){
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(3,1));
+        panel.setBorder( new TitledBorder( BorderFactory.createLineBorder(Color.BLUE, 3, false), "Route ends options" ) );
+        
+        JSlider slider = getJSlider( 0, MCSettings.getMAX_NODE_HEIGHT(), MCSettings.getINITIAL_SINGLE_SQUARE_SIZE(),10,  new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                JSlider slider = (JSlider) e.getSource();
+                MCSettings.setINITIAL_SINGLE_SQUARE_SIZE(slider.getValue() );
+            }
+        } );        
+        addLabelAndSlider("Single square size: ", slider, panel );
+                
+        slider = getJSlider( -2*Math.abs(MCSettings.getMAX_TEXT_OFFSET().getST()) , 2*Math.abs(MCSettings.getMAX_TEXT_OFFSET().getST()), MCSettings.getINITIAL_ROUTE_END_GROUP_OFFSET().getST(),50,  new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                JSlider slider = (JSlider) e.getSource();
+                Pair<Integer,Integer> offset = new Pair( slider.getValue(), MCSettings.getINITIAL_ROUTE_END_GROUP_OFFSET().getND());
+                MCSettings.setINITIAL_ROUTE_END_GROUP_OFFSET( offset );
+            }
+        } ); 
+        addLabelAndSlider("Initial route ends legend offset X: ", slider, panel);
+        
+        slider = getJSlider( -2*Math.abs(MCSettings.getMAX_TEXT_OFFSET().getND()), 2*Math.abs(MCSettings.getMAX_TEXT_OFFSET().getND()), MCSettings.getINITIAL_ROUTE_END_GROUP_OFFSET().getND(),50, new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                JSlider slider = (JSlider) e.getSource();
+                Pair<Integer,Integer> offset = new Pair( slider.getValue(), MCSettings.getINITIAL_ROUTE_END_GROUP_OFFSET().getND());
+                MCSettings.setINITIAL_ROUTE_END_GROUP_OFFSET( offset );
+            }
+        } ); 
+        addLabelAndSlider("Initial text offset Y: ", slider, panel);        
+               
+        add( panel );
+        
+    }
+    
+    /**
+     * Adds check box, that enables user to select route types to be drawn (e.g. all TRAM routes should be highlighted).
+     * This function is used in {@link #addBackgroundRoutesPanel() }
+     * @param name title of the box
+     * @param ROUTE_TYPE integer corresponding to given route type, taken from {@link MCSettings}.
+     * @param panel panel, to which the box should be added.
+     */
+    private void addBackgroungRouteCheckBox( String name, final int ROUTE_TYPE, JPanel panel ){
         JCheckBox box = new JCheckBox(name);
         box.setSelected( (MCSettings.getDRAWING_ROUTE_TYPE() & ROUTE_TYPE) != 0 );
         box.addActionListener(new ActionListener() {
@@ -193,6 +248,7 @@ public class DSPanel extends JPanel {
         
         panel.add(box);
     }
+    
     
     /**
      * 

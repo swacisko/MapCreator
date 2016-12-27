@@ -11,15 +11,15 @@ import java.awt.Graphics;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
+import javax.swing.JRadioButton;
 import javax.swing.JSlider;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -80,6 +80,8 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
         }  
         containedStopsTextArea.setText(res);    
         
+        shapeButtonsGroup.setSelected( n.getShape().equals( MCSettings.ELLIPSE ) ? ellipseButton.getModel() : rectangleButton.getModel(),true );
+        
         nodeColorBox.setSelectedItem( UsefulFunctions.parseColor( n.getColor() ) );
         nodeFillBox.setSelectedItem( UsefulFunctions.parseColor( n.getFillColor()) );
         nodeHeightSlider.setValue( n.getHeight() );
@@ -97,6 +99,7 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
     private void addAllComponents() {
         addButtons();
         addStructureName();
+        addNodeShapeRadioButtons();
         addNodeColorBox();
         addNodeSizesSliders();
         addContainedStopsTextArea();
@@ -200,7 +203,23 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
         add(strPanel, new GBC( 0,2,12,5 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100));
     }
 
+    private void addNodeShapeRadioButtons(){
+        JLabel label = new JLabel( "Node shape: " );
+        add(label, new GBC( 0,7,6,1 ).setAnchor( GBC.EAST ).setFill(GBC.BOTH).setWeight(100,100));
         
+        shapeButtonsGroup = new ButtonGroup();
+        ellipseButton = new JRadioButton("Ellipse", true); 
+        shapeButtonsGroup.add(ellipseButton);        
+        
+        rectangleButton = new JRadioButton("Rectangle",false);
+        shapeButtonsGroup.add(rectangleButton);      
+        
+        ellipseButton.addActionListener(this);
+        rectangleButton.addActionListener(this);
+        
+        add(ellipseButton,new GBC( 6,7,3,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100));
+        add(rectangleButton, new GBC( 9,7,3,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100));
+    }
     /**
      * Adds nodeColor ComboBox
      */
@@ -214,11 +233,11 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
         nodeFillBox = new JComboBox( UsefulFunctions.getColorsAsStrings() );
         nodeFillBox.addActionListener(this);
                
-        add( nodeColorLabel, new GBC( 0,7,4,2 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH) );
-        add( nodeColorBox, new GBC( 4,7,8,2 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH) );  
+        add( nodeColorLabel, new GBC( 0,8,4,2 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH) );
+        add( nodeColorBox, new GBC( 4,8,8,2 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH) );  
         
-        add( nodeFillLabel,  new GBC( 0,9,4,2 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH) );
-        add( nodeFillBox, new GBC( 4,9,8,2 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH) );  
+        add( nodeFillLabel,  new GBC( 0,10,4,2 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH) );
+        add( nodeFillBox, new GBC( 4,10,8,2 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH) );  
     }
 
     /**
@@ -235,8 +254,8 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
         nodeWidthSlider.setPaintLabels(true);
         nodeWidthSlider.addChangeListener(this);
         
-        add( nodeWidthLabel, new GBC( 0,11,1,2 ).setAnchor( GBC.EAST ).setFill(GBC.BOTH) );
-        add( nodeWidthSlider, new GBC( 1,11,5,2 ).setAnchor( GBC.WEST ).setFill(GBC.BOTH).setWeight(100,100) ); 
+        add( nodeWidthLabel, new GBC( 0,12,1,2 ).setAnchor( GBC.EAST ).setFill(GBC.BOTH) );
+        add( nodeWidthSlider, new GBC( 1,12,5,2 ).setAnchor( GBC.WEST ).setFill(GBC.BOTH).setWeight(100,100) ); 
         
         nodeHeightLabel = new JLabel( "Node height:" );
         nodeHeightSlider = new JSlider( 0, MCSettings.getMAX_NODE_HEIGHT(), 5 );
@@ -247,8 +266,8 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
         nodeHeightSlider.setPaintLabels(true);
         nodeHeightSlider.addChangeListener(this);
         
-        add( nodeHeightLabel, new GBC( 6,11,1,2 ).setAnchor( GBC.EAST ).setFill(GBC.BOTH) );
-        add( nodeHeightSlider, new GBC( 7,11,5,2 ).setAnchor( GBC.WEST ).setFill(GBC.BOTH).setWeight(100,100) ); 
+        add( nodeHeightLabel, new GBC( 6,12,1,2 ).setAnchor( GBC.EAST ).setFill(GBC.BOTH) );
+        add( nodeHeightSlider, new GBC( 7,12,5,2 ).setAnchor( GBC.WEST ).setFill(GBC.BOTH).setWeight(100,100) ); 
         
     }
 
@@ -263,7 +282,7 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
         containedStopsTextArea.setEnabled(false);
         
         containedStopsTextArea.setBorder( new TitledBorder( BorderFactory.createLineBorder( Color.BLUE , 3), "Stops" ) );
-        add( containedStopsTextArea, new GBC( 0,13,12,7 ).setFill(GBC.BOTH).setAnchor(GBC.CENTER).setWeight(100,100) );
+        add( containedStopsTextArea, new GBC( 0,14,12,7 ).setFill(GBC.BOTH).setAnchor(GBC.CENTER).setWeight(100,100) );
         
     }
     
@@ -330,6 +349,10 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
         }
         else if( source == textColorBox ){
             n.setTextColor( UsefulFunctions.parseColor( (String)textColorBox.getSelectedItem() ) );
+        }else if( source == ellipseButton ){
+            n.setShape( MCSettings.ELLIPSE );
+        }else if( source == rectangleButton ){
+            n.setShape(MCSettings.RECTANGLE);
         }
         
         getParentFrame().getParentFrame().repaint();
@@ -402,8 +425,11 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
     private JComboBox textColorBox = null;
     
     private ManagerFrame parentFrame = null;
+    
+    ButtonGroup shapeButtonsGroup = null;
 
-   
+   JRadioButton rectangleButton = null;
+   JRadioButton ellipseButton = null;
     
     private int DEFAULT_WIDTH = 400;
     private int DEFAULT_HEIGHT = 600;

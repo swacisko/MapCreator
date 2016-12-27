@@ -21,7 +21,7 @@ public interface DrawingModuleInterface {
      * @param w width of the ellipse
      * @param h height of the ellipse
      */
-    public void addEllipse( Point p, int w, int h ); 
+    public void addEllipse( Point p, int w, int h, int angle ); 
     /**
      * Draws a circle
      * @param p

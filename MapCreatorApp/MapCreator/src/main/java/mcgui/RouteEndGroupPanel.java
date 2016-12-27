@@ -25,8 +25,9 @@ import mctemplates.Pair;
  */
 public class RouteEndGroupPanel extends JPanel implements ChangeListener {
 
-    public RouteEndGroupPanel(RouteEndGroup group) {
+    public RouteEndGroupPanel(RouteEndGroup group, JPanel parentPanel) {
         this.group = group;
+        this.parentPanel = parentPanel;
 
         setLayout(new GridBagLayout());
         String title = "Routes:";
@@ -80,6 +81,8 @@ public class RouteEndGroupPanel extends JPanel implements ChangeListener {
         } else if (slider == offsetYslider) {
             group.setOffset(new Pair<>(offset.getST(), slider.getValue()));
         }
-
+        parentPanel.repaint();
     }
+    
+    private JPanel parentPanel = null;
 }

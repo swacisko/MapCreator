@@ -11,6 +11,7 @@ import java.util.Map;
 import mcgraphs.MapEdge;
 import mcgraphs.MapGraph;
 import mcgraphs.MapNode;
+import mcmapdrawing.MapLegend;
 import mcmapdrawing.RouteEndGroup;
 
 /**
@@ -131,7 +132,22 @@ public class SelectedItems {
         this.layoutMouseAlignementMode = layoutMouseAlignementMode;
     }
     
+    /**
+     * 
+     * @return return the {@link #legend} element.
+     */
+    public MapLegend getLegend() {
+        return legend;
+    }
+
+    public void setLegend(MapLegend legend) {
+        this.legend = legend;
+    }
+    
     private MapGraph graph = null;
+    private MapLegend legend = null;
+
+    
 
     private MapNode selectedNode1 = null;
     private MapEdge selectedEdge = null;

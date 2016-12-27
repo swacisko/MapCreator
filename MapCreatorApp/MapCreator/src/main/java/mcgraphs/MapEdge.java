@@ -23,8 +23,8 @@ public class MapEdge extends MapStructure {
         setHoverColor(MCSettings.getINITIAL_EDGE_HOVER_COLOR() );
         setDrawingWidth(MCSettings.getINITIAL_EDGE_WIDTH() );
         setHoverWidth(MCSettings.getINITIAL_EDGE_HOVER_WIDTH() );
-        
         setTextFontSize( (3*MCSettings.getINITIAL_TEXT_FONT_SIZE() / 4) );
+        setShape(MCSettings.RECTANGLE);
     }
 
     public void setEnds(Pair<MapNode, MapNode> p) {
@@ -124,6 +124,7 @@ public class MapEdge extends MapStructure {
     // ta lista jest przydatna do wypisywania przystankow, ktore znajduja sie na danym odcinku drogi
     // lista Forward to przystanki znajdujace sie na drodze getEnds().getST() -> getEnds().getND()
     private ArrayList<String> containedBackwardStopsIds = new ArrayList<>(); // lista Backward to kolejne przystanki na drodze getEnds().getND() -> getEnds().getST()
+    
     private int containedStopsWidth = MCSettings.getCONTAINED_STOPS_WIDTH();
     private int containedStopsHeight = MCSettings.getCONTAINED_STOPS_HEIGHT();
     

@@ -28,6 +28,8 @@ public class MapNode extends MapStructure implements Drawable {
         setHoverColor(MCSettings.getINITIAL_NODE_HOVER_COLOR() );
         setDrawingWidth(MCSettings.getINITIAL_NODE_WIDTH() );
         setHoverWidth(MCSettings.getINITIAL_NODE_HOVER_WIDTH() );
+        setShape( MCSettings.RECTANGLE );
+        setTextFormat( getTextFormat() + Font.BOLD );
     }
 
     public void setCoords(Pair<Float, Float> p) {
@@ -235,8 +237,6 @@ public class MapNode extends MapStructure implements Drawable {
     
     private Color fillColor = MCSettings.getINITIAL_FILL_COLOR();
     
-    
-    
-   
+  
 
 }

@@ -58,6 +58,7 @@ public class SVG implements DrawingModuleInterface {
 
         writerHTML.println("<!DOCTYPE html>");
         writerHTML.println("<html>");
+        writerHTML.println( "<head>\n\t<meta charset=\"UTF-8\">\n</head>" );
         writerHTML.println("<body>");
         writerHTML.println();
         writerHTML.println("<svg width=\"" + width + "\" height=\"" + height + "\">");
@@ -136,33 +137,46 @@ public class SVG implements DrawingModuleInterface {
     //c - środek elipsy, rx - promień poziomy, ry - promień pionowy
     //dodaje elipsę bez stylu do pliku HTML i elipse z "domyślnym" (ustawionym w parametrach klasy) stylem do pliku SVG
     @Override
-    public void addEllipse(Point c, int rx, int ry) {
-        addEllipse((int) c.getX(), (int) c.getY(), rx, ry);
+    public void addEllipse(Point c, int rx, int ry, int angle) {
+        addEllipse((int) c.getX(), (int) c.getY(), rx, ry,angle);
     }
 
     //dodaje elipsę bez stylu do pliku HTML i elipse z "domyślnym" (ustawionym w parametrach klasy) stylem do pliku SVG
-    public void addEllipse(int cx, int cy, int rx, int ry) {
-        writerSVG.println("   <ellipse cx=\"" + cx + "\" cy=\"" + cy + "\" rx=\"" + rx + "\" ry=\"" + ry + "\" style=\"fill:" + fillColor + ";stroke:" + color + ";stroke-width:" + strokeWidth + "\" />");
-        writerHTML.println("   <ellipse cx=\"" + cx + "\" cy=\"" + cy + "\" rx=\"" + rx + "\" ry=\"" + ry + "\" style=\"fill:" + fillColor + ";stroke:" + color + ";stroke-width:" + strokeWidth + "\" />");
-        //writerHTML.println("   <ellipse cx=\"" + cx + "\" cy=\"" + cy + "\" rx=\"" + rx + "\" ry=\"" + ry + "\" />");
+    public void addEllipse(int cx, int cy, int rx, int ry, int angle) {
+        rx /= 2;
+        ry /= 2;
+        writerSVG.println("   <ellipse cx=\"" + cx + "\" cy=\"" + cy + "\" rx=\"" + rx + "\" ry=\"" + ry + "\" style=\"fill:" + fillColor +
+                ";stroke:" + color + ";stroke-width:" + strokeWidth + "\"" + " transform=\"rotate(" + angle + " " + cx + " " + cy + ")\"  />");
+        writerHTML.println("   <ellipse cx=\"" + cx + "\" cy=\"" + cy + "\" rx=\"" + rx + "\" ry=\"" + ry + "\" style=\"fill:" + fillColor +
+                ";stroke:" + color + ";stroke-width:" + strokeWidth + "\"" + " transform=\"rotate(" + angle + " " + cx + " " + cy + ")\"  />");
+        
+        
     }
 
-    //p - lewy dolny wierzchołek prostokąta, w którym znajduje się napis
-    //dodaje napis w kolorze z parametrów klasy
+    /**
+     * 
+     * @param p left bottom corner of the rectangle in which the text should be drawn
+     * @param text text to write
+     * @param fontsize size of the font of the text
+     * @param format plain, bold,...
+     * @param angle angle at which the text should be written
+     */
     @Override
     public void addText(Point p, String text, int fontsize, int format, int angle) {
-        this.fontsize = fontsize;
+        this.fontsize = fontsize;        
+        String bold = "";
         if( new Font("serif",format,fontsize).isBold() ) {
-            strokeWidth = 3;
+            bold = "bold";
+            //strokeWidth = 5;
            // System.out.println( "Text " + text + " should be bold" );
         } else {
-            strokeWidth = 1;
+            //strokeWidth = 1;
         }
         // SHOULDN'T IT BE HERE fillColor instead of color?
         writerSVG.println("   <text x=\"" + p.x + "\" y=\"" + p.y + "\" fill=\"" + color + "\" stroke-width=\"" + strokeWidth + "\" font-size=\"" + fontsize + "\""
-                + " transform=\"rotate(" + angle + " " + p.x + " " + p.y + ")\"> " + text + "</text>");
+                + " font-weight=\"" + bold + "\" transform=\"rotate(" + angle + " " + p.x + " " + p.y + ")\"> " + text + "</text>");
         writerHTML.println("   <text x=\"" + p.x + "\" y=\"" + p.y + "\" fill=\"" + color + "\" stroke-width=\"" + strokeWidth + "\" font-size=\"" + fontsize + "\""
-                + " transform=\"rotate(" + angle + " " + p.x + " " + p.y + ")\"> " + text + "</text>");
+                + " font-weight=\"" + bold + "\" transform=\"rotate(" + angle + " " + p.x + " " + p.y + ")\"> " + text + "</text>");
     }
 
     @Override
@@ -234,10 +248,14 @@ public class SVG implements DrawingModuleInterface {
      * Adds rectangle with CENTER in point (x,y). See {@link #addRectangle(java.awt.Point, int, int, int) }.
      */
     public void addRectangle(int x, int y, int width, int height, int angle) {
-        writerSVG.println("   <rect x=\"" + (x - (width/2)) + "\" y=\"" + (y - (height/2)) + "\" width=\"" + width + "\" height=\"" + height + "\" style=\""
+        int rx = width / 6;
+        int ry = height / 6;
+        writerSVG.println("   <rect x=\"" + (x - (width/2)) + "\" y=\"" + (y - (height/2)) + "\" rx=\"" + rx + "\" ry=\"" + ry + "\" width=\"" 
+                + width + "\" height=\"" + height + "\" style=\""
                 + "fill:" + fillColor + ";stroke:" + color + ";stroke-width:" + strokeWidth + "\""
                 + " transform=\"rotate(" + angle + " " + x + " " + y + ") " +"\" />");
-        writerHTML.println("   <rect x=\"" + (x - (width/2)) + "\" y=\"" + (y - (height/2)) + "\" width=\"" + width + "\" height=\"" + height + "\" style=\""
+        writerHTML.println("   <rect x=\"" + (x - (width/2)) + "\" y=\"" + (y - (height/2)) + "\" rx=\"" + rx + "\" ry=\"" + ry + "\" width=\"" 
+                + width + "\" height=\"" + height + "\" style=\""
                 + "fill:" + fillColor + ";stroke:" + color + ";stroke-width:" + strokeWidth + "\""
                 + " transform=\"rotate(" + angle + " " + x + " " + y + ") " +"\" />");
     }

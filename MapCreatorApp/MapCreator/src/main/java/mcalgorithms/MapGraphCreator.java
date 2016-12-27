@@ -37,7 +37,7 @@ public class MapGraphCreator {
      * Prepares data i want to be drawn on the graph.
      */
     private void createConsideredRoutesAndStops() {
-        System.out.println( "Wybieram przystanki i drogi ktore maja zostac dodane do grafu" );
+        //System.out.println( "Wybieram przystanki i drogi ktore maja zostac dodane do grafu" );
         consideredRoutes.clear();
         consideredStops.clear();
         noncontractableNodes.clear();
@@ -89,7 +89,7 @@ public class MapGraphCreator {
 
     // 
     private void addEdgesToGraph() {
-        System.out.println("Zaczynam dodawac krawedzie");
+        //System.out.println("Zaczynam dodawac krawedzie");
         Set< Pair<Integer, Integer>> edgesAdded = new HashSet<>(); // edgesAdded to zbior par, z ktorych kazda okresla 2 id wierzcholkow, ktore chce polaczyc
 
         Map<String, Integer> nodeIdReversed = new HashMap<>();  // nodeIdReversed.get(key) to wartosc value taka, ze przystanek o id = key znajduje sie w wierzcholku grafu o id = value
@@ -133,7 +133,7 @@ public class MapGraphCreator {
             }
         }
 
-        System.out.println("\nSkonczylem dodawac krawedzie");
+        //System.out.println("\nSkonczylem dodawac krawedzie");
     }
 
     // funkcja dodaje krawedzie do grafu sortujac topologicznie wszystkie przystanki na danej drodze

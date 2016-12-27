@@ -12,11 +12,13 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JSlider;
 import javax.swing.JTextArea;
 import javax.swing.border.TitledBorder;
@@ -58,8 +60,8 @@ public class SelectedEdgePanel extends JPanel implements ActionListener, ChangeL
             textSizeSlider.setValue( textSizeSlider.getMinimum() );
             return;
         }
-        
-        
+                
+        shapeButtonsGroup.setSelected( e.getShape().equals( MCSettings.ELLIPSE ) ? ellipseButton.getModel() : rectangleButton.getModel(),true );
         
         containedStopsTextArea.setFont( new Font( "Serif",Font.PLAIN, 15 ) );
         containedStopsTextArea.setBackground(Color.BLACK);
@@ -79,12 +81,22 @@ public class SelectedEdgePanel extends JPanel implements ActionListener, ChangeL
     }
     
     private void addAllComponents(){
+        JLabel textStyleLabel = new JLabel( "Text style" );
         textBoldBox = new JCheckBox("Bold");
         textBoldBox.addActionListener(this);
         
         textVisibleBox = new JCheckBox( "Visible" );
         textVisibleBox.addActionListener(this);
         
+        JLabel shapeLabel = new JLabel( "Node shape: " );               
+        shapeButtonsGroup = new ButtonGroup();
+        ellipseButton = new JRadioButton("Ellipse", true); 
+        shapeButtonsGroup.add(ellipseButton); 
+        rectangleButton = new JRadioButton("Rectangle",false);
+        shapeButtonsGroup.add(rectangleButton);              
+        ellipseButton.addActionListener(this);
+        rectangleButton.addActionListener(this);        
+                
         textSizeSlider = new JSlider( 0, MCSettings.getMAX_TEXT_FONT(), MCSettings.getINITIAL_TEXT_FONT_SIZE() );
         textSizeSlider.setPaintTicks(true);
         textSizeSlider.setMajorTickSpacing( 10 );
@@ -112,22 +124,26 @@ public class SelectedEdgePanel extends JPanel implements ActionListener, ChangeL
         containedStopsTextArea.setEnabled(false);        
         containedStopsTextArea.setBorder( new TitledBorder( BorderFactory.createLineBorder( Color.GREEN.darker(), 3), "Contained stops" ) );
         
-        add( textVisibleBox,  new GBC( 0,1,6,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
-        add( textBoldBox,  new GBC( 6,1,6,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
-        add( new JLabel("Move edge text: "), new GBC( 0,2,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
-        add( getTextMoveButton("U",0,-3),  new GBC( 4,2,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
-        add( getTextMoveButton("D",0,3),  new GBC( 6,2,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100));
-        add( getTextMoveButton("L",-3,0),  new GBC( 8,2,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
-        add( getTextMoveButton("R",3,0),  new GBC( 10,2,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100));
-        add( textSizeLabel, new GBC( 0,3,4,1 ).setAnchor( GBC.EAST ).setFill(GBC.BOTH).setWeight(100,100));
-        add( textSizeSlider, new GBC( 4,3,8,1 ).setAnchor( GBC.WEST ).setFill(GBC.BOTH).setWeight(100,100));
-        add( textAngleLabel, new GBC( 0,4,4,1 ).setAnchor( GBC.EAST ).setFill(GBC.BOTH).setWeight(100,100));
-        add( textAngleSlider, new GBC( 4,4,8,1 ).setAnchor( GBC.WEST ).setFill(GBC.BOTH).setWeight(100,100));
+        add( textStyleLabel, new GBC( 0,1,4,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
+        add( textVisibleBox,  new GBC( 4,1,4,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
+        add( textBoldBox,  new GBC( 8,1,4,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
+        add(shapeLabel, new GBC( 0,2,4,1 ).setAnchor( GBC.EAST ).setFill(GBC.BOTH).setWeight(100,100)); 
+        add(ellipseButton,new GBC( 4,2,4,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100));
+        add(rectangleButton, new GBC( 8,2,4,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100));
+        add( new JLabel("Move edge text: "), new GBC( 0,3,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
+        add( getTextMoveButton("U",0,-3),  new GBC( 4,3,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
+        add( getTextMoveButton("D",0,3),  new GBC( 6,3,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100));
+        add( getTextMoveButton("L",-3,0),  new GBC( 8,3,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
+        add( getTextMoveButton("R",3,0),  new GBC( 10,3,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100));
+        add( textSizeLabel, new GBC( 0,4,4,1 ).setAnchor( GBC.EAST ).setFill(GBC.BOTH).setWeight(100,100));
+        add( textSizeSlider, new GBC( 4,4,8,1 ).setAnchor( GBC.WEST ).setFill(GBC.BOTH).setWeight(100,100));
+        add( textAngleLabel, new GBC( 0,5,4,1 ).setAnchor( GBC.EAST ).setFill(GBC.BOTH).setWeight(100,100));
+        add( textAngleSlider, new GBC( 4,5,8,1 ).setAnchor( GBC.WEST ).setFill(GBC.BOTH).setWeight(100,100));
         
-        add( textColorLabel,  new GBC( 0,5,4,1 ).setAnchor( GBC.EAST ).setFill(GBC.BOTH).setWeight(100,100) );
-        add( textColorBox,  new GBC( 4,5,8,1 ).setAnchor( GBC.WEST ).setFill(GBC.BOTH).setWeight(100,100) );
+        add( textColorLabel,  new GBC( 0,6,4,1 ).setAnchor( GBC.EAST ).setFill(GBC.BOTH).setWeight(100,100) );
+        add( textColorBox,  new GBC( 4,6,8,1 ).setAnchor( GBC.WEST ).setFill(GBC.BOTH).setWeight(100,100) );
                 
-        add( containedStopsTextArea, new GBC( 0,6,12,7 ).setFill(GBC.BOTH).setAnchor(GBC.CENTER).setWeight(100,100) );
+        add( containedStopsTextArea, new GBC( 0,7,12,7 ).setFill(GBC.BOTH).setAnchor(GBC.CENTER).setWeight(100,100) );
     }
     
 
@@ -174,6 +190,10 @@ public class SelectedEdgePanel extends JPanel implements ActionListener, ChangeL
             edge.setTextVisible( textVisibleBox.isSelected() );
         }else if( source == textBoldBox ){
             edge.setTextBold( textBoldBox.isSelected() );
+        }else if( source == ellipseButton ){
+            edge.setShape(MCSettings.ELLIPSE);
+        }else if( source == rectangleButton ){
+            edge.setShape( MCSettings.RECTANGLE );
         }
         
         getParentFrame().getParentFrame().repaint();
@@ -206,6 +226,10 @@ public class SelectedEdgePanel extends JPanel implements ActionListener, ChangeL
     private JLabel textColorLabel = null;
     private JComboBox textColorBox = null;
     private JTextArea containedStopsTextArea = null;
+    
+    ButtonGroup shapeButtonsGroup = null;
+    JRadioButton ellipseButton = null;
+    JRadioButton rectangleButton = null;
     
     private int DEFAULT_WIDTH = 400;
     private int DEFAULT_HEIGHT = 600;

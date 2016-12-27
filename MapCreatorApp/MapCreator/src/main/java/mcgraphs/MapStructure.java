@@ -162,11 +162,15 @@ public class MapStructure {
     }
     
     public boolean isTextBold() {
-        return textBold;
+        return (textFormat ^ Font.BOLD) != 0;
     }
 
     public void setTextBold(boolean textBold) {
-        this.textBold = textBold;
+        if(textBold){
+            textFormat |= Font.BOLD;
+        }else{
+            textFormat = (( textFormat | Font.BOLD ) ^ Font.BOLD);
+        }
     }
 
     public int getTextFormat() {
@@ -185,7 +189,13 @@ public class MapStructure {
         this.textColor = textColor;
     }
     
-    
+    public String getShape() {
+        return shape;
+    }
+
+    public void setShape(String shape) {
+        this.shape = shape;
+    }
      
 
     private Color hoverColor = Color.RED;
@@ -210,10 +220,14 @@ public class MapStructure {
     private int textAngle = 0;  
     private boolean textVisible = true;
     private int textFontSize = MCSettings.getINITIAL_TEXT_FONT_SIZE();
-    private boolean textBold = false;
     private int textFormat = Font.PLAIN;
     private Color textColor = MCSettings.getTEXT_COLOR();
 
-    
+    /**
+     * This variable defines, whether a stop (node) or contained stop (in contracted edge) will be drawn as an ellipse or rectangle
+     */
+    private String shape = MCSettings.RECTANGLE;
+
+        
     
 }

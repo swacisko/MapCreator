@@ -242,7 +242,8 @@ public class GraphGlueing {
         glueingParameter = MCSettings.getSECOND_GLUEING_DISTANCE_PARAMTER();
         glueGraph();
         trimNodeStructureNames();
-        transformPolishLetters();
+        //transformPolishLetters();
+        System.out.println( "Po sklejaniu graf ma " + graph.countNodes() + "  wierzcholkow i " + graph.countEdges() + " krawedzi" );
         
         return graph;
     }

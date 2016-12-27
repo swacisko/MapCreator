@@ -77,26 +77,30 @@ public class MCSettings {
     private static int INITIAL_NODE_HEIGHT = 4;
 
     private static int INITIAL_NODE_HOVER_WIDTH = 12;
-    private static Color INITIAL_FILL_COLOR = Color.ORANGE;
+    private static Color INITIAL_FILL_COLOR = Color.WHITE;
     
     private static int CONTAINED_STOPS_DRAWING_SIZE = 3*INITIAL_NODE_WIDTH;
-    private static int CONTAINED_STOPS_WIDTH = 10;
-    private static int CONTAINED_STOPS_HEIGHT = 20;
+    private static int CONTAINED_STOPS_WIDTH = 6;
+    private static int CONTAINED_STOPS_HEIGHT = 6;
 
+    public static final String RECTANGLE = "rectangle";
+    public static final String ELLIPSE = "ellipse";
+
+    
     
     private static boolean drawContainedStopsTexts = true;
 
                
     private static Color TEXT_COLOR = Color.BLACK;
 
-    private static int INITIAL_ROUTE_HIGHLIGHT_WIDTH = 4*INITIAL_EDGE_WIDTH;
+    private static int INITIAL_ROUTE_HIGHLIGHT_WIDTH = 12;
     private static int INITIAL_ROUTE_HIGHLIGHT_HOVER_WIDTH = 4*INITIAL_EDGE_HOVER_WIDTH;
 
     private static final int MAX_TEXT_FONT = 90;
     
     
-    private static int MAX_NODE_WIDTH = 30;   
-    private static int MAX_NODE_HEIGHT = 30;
+    private static int MAX_NODE_WIDTH = 50;   
+    private static int MAX_NODE_HEIGHT = 50;
     private static int INITIAL_TEXT_FONT_SIZE = 40;
 
     
@@ -151,6 +155,7 @@ public class MCSettings {
     //***************************************************************  GETTERS AND SETTERS AND SOME OTHER
     
     
+    
     public static int getCONTAINED_STOPS_WIDTH() {
         return CONTAINED_STOPS_WIDTH;
     }
@@ -182,7 +187,6 @@ public class MCSettings {
     public static void setINITIAL_SINGLE_SQUARE_SIZE(int INITIAL_SINGLE_SQUARE_SIZE) {
         MCSettings.INITIAL_SINGLE_SQUARE_SIZE = INITIAL_SINGLE_SQUARE_SIZE;
     }
-
     
     public static int getINITIAL_NODE_HEIGHT() {
         return INITIAL_NODE_HEIGHT;
@@ -358,11 +362,14 @@ public class MCSettings {
     public static void addRouteToHighlight(String routeId) {
         if( routesToHighlight.contains(routeId) == false ) {
             routesToHighlight.add(routeId);
-            Color color = null;
-            do{
-                color = UsefulFunctions.getNextColor();
-            }while( color == Color.WHITE || color == Color.BLACK );
-            routeToHighlightColor.put( routeId, color );
+            if( routeToHighlightColor.get( routeId ) == null ){                
+                Color color = null;
+                do{
+                    color = UsefulFunctions.getNextColor();
+                }while( color == Color.WHITE || color == Color.BLACK );
+                routeToHighlightColor.put( routeId, color );
+            }
+            
         }        
     }
     

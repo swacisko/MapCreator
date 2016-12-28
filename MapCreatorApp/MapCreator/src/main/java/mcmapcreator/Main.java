@@ -16,35 +16,26 @@ public class Main {
      //  t.test();
         
         
-        
-        
-        MCDatabase.init(); // na samym poczatku musze zainicjalizowac baze danych
-        
+                
        // MapGraph g = new MapGraph();
        // g.testGraph();        
         
-        for( int i=1; i<=15; i++ ){
+        /*for( int i=1; i<=15; i++ ){
             MCSettings.addRouteToHighlight( ""+i );
-        }
+        }*/
         
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
                 MainFrame frame = new MainFrame();
-                frame.setVisible(true);
                 frame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
                 frame.setResizable(true);
+                
             }
         });
         
         /*DrawingModule dm = new DrawingModule( new SVG( MCSettings.getINITIAL_SVG_WIDTH(),MCSettings.getINITIAL_SVG_HEIGHT(),"Rysowanie" ) );        
         dm.drawAllMaps();*/
-        
-        
-        
-        
-
-	
         
     }
 

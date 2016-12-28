@@ -37,10 +37,10 @@ public class GTFSInput {
     //
     public static ArrayList<String> readFile(String filename) throws FileNotFoundException, IOException {
         //String path = "/home/swacisko/NetBeansProjects/Inzynierka/GTFS/" + filename;
-        String path = (new File("").getAbsolutePath()) + "/GTFS/" + filename;
+        String path = MCSettings.getGtfsDirectoryPath() + filename;
 
         if( UsefulFunctions.existsFile(path) == false ) { 
-            throw new FileNotFoundException();
+            return new ArrayList<>();
         }
 
         ArrayList<String> data = new ArrayList<>();

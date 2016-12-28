@@ -34,6 +34,7 @@ import javax.swing.JRadioButtonMenuItem;
 import mcgraphs.MapEdge;
 import mcgraphs.MapGraph;
 import mcgraphs.MapNode;
+import mcmapcreator.FileChooser;
 import mcmapdrawing.DrawingModule;
 import mcmapdrawing.DrawingModuleInterface;
 import mcmapdrawing.RouteEndGroup;
@@ -84,6 +85,7 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
                 if (graph == null) {
                     return;
                 }
+                FileChooser.saveSvgFile(SchemeContructionPanel.this);
                 new DrawingModule(new SVG(MCSettings.getINITIAL_SVG_WIDTH(), MCSettings.getINITIAL_SVG_HEIGHT()), selectedItems)
                         .drawGraphOnMap(graph, MCSettings.getSvgFileName());
             }

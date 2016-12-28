@@ -17,6 +17,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import mcgraphs.MapGraph;
+import mcgtfsstructures.MCDatabase;
+import mcmapcreator.FileChooser;
 import mcmapdrawing.DrawingModule;
 import mcmapdrawing.SVG;
 import mctemplates.MCSettings;
@@ -37,19 +39,27 @@ public class MainFrame extends JFrame {
         }
         Dimension d = t.getScreenSize();
         setSize(d.width, d.height);
-                
+        
+                        
         schemePanel = new SchemeContructionPanel( d.width - 30, d.height-30, selectedItems );
         schemePanel.setParentFrame(this);
         setLayout( new BorderLayout() );
         JScrollPane scroll = new JScrollPane( schemePanel );
         add( scroll, BorderLayout.CENTER );
         
+        setVisible(true);
+        selectAndReadGtfs();
+               
         managerFrame = new ManagerFrame(this, selectedItems);
         managerFrame.setLocation( new Point( (2*d.width/3), d.height / 10  ) );
         managerFrame.setSize( d.width / 3, d.height/2 );
         managerFrame.setVisible(true);
-        managerFrame.setDefaultCloseOperation( JFrame.HIDE_ON_CLOSE );
-                
+        managerFrame.setDefaultCloseOperation( JFrame.HIDE_ON_CLOSE );                
+    }
+    
+    private void selectAndReadGtfs(){
+        FileChooser.chooseGtfsDirectory(null);        
+        MCDatabase.init();
     }
     
     public void showManager(){

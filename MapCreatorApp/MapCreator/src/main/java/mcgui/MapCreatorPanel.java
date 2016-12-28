@@ -16,6 +16,7 @@ import mcalgorithms.ForceAlgorithm;
 import mcalgorithms.GraphGlueing;
 import mcalgorithms.MapGraphCreator;
 import mcgraphs.MapGraph;
+import mcmapcreator.FileChooser;
 import mcmapdrawing.DrawingModule;
 import mcmapdrawing.SVG;
 import mctemplates.MCSettings;
@@ -42,6 +43,7 @@ public class MapCreatorPanel extends JPanel {
                 if (graph == null) {
                     return;
                 }
+                FileChooser.saveSvgFile(MapCreatorPanel.this);
                 new DrawingModule(new SVG(MCSettings.getINITIAL_SVG_WIDTH(), MCSettings.getINITIAL_SVG_HEIGHT()), selectedItems)
                         .drawGraphOnMap(graph, MCSettings.getSvgFileName());
             }

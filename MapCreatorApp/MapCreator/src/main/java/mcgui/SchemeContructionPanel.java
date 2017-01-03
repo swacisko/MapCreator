@@ -164,7 +164,7 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
                 selectedItems.getGraph().getNodes().isEmpty()) {
             return;
         }
-        module.drawGraphOnMap(selectedItems.getGraph(), "Graph drawing");
+        module.drawGraphOnMap(selectedItems.getGraph(), ("Graph drawing").intern() );
     }
 
     @Override

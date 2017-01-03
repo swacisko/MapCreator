@@ -190,10 +190,10 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
         strPanel.add( textVisibleBox,  new GBC( 0,1,6,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
         strPanel.add( textBoldBox,  new GBC( 6,1,6,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
         strPanel.add( new JLabel("Move node text: "), new GBC( 0,2,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
-        strPanel.add( getTextMoveButton("U",0,-3),  new GBC( 4,2,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
-        strPanel.add( getTextMoveButton("D",0,3),  new GBC( 6,2,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100));
-        strPanel.add( getTextMoveButton("L",-3,0),  new GBC( 8,2,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
-        strPanel.add( getTextMoveButton("R",3,0),  new GBC( 10,2,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100));
+        strPanel.add( getTextMoveButton("U",0,-5),  new GBC( 4,2,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
+        strPanel.add( getTextMoveButton("D",0,5),  new GBC( 6,2,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100));
+        strPanel.add( getTextMoveButton("L",-5,0),  new GBC( 8,2,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
+        strPanel.add( getTextMoveButton("R",5,0),  new GBC( 10,2,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100));
         strPanel.add( textSizeLabel, new GBC( 0,3,4,1 ).setAnchor( GBC.EAST ).setFill(GBC.BOTH).setWeight(100,100));
         strPanel.add( textSizeSlider, new GBC( 4,3,8,1 ).setAnchor( GBC.WEST ).setFill(GBC.BOTH).setWeight(100,100));
         strPanel.add( textAngleLabel, new GBC( 0,4,4,1 ).setAnchor( GBC.EAST ).setFill(GBC.BOTH).setWeight(100,100));
@@ -312,7 +312,7 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
         if( n == null ) return;
         
         if (source == removeNodeButton) {
-            int confirm = new JOptionPane().showConfirmDialog(this, "Are yout sure yout want to remove that node?","Remove node", JOptionPane.OK_CANCEL_OPTION);
+            int confirm = JOptionPane.showConfirmDialog(this, "Are yout sure yout want to remove that node?","Remove node", JOptionPane.OK_CANCEL_OPTION);
             if (confirm == JOptionPane.CANCEL_OPTION || confirm == JOptionPane.CLOSED_OPTION) {
                 return;
             }

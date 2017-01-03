@@ -136,10 +136,10 @@ public class SelectedEdgePanel extends JPanel implements ActionListener, ChangeL
         add(ellipseButton,new GBC( 4,2,4,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100));
         add(rectangleButton, new GBC( 8,2,4,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100));
         add( new JLabel("Move edge text: "), new GBC( 0,3,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
-        add( getTextMoveButton("U",0,-3),  new GBC( 4,3,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
-        add( getTextMoveButton("D",0,3),  new GBC( 6,3,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100));
-        add( getTextMoveButton("L",-3,0),  new GBC( 8,3,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
-        add( getTextMoveButton("R",3,0),  new GBC( 10,3,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100));
+        add( getTextMoveButton("U",0,-5),  new GBC( 4,3,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
+        add( getTextMoveButton("D",0,5),  new GBC( 6,3,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100));
+        add( getTextMoveButton("L",-5,0),  new GBC( 8,3,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100) );
+        add( getTextMoveButton("R",5,0),  new GBC( 10,3,2,1 ).setAnchor( GBC.CENTER ).setFill(GBC.BOTH).setWeight(100,100));
         add( textSizeLabel, new GBC( 0,4,4,1 ).setAnchor( GBC.EAST ).setFill(GBC.BOTH).setWeight(100,100));
         add( textSizeSlider, new GBC( 4,4,8,1 ).setAnchor( GBC.WEST ).setFill(GBC.BOTH).setWeight(100,100));
         add( textAngleLabel, new GBC( 0,5,4,1 ).setAnchor( GBC.EAST ).setFill(GBC.BOTH).setWeight(100,100));

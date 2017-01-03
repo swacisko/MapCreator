@@ -10,6 +10,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import mcalgorithms.EdgeContraction;
 import mcalgorithms.ForceAlgorithm;
@@ -20,6 +21,7 @@ import mcmapcreator.FileChooser;
 import mcmapdrawing.DrawingModule;
 import mcmapdrawing.SVG;
 import mctemplates.MCSettings;
+import mctemplates.UsefulFunctions;
 
 /**
  *
@@ -44,6 +46,16 @@ public class MapCreatorPanel extends JPanel {
                     return;
                 }
                 FileChooser.saveSvgFile(MapCreatorPanel.this);
+                while( UsefulFunctions.existsFile( MCSettings.getMapsDirectoryPath() ) ){ // if such file exists, i check, whether user really wants to replace it.
+                    int res = JOptionPane.showConfirmDialog( MapCreatorPanel.this, "File with path " + MCSettings.getMapsDirectoryPath() +
+                            " already exists. Do you want to continue?");
+                    if( res == JOptionPane.YES_OPTION ){
+                        break;
+                    }else{
+                        FileChooser.saveSvgFile(MapCreatorPanel.this);
+                    }
+                        
+                }
                 new DrawingModule(new SVG(MCSettings.getINITIAL_SVG_WIDTH(), MCSettings.getINITIAL_SVG_HEIGHT()), selectedItems)
                         .drawGraphOnMap(graph, MCSettings.getSvgFileName());
             }
@@ -53,12 +65,12 @@ public class MapCreatorPanel extends JPanel {
         basicMapButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                disableAllButtons();
+                if (beginAction() == false) {
+                    endAction(null);
+                    return;
+                }
                 MapGraph graph = new MapGraphCreator().createMapGraphFromGtfsDatabase(MCSettings.getDRAWING_ROUTE_TYPE());
-                selectedItems.setGraph(graph);
-                selectedItems.clearRouteEnds();
-                enableAllButtons();
-                repaintAll();
+                endAction(graph);
             }
         });
 
@@ -66,13 +78,13 @@ public class MapCreatorPanel extends JPanel {
         gluedMapButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                disableAllButtons();
+                if (beginAction() == false) {
+                    endAction(null);
+                    return;
+                }
                 MapGraph graph = new MapGraphCreator().createMapGraphFromGtfsDatabase(MCSettings.getDRAWING_ROUTE_TYPE());
                 graph = new GraphGlueing(graph).convertGraph();
-                selectedItems.setGraph(graph);
-                selectedItems.clearRouteEnds();
-                enableAllButtons();
-                repaintAll();
+                endAction(graph);
             }
         });
 
@@ -80,17 +92,16 @@ public class MapCreatorPanel extends JPanel {
         contractedMapButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                disableAllButtons();
+                if (beginAction() == false) {
+                    return;
+                }
                 MapGraph graph = new MapGraphCreator().createMapGraphFromGtfsDatabase(MCSettings.getDRAWING_ROUTE_TYPE());
                 if (graph == null) {
                     System.out.println("\n\nGRAPH == NULL");
                 }
                 graph = new GraphGlueing(graph).convertGraph();
                 graph = new EdgeContraction(graph).convertGraph();
-                selectedItems.setGraph(graph);
-                selectedItems.clearRouteEnds();
-                enableAllButtons();
-                repaintAll();
+                endAction(graph);
             }
         });
 
@@ -98,15 +109,15 @@ public class MapCreatorPanel extends JPanel {
         forcespacedMapButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                disableAllButtons();
+                if (beginAction() == false) {
+                    endAction(null);
+                    return;
+                }
                 MapGraph graph = new MapGraphCreator().createMapGraphFromGtfsDatabase(MCSettings.getDRAWING_ROUTE_TYPE());
                 graph = new GraphGlueing(graph).convertGraph();
                 graph = new EdgeContraction(graph).convertGraph();
                 graph = new ForceAlgorithm(graph, new SVG(MCSettings.getINITIAL_SVG_WIDTH(), MCSettings.getINITIAL_SVG_HEIGHT(), "forcespaced")).convertGraph();
-                selectedItems.setGraph(graph);
-                selectedItems.clearRouteEnds();
-                enableAllButtons();
-                repaintAll();
+                endAction(graph);
             }
         });
 
@@ -124,6 +135,40 @@ public class MapCreatorPanel extends JPanel {
         add(contractedMapButton);
         add(forcespacedMapButton);
         // add( centralizedAttractionButton );
+    }
+
+    /**
+     *
+     * @return returns true if user confirmed, he/she deliberately want to draw
+     * new scheme, false otherwise.
+     */
+    private boolean beginAction() {
+        disableAllButtons();
+        if (selectedItems.getGraph() != null) {
+            int res = JOptionPane.showConfirmDialog(this, "Are yout sure you want to create new scheme?", "Please confirm.",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (res == JOptionPane.YES_OPTION) {
+                return true;
+            }else{
+                return false;
+            }
+            
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Adds given graph to {@link #selectedItems}. Clears route ends. Enables all buttons. Repaints components.
+     * @param graph Graph to be added to {@link #selectedItems}.
+     */
+    private void endAction(MapGraph graph) {
+        if( graph != null ){
+            selectedItems.setGraph(graph);
+            selectedItems.clearRouteEnds();
+        }        
+        enableAllButtons();
+        repaintAll();
     }
 
     private void repaintAll() {

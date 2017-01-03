@@ -42,7 +42,7 @@ public class RouteEndGroupPanel extends JPanel implements ChangeListener {
         slider.setPaintLabels(true);
         slider.setPaintTrack(true);
         slider.setPaintTicks(true);
-        slider.setMajorTickSpacing(20);        
+        slider.setMajorTickSpacing(20); 
     }
 
     private void addAllComponents() {

@@ -231,7 +231,7 @@ public class GraphGlueing {
         if( graph == null ) return null;
         // resGraph = graph;
         CNT = 0;
-        System.out.println( "Przed sklejaniem graf ma " + graph.countNodes() + "  wierzcholkow i " + graph.countEdges() + " krawedzi" );
+       // System.out.println( "Przed sklejaniem graf ma " + graph.countNodes() + "  wierzcholkow i " + graph.countEdges() + " krawedzi" );
         
         //resGraph = new MapGraph(); // to jest potrzebne gdy uzywamy funkcji gluegraphold
         //glueGraphOld();   
@@ -243,7 +243,7 @@ public class GraphGlueing {
         glueGraph();
         trimNodeStructureNames();
         //transformPolishLetters();
-        System.out.println( "Po sklejaniu graf ma " + graph.countNodes() + "  wierzcholkow i " + graph.countEdges() + " krawedzi" );
+        //System.out.println( "Po sklejaniu graf ma " + graph.countNodes() + "  wierzcholkow i " + graph.countEdges() + " krawedzi" );
         
         return graph;
     }

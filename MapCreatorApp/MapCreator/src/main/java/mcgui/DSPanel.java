@@ -215,11 +215,11 @@ public class DSPanel extends JPanel {
             @Override
             public void stateChanged(ChangeEvent e) {
                 JSlider slider = (JSlider) e.getSource();
-                Pair<Integer,Integer> offset = new Pair( slider.getValue(), MCSettings.getINITIAL_ROUTE_END_GROUP_OFFSET().getND());
+                Pair<Integer,Integer> offset = new Pair( MCSettings.getINITIAL_ROUTE_END_GROUP_OFFSET().getST(), slider.getValue() );
                 MCSettings.setINITIAL_ROUTE_END_GROUP_OFFSET( offset );
             }
         } ); 
-        addLabelAndSlider("Initial text offset Y: ", slider, panel);        
+        addLabelAndSlider("Initial route ends legend offset Y: ", slider, panel);        
                
         add( panel );
         

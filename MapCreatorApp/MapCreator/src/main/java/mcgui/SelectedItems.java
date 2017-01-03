@@ -100,6 +100,9 @@ public class SelectedItems {
         this.routeEnds = routeEnds;
     }
     
+    /**
+     * This function clears {@link #routeEnds} list. Only elements within this list will be drawn as the ends of highlighted routes.
+     */
     public void clearRouteEnds(){
         routeEnds.clear();
     }
@@ -146,9 +149,7 @@ public class SelectedItems {
     
     private MapGraph graph = null;
     private MapLegend legend = null;
-
     
-
     private MapNode selectedNode1 = null;
     private MapEdge selectedEdge = null;
 

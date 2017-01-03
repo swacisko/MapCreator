@@ -105,7 +105,7 @@ public class MCSettings {
 
     
     
-    private static Pair<Integer,Integer> INITIAL_TEXT_OFFSET = new Pair<>( -30,-15 );
+    private static Pair<Integer,Integer> INITIAL_TEXT_OFFSET = new Pair<>( -50,-30 );
     private static final Pair<Integer,Integer> MAX_TEXT_OFFSET = new Pair<>( -100,-100 );
     private static boolean drawBackgroundTexts = true;
 
@@ -131,7 +131,7 @@ public class MCSettings {
     private static float SECOND_GLUEING_DISTANCE_PARAMTER = 25;
 
     private static String gtfsDirectoryPath = new File("").getAbsolutePath();
-    private static String mapsDirectoryPath = new File("").getAbsolutePath() + "/DrawingFolder/";
+    private static String mapsDirectoryPath = new File("").getAbsolutePath() + File.pathSeparator + "DrawingFolder" + File.pathSeparator;
     private static String svgFileName = "Test";
 
     

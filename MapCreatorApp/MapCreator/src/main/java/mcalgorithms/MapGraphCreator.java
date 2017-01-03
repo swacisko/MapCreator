@@ -70,7 +70,7 @@ public class MapGraphCreator {
     private void addNodesToGraph() {        
         int CNT = 1;
         for (Stop s : consideredStops) {
-            System.out.print( "\rDodaje wierzcholek nr " + (CNT++) );
+            //System.out.print( "\rDodaje wierzcholek nr " + (CNT++) );
             MapNode node = new MapNode();
             node.setCoords(s.getCoords());
             node.setStructureName(s.getStopName());
@@ -126,7 +126,7 @@ public class MapGraphCreator {
                             e.setColor(MCSettings.getCorrespondingColor(colormode));
                             resGraph.addMapEdge(e);
 
-                            System.out.print("\rDodaje krawedz nr: " + CNT++);
+                           // System.out.print("\rDodaje krawedz nr: " + CNT++);
                         }
                     }
                 }

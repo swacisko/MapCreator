@@ -8,9 +8,9 @@ package mcmapcreator;
 import java.io.File;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import mctemplates.MCSettings;
 import mctemplates.UsefulFunctions;
-
 /**
  *
  * @author swacisko
@@ -20,20 +20,25 @@ public class FileChooser {
     public static void chooseGtfsDirectory( JComponent parent ){
         if( chooser == null ){
             chooser = new JFileChooser( new File(".") );
-            File file = new File("");
-            if( (file = new File(file.getAbsolutePath()+"/GTFS") ).exists() && file.isDirectory() ){
-                chooser.setSelectedFile(file);
-            }
+            chooser.setDialogTitle( "Please select directory with GTFS data" );
+            
+            chooser.setToolTipText( "Please select GTFS folder" );
+            chooser.setFileSelectionMode( JFileChooser.DIRECTORIES_ONLY ); 
         }
-        chooser.setToolTipText( "Please select GTFS folder" );
-        chooser.setFileSelectionMode( JFileChooser.DIRECTORIES_ONLY );   
-        
+          
+        File file = new File("");
+        if( (file = new File(file.getAbsolutePath() + File.separator + "GTFS" ) ).exists() && file.isDirectory() ){
+            chooser.setSelectedFile(file);
+        }
         int result = chooser.showOpenDialog(parent);
         if( result == JFileChooser.APPROVE_OPTION ){
-            File file = chooser.getSelectedFile();
-            MCSettings.setGtfsDirectoryPath( file.getAbsolutePath() + "/" );
-            System.out.println( "Directory   " + file.getAbsolutePath() + "   was chosen");
-        }        
+            file = chooser.getSelectedFile();
+            MCSettings.setGtfsDirectoryPath( file.getAbsolutePath() + File.separator );
+            System.out.println( "Directory   " + ( file.getAbsolutePath() + File.separator ) + "   was chosen");
+        }else{
+            JOptionPane.showMessageDialog(parent, "Please press OK and select proper GTFS directory", "Choose GTFS directory", JOptionPane.WARNING_MESSAGE);
+            chooseGtfsDirectory(parent);
+        }   
     }
     
     public static void saveSvgFile( JComponent parent ){
@@ -52,9 +57,20 @@ public class FileChooser {
                 //MCSettings.setSvgFileName( file.getName() );
                 MCSettings.setSvgFileName( "" );
             }
-            MCSettings.setMapsDirectoryPath( file.getAbsolutePath() );
-            System.out.println( "Directory   " + file.getAbsolutePath() + "   was chosen");
+            MCSettings.setMapsDirectoryPath( getFilenameWithoutExtension( file.getAbsolutePath() ) );
+            System.out.println( "Directory   " + MCSettings.getMapsDirectoryPath() + "   was chosen");
         }
+    }
+    
+    public static String getFilenameWithoutExtension( String fileName ){
+        String noExtension = fileName;
+        int i = fileName.lastIndexOf('.');
+        int p = Math.max(fileName.lastIndexOf('/'), fileName.lastIndexOf('\\'));
+
+        if (i > p) {
+            noExtension = fileName.substring(0,i);
+        }
+        return noExtension;
     }
     
     

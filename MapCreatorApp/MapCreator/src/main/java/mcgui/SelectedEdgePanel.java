@@ -80,6 +80,9 @@ public class SelectedEdgePanel extends JPanel implements ActionListener, ChangeL
         textSizeSlider.setValue( e.getTextFontSize() );
     }
     
+    /**
+     * This function adds all components (such as {@link #textBoldBox} or {@link #containedStopsTextArea}) to SelectedEdgePanel.
+     */
     private void addAllComponents(){
         JLabel textStyleLabel = new JLabel( "Text style" );
         textBoldBox = new JCheckBox("Bold");
@@ -164,7 +167,13 @@ public class SelectedEdgePanel extends JPanel implements ActionListener, ChangeL
         this.parentFrame = parentFrame;
     }
     
-     
+    /**
+     * 
+     * @param name name of the button
+     * @param xdiff value which will be added to x-coordinate of text offset.
+     * @param ydiff value which will be added to y-coordinate of text offset.
+     * @return returns a button (JButton object) with specified parameters
+     */
     private JButton getTextMoveButton( String name, final int xdiff, final int ydiff ){
         JButton button = new JButton(name);
         button.addActionListener( new ActionListener() {

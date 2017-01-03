@@ -62,8 +62,8 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
             nodeHeightSlider.setValue( nodeHeightSlider.getMinimum() );
             nodeWidthSlider.setValue( nodeWidthSlider.getMinimum() );
             textAngleSlider.setValue( textAngleSlider.getMinimum() );
-            textVisibleBox.setSelected(false);
-            textBoldBox.setSelected(false);
+            textVisibleBox.setSelected( false );
+            textBoldBox.setSelected( false );
             textSizeSlider.setValue( textSizeSlider.getMinimum() );
             return;
         }
@@ -172,6 +172,7 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
         textAngleSlider = new JSlider( 0,360,0 );
         textAngleSlider.setPaintTicks(true);
         textAngleSlider.setMajorTickSpacing( 45 );
+        textAngleSlider.setMinorTickSpacing(15);
         textAngleSlider.setPaintLabels(true);
         textAngleSlider.setPaintTrack(true);
         textAngleSlider.addChangeListener(this);
@@ -254,7 +255,7 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
         nodeWidthSlider.setPaintLabels(true);
         nodeWidthSlider.addChangeListener(this);
         
-        add( nodeWidthLabel, new GBC( 0,12,1,2 ).setAnchor( GBC.EAST ).setFill(GBC.BOTH) );
+        add( nodeWidthLabel, new GBC( 0,12,1,2 ).setAnchor( GBC.EAST ).setFill(GBC.BOTH).setWeight(100,100) );
         add( nodeWidthSlider, new GBC( 1,12,5,2 ).setAnchor( GBC.WEST ).setFill(GBC.BOTH).setWeight(100,100) ); 
         
         nodeHeightLabel = new JLabel( "Node height:" );
@@ -266,7 +267,7 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
         nodeHeightSlider.setPaintLabels(true);
         nodeHeightSlider.addChangeListener(this);
         
-        add( nodeHeightLabel, new GBC( 6,12,1,2 ).setAnchor( GBC.EAST ).setFill(GBC.BOTH) );
+        add( nodeHeightLabel, new GBC( 6,12,1,2 ).setAnchor( GBC.EAST ).setFill(GBC.BOTH).setWeight(100,100) );
         add( nodeHeightSlider, new GBC( 7,12,5,2 ).setAnchor( GBC.WEST ).setFill(GBC.BOTH).setWeight(100,100) ); 
         
     }

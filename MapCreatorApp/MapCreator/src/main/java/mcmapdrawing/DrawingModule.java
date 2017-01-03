@@ -540,7 +540,7 @@ public class DrawingModule {
         createLBCandRUC(graph);
         //normalizeGraphCoordinates( graph);
 
-        svg.setName(initialSVGFileName + "_" + svgname);
+        svg.setName(initialSVGFileName + svgname);
         beginSVG();
         // svg.addImageLink( "background.jpg" );        
 

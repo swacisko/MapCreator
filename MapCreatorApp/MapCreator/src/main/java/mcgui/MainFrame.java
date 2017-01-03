@@ -9,22 +9,14 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import mcgraphs.MapGraph;
 import mcgtfsstructures.MCDatabase;
 import mcmapcreator.FileChooser;
-import mcmapdrawing.DrawingModule;
-import mcmapdrawing.SVG;
-import mctemplates.MCSettings;
 
 /**
  * This class is the main frame of MapCreator's GUI. Here you can click to choose what do you want to change, select, draw, etc.
+ * MainFrame consists of {@link SchemeContructionPanel}, and an instance of {@link ManagerFrame} as separate JFrame.
  * @author swacisko
  */
 public class MainFrame extends JFrame {
@@ -58,7 +50,7 @@ public class MainFrame extends JFrame {
     }
     
     private void selectAndReadGtfs(){
-        FileChooser.chooseGtfsDirectory(null);        
+        FileChooser.chooseGtfsDirectory(schemePanel);        
         MCDatabase.init();
     }
     

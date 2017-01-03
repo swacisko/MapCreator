@@ -216,7 +216,7 @@ public class EdgeContraction {
 
         int CNT = 1;
         for (MapNode n : deg2Nodes) {
-            System.out.print("\rDokonuje kontrakcji na wierzcholku nr " + (CNT++));
+           // System.out.print("\rDokonuje kontrakcji na wierzcholku nr " + (CNT++));
             removeDeg2NodeFromGraph(n);
         }
 
@@ -224,7 +224,7 @@ public class EdgeContraction {
         // UWAGA - po pierwszej petli dla wszystkich wierzcholkow w listach containedForwardStopsIds i containedBackwardStopsIds powinny byc te same elementy
         // ale w odwroconej kolejnosci.
         removeParallelEdges();
-        System.out.println("\nGraph ma teraz " + graph.countNodes() + " wierzcholkow oraz " + graph.countEdges() + " krawedzi");
+      //  System.out.println("\nGraph ma teraz " + graph.countNodes() + " wierzcholkow oraz " + graph.countEdges() + " krawedzi");
         /*CNT = 1;
          createDeg2Vertices();
          for( MapNode n : deg2Nodes ){

@@ -229,7 +229,7 @@ public class ForceAlgorithm {
         } else{
             //deltaX /= lengthfactor;
             float wsp = 0.3f;
-            deltaX *= ( wsp + (1-wsp)* ( (float)1 / ( (float) lengthfactor ) ) );
+            deltaX *= ( wsp + (1-wsp)* ( lengthfactor / 10f ) );
         }
         float mutualForce = MCSettings.getSPRING_COEF(); // spring COEF jest dodatnia wartosci;
         mutualForce *= deltaX;

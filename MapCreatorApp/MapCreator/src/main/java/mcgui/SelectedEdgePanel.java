@@ -111,6 +111,8 @@ public class SelectedEdgePanel extends JPanel implements ActionListener, ChangeL
         textAngleSlider = new JSlider( 0,360,0 );
         textAngleSlider.setPaintTicks(true);
         textAngleSlider.setMajorTickSpacing( 45 );
+        textAngleSlider.setMinorTickSpacing(15);
+        textAngleSlider.setSnapToTicks(true);
         textAngleSlider.setPaintLabels(true);
         textAngleSlider.setPaintTrack(true);
         textAngleSlider.addChangeListener(this);

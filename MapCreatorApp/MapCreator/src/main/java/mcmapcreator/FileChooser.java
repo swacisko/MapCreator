@@ -41,25 +41,35 @@ public class FileChooser {
         }   
     }
     
-    public static void saveSvgFile( JComponent parent ){
+    /**
+     * Function lets user to select location for the scheme to save. Shows dialog using JFileChooser.
+     * @param parent parent component used by {@link JFileChooser#showSaveDialog(java.awt.Component)}.
+     * @return returns true if user accepted, false if rejected or closed.
+     */
+    public static boolean saveSvgFile( JComponent parent ){
         if( chooser == null ){
             chooser = new JFileChooser( new File(".") );
         }
         chooser.setToolTipText( "Please select svg file" );
         chooser.setFileSelectionMode( JFileChooser.FILES_ONLY );   
+        chooser.setDialogTitle("Please select svg destination file");
         
         int result = chooser.showSaveDialog(parent);
         if( result == JFileChooser.APPROVE_OPTION ){
             File file = chooser.getSelectedFile();
-            if( UsefulFunctions.existsFile( file.getAbsolutePath() ) ){
-                MCSettings.setSvgFileName("");
+            if( UsefulFunctions.existsFile( getFilenameWithoutExtension( file.getAbsolutePath() )  ) ){
+                int res = JOptionPane.showConfirmDialog(parent, "Chosen file already exists. Do you want to continue?", "File name", JOptionPane.WARNING_MESSAGE);
+                if( res != JOptionPane.YES_OPTION ){
+                    return false;
+                }
             }else{
-                //MCSettings.setSvgFileName( file.getName() );
                 MCSettings.setSvgFileName( "" );
             }
             MCSettings.setMapsDirectoryPath( getFilenameWithoutExtension( file.getAbsolutePath() ) );
             System.out.println( "Directory   " + MCSettings.getMapsDirectoryPath() + "   was chosen");
+            return true;
         }
+        return false;
     }
     
     public static String getFilenameWithoutExtension( String fileName ){

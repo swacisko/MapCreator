@@ -56,6 +56,7 @@ public class MainFrame extends JFrame {
     
     public void showManager(){
         managerFrame.setVisible(true);
+        managerFrame.toFront();
     }
         
     @Override

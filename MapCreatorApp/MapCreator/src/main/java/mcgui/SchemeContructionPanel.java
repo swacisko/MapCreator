@@ -85,7 +85,9 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
                 if (graph == null) {
                     return;
                 }
-                FileChooser.saveSvgFile(SchemeContructionPanel.this);
+                if(FileChooser.saveSvgFile(SchemeContructionPanel.this) == false ){
+                    return;
+                }
                 new DrawingModule(new SVG(MCSettings.getINITIAL_SVG_WIDTH(), MCSettings.getINITIAL_SVG_HEIGHT()), selectedItems)
                         .drawGraphOnMap(graph, MCSettings.getSvgFileName());
             }

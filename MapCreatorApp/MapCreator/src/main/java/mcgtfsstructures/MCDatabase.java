@@ -218,6 +218,10 @@ public class MCDatabase {
         return stoptimesMapByTripId.get(id);
     }
 
+    /**
+     * Function sort all stoptimes send as a parameter in increasing order - with respect to their occurence along on the trip.
+     * @param l list of stoptimes to sort.
+     */
     private static void sortStopTimesByTripId(ArrayList<StopTime> l) {
         sort(l, new StopTimeSequenceComparator());
     }

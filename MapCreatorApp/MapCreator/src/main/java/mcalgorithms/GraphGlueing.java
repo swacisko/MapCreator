@@ -21,13 +21,14 @@ import org.hibernate.util.StringHelper;
 
 /**
  * This class is responsible for glueing graph - multiple stops in close proximity should be treated as one stop (we don't care whether there are 10 stops around the
- * roundabout, we only want to know that there is one). 
+ * roundabout, we only want to know that there is any stop). In glueing algorithm there are two phases of glueing. During the first phase stops are glued only
+ * if they are in very close proximity - specified by parameter {@link MCSettings#FIRST_GLUEING_DISTANCE_PARAMETER}. This should glue all stops with the same name
+ * (e.g if there are two stops on both sides of a street). The second glueing 
  * @author swacisko
  *
  *
  */
-// ten algorytm skleja nam graf zadany poprzez wszystkie przystanki i polaczenia w graf, w ktorym te same przystanki sa ze soba utozsamiane
-// zwraca nowy graf, nie modyfikuje tego przeslanego jako parametr
+
 public class GraphGlueing {
 
         public GraphGlueing(MapGraph graph) {

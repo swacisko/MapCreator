@@ -68,6 +68,9 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
 
     }
 
+    /**
+     * Functions creates and adds a popup menu to the panel.
+     */
     private void addPopupMenu() {
         popupMenu = new JPopupMenu("Popup menu");
         JMenuItem item = new JMenuItem("Show manager");
@@ -295,6 +298,10 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
         this.parentFrame = parentFrame;
     }
 
+    /**
+     * Function moves selected node (that in {@link #selectedItems}) to the specified position specified by Point p.
+     * @param p point to which the node will be moved.
+     */
     private void moveNodeToPosition(Point p) {
         if (selectedItems.isMovableNode() == false) {
             return;
@@ -330,6 +337,11 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
         //  System.out.println( "denormalized coords = " + node.getCoords() );       
     }
 
+    /**
+     * Finds and returns a node under the cursor. This function enables user to select node by clicking on it.
+     * @param p the position of the cursor on the panel.
+     * @return returns found node or null if no such node was found.
+     */
     private MapNode getMapNodeOnPosition(Point p) {
         if (selectedItems.getGraph() == null) {
             return null;
@@ -351,6 +363,12 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
         return null;
     }
 
+    /**
+     * Function finds all nodes contained in a rectangle with its diagonal vertices in points abeg and aend.
+     * @param abeg coordinates of the first vertex of a rectangle.
+     * @param aend coordinates of the second vertex of the rectangle.
+     * @return returns found nodes - these within the specified rectangle - or an empty array list if no such nodes exist.
+     */
     private ArrayList<MapNode> getNodesInRectangle(Point abeg, Point aend) {
         ArrayList<MapNode> list = new ArrayList<>();
 
@@ -384,7 +402,15 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
 
     }
 
-
+    /**
+     * Function used in node-alignment procedure.
+     * If alignment parameter equals {@link MCSettings#HORIZONTAL_ALIGNMENT}, then the X coordinate of all nodes send
+     * in nodes parameter will be set to the value of the X coordinate of the COG (center of gravity) of these nodes.
+     * If alignment parameter equals {@link MCSettings#VERTICAL_ALIGNMENT}, then the Y coordinate of all nodes send
+     * in nodes parameter will be set to the value of the Y coordinate of the COG (center of gravity) of these nodes.
+     * @param nodes node to be aligned.
+     * @param alignment type of alignment - currently only vertical and horizontal alignment possible.
+     */
     public void alignSelectedNodes(ArrayList<MapNode> nodes, int alignment) {
         ArrayList<Pair<Float, Float>> points = new ArrayList<>();
         for (MapNode n : nodes) {

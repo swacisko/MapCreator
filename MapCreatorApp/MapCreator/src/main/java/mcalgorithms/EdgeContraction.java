@@ -15,10 +15,13 @@ import mcgraphs.MapNode;
 import mctemplates.Pair;
 
 /**
- *
+ * This class contains all methods needed to convert a graph to edge-contracted graph. Edge contracted graph is a graph with no nodes of degree 2 - unless there
+ * are degree2-vertices in graph that are noncontractable. All deg2-vertices are removed from the set of nodes and added to the list of containedStops in respective
+ * MapEdge objects. This facilitates user to model and modify the scheme - stops contained in edges are displayed, but are 'evenly' spaced and keep the properties
+ * of the scheme, rather than the real map.
  * @author swacisko
  */
-// chociaz to w zasadzie nie jest kontrakcja krawedzi, tylko usuwanie wierzcholka stopnia 2 :) ale przez to scala sie dwie incydentne krawedzie
+
 public class EdgeContraction {
 
     public EdgeContraction(MapGraph graph) {

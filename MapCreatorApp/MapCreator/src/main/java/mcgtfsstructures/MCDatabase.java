@@ -5,7 +5,6 @@
  */
 package mcgtfsstructures;
 
-import java.io.File;
 import java.util.ArrayList;
 import static java.util.Collections.sort;
 import java.util.HashMap;
@@ -17,6 +16,10 @@ import java.util.Map;
  */
 public class MCDatabase {
 
+    /**
+     * {@link #init() } function initializes whole database. Before calling that function, a path to GTFS directory should be properly set. If not - 
+     * behavior may be unknown (though it should just disable application from doing nothing). 
+     */
     public static void init() {
         System.out.println( "Inicjalizacja wewnetrznej bazy danych" );
         stops = GTFSInput.getAllStops();
@@ -43,7 +46,9 @@ public class MCDatabase {
         }
     }
 
-    // tworzy wszystkie mapy (stopsMapByStopId, tripsMapByTripId,...)
+    /**
+     * Function initializes all maps in {@link MCDatabase}. Afterwards all maps ( {@link #stopsMapByStopId}, etc.) will be ready to use.
+     */
     private static void initMaps() {
         System.out.println( "\nInicjalizacja map bazodanowych" );
         stopsMapByStopId = new HashMap<>();
@@ -88,19 +93,26 @@ public class MCDatabase {
         }
     }
 
-    // do kazdej drogi przypisuje przystanki, ktore znajduja sie na tej drodze
+    /**
+     * In this function stops are being assigned to routes. After that, each route will contain a list of stops it visits.
+     */
     private static void assignStopsToRoutes() {
         for (StopTime st : stoptimes) {
             String stopid = st.getStopId();
             Trip t = tripsMapByTripId.get(st.getTripId());
-            Route r = routesMapByRouteId.get(t.getRouteId());
-            if (r.containsStopOfId(stopid) == false) {
+            Route r = null;
+            if( t != null ) r = routesMapByRouteId.get(t.getRouteId());
+            
+            if( (r != null) && ( r.containsStopOfId(stopid) == false) ) {
                 r.addStopId(stopid);
             }
         }
     }
 
-
+    /**
+     * Function used to write {@link MCDatabase} in primitive way - as a toString() method.
+     * @return returns concatenation of toString() methods of array lists in the database.
+     */
     public static String writeDatabase() {
         String s = stops.toString() + routes.toString() + shapes.toString() + trips.toString();
         return s;
@@ -164,14 +176,28 @@ public class MCDatabase {
     //END OF STOPS SECTION
 
     //   TRIPS SECTION
+    /**
+     * 
+     * @return return array list {@link #trips} containing all data in trips.txt file.
+     */
     public static ArrayList<Trip> getAllTrips() {
         return trips;
     }
 
+    /**
+     * 
+     * @param id id of the trip to return.
+     * @return returns trip with given id. If there is no trip with specified id, returns null;
+     */
     public static Trip getTripOfId(String id) {
         return tripsMapByTripId.get(id);
     }
 
+    /**
+     * 
+     * @param id id of the route.
+     * @return returns all trips from {@link #trips} with routeId equals to id.
+     */
     public static ArrayList<Trip> getAllTripsOfRouteId(String id) {
         return tripsMapByRouteId.get(id);
     }
@@ -182,21 +208,12 @@ public class MCDatabase {
         return stoptimes;
     }
 
-    // zwraca liste wszystkich StopTimes, dla ktorych trip_id = id. Zwraca w posortowanej kolejnosci - w takiej, w jakiej wystepuje naprawde w trasie
-    public static ArrayList<StopTime> getAllStopTimesOfTripId(String id) {
-        /*ArrayList<StopTime> res = new ArrayList<>();
-         for (StopTime s : stoptimes) {
-         if (s.getTripId().equals(id)) {
-         res.add(s);
-         }
-         }
-
-         if (res.isEmpty()) {
-         return null;
-         } else {
-         sortStopTimesByTripId(res);
-         return res;
-         }*/
+    /**
+     * 
+     * @param id
+     * @return returns all stoptimes from {@link #stoptimes}, with tripId equal to id. Returned stoptimes are sorted in increasing order along the trip.
+     */
+    public static ArrayList<StopTime> getAllStopTimesOfTripId(String id) {        
         sortStopTimesByTripId(stoptimesMapByTripId.get(id));
         return stoptimesMapByTripId.get(id);
     }

@@ -45,7 +45,9 @@ import mctemplates.Pair;
 import mctemplates.UsefulFunctions;
 
 /**
- * This class is a panel on which we draw a scheme.
+ * This class is a panel on which we draw a scheme. {@link SchemeContructionPanel} implements {@link DrawingModuleInterface} interface. It allows it to be used
+ * by {@link DrawingModule} to draw a graph. In this case the graph is drawn on {@link SchemeContructionPanel} - it is on a JPanel. All drawing functions are 
+ * currently implemented using java.swing package. 
  *
  * @author swacisko
  */
@@ -436,8 +438,8 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
             MapNode n = getMapNodeOnPosition(event.getPoint());
             //System.out.println( "Point:\t" + event.getPoint() );
             if (n == null) {
-                if (selectedItems.isMovableNode()) {
-                    moveNodeToPosition(event.getPoint());
+                if (selectedItems.isMovableNode()) { 
+                    //moveNodeToPosition(event.getPoint()); // I don't want to move node when pressed, only when dragged.
                 } else {
                     selectedItems.setSelectedNode1(null);
 

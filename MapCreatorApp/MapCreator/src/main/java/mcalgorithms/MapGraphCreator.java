@@ -17,13 +17,18 @@ import mctemplates.MCSettings;
 import mctemplates.Pair;
 
 /**
- *
+ * {@link MapGraphCreator} contains all methods needed to create basic graph from database.
  * @author swacisko
  */
 // TWORZY GRAF Z DANYCH GTFS
 public class MapGraphCreator {
 
-    
+    /**
+     * This function checks all conditions, which every route must fulfill to be added to graph. E.g. it may be either a main route, a background route, or meet any
+     * other condition that would cause it to be added to graph.
+     * @param r route to be added.
+     * @return return true, if the given route should be added to graph.
+     */
     private boolean addRouteCondition( Route r ){
         int routetype = Integer.parseInt(r.getRouteType());
         if( ( (MCSettings.isFullSchemeBackground() || MCSettings.getRoutesToHighlight().isEmpty()  ) &&  (TRANSPORT_MEASURE & (1 << routetype)) != 0 )||
@@ -34,7 +39,7 @@ public class MapGraphCreator {
     }
     
     /**
-     * Prepares data i want to be drawn on the graph.
+     * Creates all routes and stops that will be subsequently added to graph.
      */
     private void createConsideredRoutesAndStops() {
         //System.out.println( "Wybieram przystanki i drogi ktore maja zostac dodane do grafu" );
@@ -65,7 +70,8 @@ public class MapGraphCreator {
     }
 
     /**
-     * Adds all nodes from MCDatabase to graph, with respect to routes with type {@link MapGraphCreator#TRANSPORT_MEASURE}.
+     * Adds all nodes from {@link #consideredStops} - stops determined in {@link #createConsideredRoutesAndStops() } - to graph.
+     * 
      */
     private void addNodesToGraph() {        
         int CNT = 1;
@@ -87,7 +93,9 @@ public class MapGraphCreator {
         System.out.println();
     }
 
-    // 
+    /**
+     * Function adds to graph all edges forming any of the trip with routeId contained in {@link #consideredRoutes}.
+     */
     private void addEdgesToGraph() {
         //System.out.println("Zaczynam dodawac krawedzie");
         Set< Pair<Integer, Integer>> edgesAdded = new HashSet<>(); // edgesAdded to zbior par, z ktorych kazda okresla 2 id wierzcholkow, ktore chce polaczyc
@@ -136,8 +144,12 @@ public class MapGraphCreator {
         //System.out.println("\nSkonczylem dodawac krawedzie");
     }
 
-    // funkcja dodaje krawedzie do grafu sortujac topologicznie wszystkie przystanki na danej drodze
-    // ALE NA RAZIE NIE DZIALA - PRZYSTANKI W JEDNA I W DRUGA STRONE MAJA ZUPELNIE ROZNE ID, WIEC NIE DA SIE I TAK ROZSADNIE KOLEJNOSCI ODZWIERCIEDLIC
+    /**
+     * Function adds all edges to graph using topological sorting. All stops are sorted topologically. A DAG is created and hence a route is obtained by finding
+     * the longest path in that DAG. This however works poorly in general in comparison with graph-glueing method. However there are some special cases in which it
+     * is also useful. Another advantage of this method is linear execution time - for large data speeds up the whole process of building a graph. However, since 
+     * we don't care for a few seconds, the use of this function is deprecated and should be used only in vindicated instances.
+     */
     public void addEdgesToGraphTopoSort() {
         System.out.println( "Zaczynam dodawac krawedzie do poczatkowego grafu" );
         Map<String, Integer> nodeIdReversed = new HashMap<>();  // nodeIdReversed.get(key) to wartosc value taka, ze przystanek o id = key znajduje sie w wierzcholku grafu o id = value
@@ -279,7 +291,9 @@ public class MapGraphCreator {
 
     }
 
-    
+    /**
+     * Function tests frequencies of stops on routes. 
+     */
     public void testStopsFrequenciesOnRoutes(){
         
         for (String s : consideredRoutes) {
@@ -375,6 +389,12 @@ public class MapGraphCreator {
         
     }
     
+    /**
+     * Function creates a graph from data in {@link MCDatabase}. Adds only these routes that meet conditions in 
+     * {@link #addRouteCondition(mcgtfsstructures.Route) } function. 
+     * @param TRANSPORT_MEASURE this parameter denotes transport measures that should be added to graph as a background of the scheme.
+     * @return return created graph.
+     */
     public MapGraph createMapGraphFromGtfsDatabase(int TRANSPORT_MEASURE) {
         this.TRANSPORT_MEASURE = TRANSPORT_MEASURE;
         createConsideredRoutesAndStops();

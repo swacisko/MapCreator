@@ -76,9 +76,10 @@ public class GTFSInput {
     public static ArrayList<String> processFileData(String data) {
         ArrayList<String> list = new ArrayList<>();
         String fragment = "";
+        boolean openParenthesis = false;
         for (int i = 0; i < data.length(); i++) {
 
-            if (data.charAt(i) == ',') {
+            if ( (data.charAt(i) == ',') && (openParenthesis == false) ) {
                 if (!fragment.equals("")) {
                     if (fragment.endsWith("\"")) {
                     //    System.out.println( "fragment = " + fragment );
@@ -91,7 +92,10 @@ public class GTFSInput {
                     list.add("");
                 }
             } else {
-                fragment = fragment + data.charAt(i);
+                if( data.charAt(i) == '\"' ){
+                    openParenthesis = !openParenthesis;
+                }
+                fragment += data.charAt(i);
             }
 
         }
@@ -154,6 +158,10 @@ public class GTFSInput {
         return res;
     }
 
+    /**
+     * Function reads and converts all data in stops.txt file.
+     * @return return converted data as an array list of Stop objects.
+     */
     public static ArrayList< Stop> getAllStops() {
         System.out.print( "Wczytuje dane z pliku stops.txt... " );
         ArrayList<Stop> res = new ArrayList<>();
@@ -166,6 +174,10 @@ public class GTFSInput {
         return res;
     }
 
+    /**
+     * Function reads and converts all data in routes.txt file.
+     * @return return converted data as an array list of Route objects.
+     */
     public static ArrayList< Route> getAllRoutes() {
         System.out.print( "Wczytuje dane z pliku routest.txt... " );
         ArrayList< Route> res = new ArrayList<>();
@@ -178,6 +190,10 @@ public class GTFSInput {
         return res;
     }
 
+    /**
+     * Function reads and converts all data in shapes.txt file.
+     * @return return converted data as an array list of Shape objects..
+     */
     public static ArrayList< Shape > getAllShapes() {
         System.out.print( "Wczytuje dane z pliku shapes.txt... " );
         ArrayList< Shape> res = new ArrayList<>();
@@ -191,6 +207,10 @@ public class GTFSInput {
         return res;
     }
 
+    /**
+     * Function reads and converts all data in trips.txt file.
+     * @return return converted data as an array list of Trip objects..
+     */
     public static ArrayList< Trip> getAllTrips() {
         System.out.print( "Wczytuje dane z pliku trips.txt... " );
         ArrayList< Trip> res = new ArrayList<>();
@@ -203,6 +223,10 @@ public class GTFSInput {
         return res;
     }
 
+    /**
+     * Function reads and converts all data in stoptimes.txt file.
+     * @return return converted data as an array list of StopTime objects.
+     */
     public static ArrayList< StopTime> getAllStopTimes(){
         System.out.print( "Wczytuje dane z pliku stoptimes.txt... " );
         ArrayList< StopTime> res = new ArrayList<>();

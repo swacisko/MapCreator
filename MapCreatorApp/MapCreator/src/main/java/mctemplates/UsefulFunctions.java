@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 /**
- *
+ *  Class with some useful functions - parsers, colors, vector length, etc.
  * @author swacisko
  */
 public class UsefulFunctions {

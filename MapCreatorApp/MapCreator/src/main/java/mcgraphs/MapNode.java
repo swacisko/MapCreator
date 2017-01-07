@@ -17,7 +17,7 @@ import mctemplates.Drawable;
 import mctemplates.MCSettings;
 
 /**
- *
+ * Node of the graph. It stores all data (lists of neighbors, color of the node, coordinates, etc.) of the single node in a graph.
  * @author swacisko
  */
 public class MapNode extends MapStructure implements Drawable {
@@ -140,7 +140,7 @@ public class MapNode extends MapStructure implements Drawable {
     
     /**
      * 
-     * @return returns the list of neighbours of given node. Fixed naighbour may occur many times on that list if a graph is a multigraph
+     * @return returns the list of neighbors of given node. Fixed naighbor may occur many times on that list if a graph is a multigraph.
      */
     public ArrayList<MapNode> getNeighbours(){
         ArrayList<MapNode> neigh = new ArrayList<>();

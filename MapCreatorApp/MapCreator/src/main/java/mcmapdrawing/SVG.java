@@ -9,32 +9,45 @@ import java.util.ArrayList;
 import mctemplates.MCSettings;
 import mctemplates.UsefulFunctions;
 
-//TO DO:
-//dodawanie klasy (stylu)
-//dodawanie części parametrów stylu przy tworzeniu figur
-//styl napisów?
-//funkcje - pair
+/**
+ * {@link SVG} class is the module responsible for creating and saving .svg output file of created scheme. It implements {@link DrawingModuleInterface}, so it can be used by
+ * {@link DrawingModule} module to draw scheme. This function also creates provisional .html file to let user easily verify, whether visual conditions of created scheme
+ * are satisfactory.
+ * @author Joanna Malińska
+ */
 public class SVG implements DrawingModuleInterface {
 
     public SVG() {
 
     }
 
-    //konstruktor ustawiający wymiary rysunku
+    /**
+     * Class constructor. Creates .svg file with given dimensions. (height may be scaled in {@link DrawingModule#scaleSVG() } so it keeps scheme dimensions).
+     * @param widthp width of the svg file.
+     * @param heightp height of the svg file.
+     */
     public SVG(int widthp, int heightp) {
         this();
         width = widthp;
         height = heightp;
     }
 
-    //konstruktor ustawiający nazwę plików
+    /**
+     * Class constructor. Creates .svg file with given file name.
+     * @param fileNamep 
+     */
     public SVG(String fileNamep) {
         this();
         fileName = fileNamep;
 
     }
 
-    //konstruktor ustawiający wymiary rysunku i nazwę plików
+    /**
+     * Class constructor. Creates .svg file with specified dimensions and file name.
+     * @param widthp
+     * @param heightp
+     * @param fileNamep 
+     */
     public SVG(int widthp, int heightp, String fileNamep) {
         this();
         width = widthp;
@@ -42,7 +55,9 @@ public class SVG implements DrawingModuleInterface {
         fileName = fileNamep;
     }
 
-    //wszystkie potrzebne rzeczy na początek plików
+    /**
+     * In {@link #begin() } function are done all activities that should be executed before writing to .svg file. (e.g. creating writers).
+     */
     @Override
     public void begin() {
 
@@ -70,7 +85,9 @@ public class SVG implements DrawingModuleInterface {
          addEllipseStyle();*/
     }
 
-    //wszystkie potrzebne rzeczy na koniec plików
+    /**
+     * In this function are undertaken all tasks, that should be done when the .svg output file is created. (e.g. closing writers).
+     */
     @Override
     public void end() {
         writerSVG.println("</svg>");

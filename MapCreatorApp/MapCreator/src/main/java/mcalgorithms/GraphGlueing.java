@@ -23,7 +23,8 @@ import org.hibernate.util.StringHelper;
  * This class is responsible for glueing graph - multiple stops in close proximity should be treated as one stop (we don't care whether there are 10 stops around the
  * roundabout, we only want to know that there is any stop). In glueing algorithm there are two phases of glueing. During the first phase stops are glued only
  * if they are in very close proximity - specified by parameter {@link MCSettings#FIRST_GLUEING_DISTANCE_PARAMETER}. This should glue all stops with the same name
- * (e.g if there are two stops on both sides of a street). The second glueing 
+ * (e.g if there are two stops on both sides of a street). The second glueing is staged with a bit greater parameter - {@link MCSettings#SECOND_GLUEING_DISTANCE_PARAMTER},
+ * therefore all stops within small area should be equated. (e.g. all stops around a roundabout).
  * @author swacisko
  *
  *
@@ -31,11 +32,18 @@ import org.hibernate.util.StringHelper;
 
 public class GraphGlueing {
 
-        public GraphGlueing(MapGraph graph) {
+    /**
+     * Class constructor.
+     * @param graph 
+     */
+    public GraphGlueing(MapGraph graph) {
         this.graph = graph;
     }
     
-    // zwraca dwuwymiarowa tablice - kazda lista w tej tablicy zawiera wszystkie ID wierzcholkow ktore maja zostac zlepione w jeden konkretny wierzcholek
+    /**
+     * Function used to alternative way of glueing vertices.
+     * @return 
+     */
     private ArrayList< ArrayList<Integer> > getGlueingList(){
         ArrayList< ArrayList<Integer> > glueingList = new ArrayList<>(); // glueingList.get(i) to lista id wierzcholkow, ktore maja zostac zlepione
         Set<Integer> isGlued = new HashSet<>();
@@ -66,8 +74,11 @@ public class GraphGlueing {
     }
     
     
-    // jako parametr przesylana jest tablica ID wierzcholkow jtore maja zostac zlepione
-    // jako wynik zwracana jest lista ID wszystkich sasiadow tychze wierzcholkow
+    /**
+     * Function used in alternative way of glueing vertices.
+     * @param similarNeighbours
+     * @return 
+     */
     private ArrayList<Integer> getListOfDifferentNeighbours( ArrayList<Integer> similarNeighbours ){                
         ArrayList<MapEdge> edges = graph.getEdges();        
         Set<Integer> zb = new HashSet<>();
@@ -110,6 +121,9 @@ public class GraphGlueing {
         n.setStructureName( structurename ); 
     }
 
+    /**
+     * Alternative way of glueing nodes.
+     */
     private void glueGraphOld(){        
         ArrayList< ArrayList<Integer> > glueingList = getGlueingList(); // glueingList.get(i) to lista id wierzcholkow, ktore maja zostac zlepione
                
@@ -226,7 +240,7 @@ public class GraphGlueing {
         
     /**
      * Converts {@link GraphGlueing#graph} by glueing its nodes. It reduces the total amount of nodes and edges in graph.
-     * @return returns {@link GraphGlueing#resGraph} - graph after glueing
+     * @return returns {@link GraphGlueing#resGraph} - graph after glueing procedure.
      */
     public MapGraph convertGraph() {
         if( graph == null ) return null;
@@ -281,6 +295,10 @@ public class GraphGlueing {
         return false;
     }
 
+    /**
+     * Function used to test correctness of glueing method. Prints to the standard output all data and details during glueing process to enable programmer to check,
+     * whether glueing goes correctly.
+     */
     public void testGlueing() {
         ArrayList<MapNode> nodes = graph.getNodes();
         for (int i = 0; i < nodes.size(); i++) {
@@ -303,6 +321,9 @@ public class GraphGlueing {
         }
     }
 
+    /**
+     * Function used to test whether algorithm comparing similar names of stops works correctly.
+     */
     public void testSimilarNames() {
         ArrayList<MapNode> nodes = graph.getNodes();
 
@@ -317,11 +338,11 @@ public class GraphGlueing {
     }
 
     /**
-     * Function used to check, whether two nodes can be glued together
+     * Function used to check, whether two nodes can be glued together in first glueing. It fins longest common substring of two strings (stop names). 
      * @param s1 First string
      * @param s2 Second string
      * @param threshold Float value in interval [0,1]
-     * @return returns true if given strings are similar with respect to threshold
+     * @return returns true if given strings are similar with respect to threshold value.
      */
     private boolean similarName(String s1, String s2, float threshold) {
         String lcs = LongestCommonSubstring.getLongestCommonSubstring(s1, s2);
@@ -349,6 +370,10 @@ public class GraphGlueing {
         return (Math.abs(f1x - f2x) + Math.abs(f1y - f2y)) < threshold;
     }
     
+    /**
+     * 
+     * @return returns {@link #glueingParameter}. 
+     */
     public float getGlueingParameter() {
         return glueingParameter;
     }
@@ -402,7 +427,7 @@ public class GraphGlueing {
     }
 
     /**
-     * We need this only when we use glueGraphOld, which i think is useless now.
+     * We need this only when we use {@link #glueGraphOld() }, which i think is useless now, since {@link #glueGraph() } works better and fast enough.
      */
     private MapGraph resGraph = null; 
     private MapGraph graph = null;

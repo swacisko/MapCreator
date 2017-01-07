@@ -15,7 +15,7 @@ import mcmapdrawing.MapLegend;
 import mcmapdrawing.RouteEndGroup;
 
 /**
- *
+ * {@link SelectedItems} objects store data of (almost) all non-settings editable elements. (e.g. graph nodes, edges, route ends, selected options in GUI).
  * @author swacisko
  */
 public class SelectedItems {

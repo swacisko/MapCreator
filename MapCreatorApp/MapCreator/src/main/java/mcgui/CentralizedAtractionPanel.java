@@ -14,8 +14,7 @@ import javax.swing.JPanel;
 public class CentralizedAtractionPanel extends JPanel {
     
     public CentralizedAtractionPanel(){
-        setSize( DEFAULT_WIDTH, DEFAULT_HEIGHT );
-        
+        setSize( DEFAULT_WIDTH, DEFAULT_HEIGHT );        
     }
     
     

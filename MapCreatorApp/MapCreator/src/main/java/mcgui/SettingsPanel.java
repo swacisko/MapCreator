@@ -13,7 +13,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
- *
+ * GUI panel with options to modify settings.
  * @author swacisko
  */
 public class SettingsPanel extends JPanel{

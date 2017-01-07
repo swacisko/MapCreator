@@ -116,7 +116,7 @@ public class DrawingModule {
 
     /**
      * Function scales SVG. As LBC and RUC are set, this function changes
-     * svg.width, so that the proportions of image are adequate
+     * svg.width, so that the proportions of image are adequate.
      */
     private void scaleSVG() {
         float dW = RUC.getST() - LBC.getST();
@@ -176,6 +176,11 @@ public class DrawingModule {
         return new Pair<>(x2, y2);
     }
 
+    /**
+     * Function normalizes coordinates of all nodes in the graph. This function will be used to optimize number of calculations (it may come very useful ans significantly
+     * speed up the process of drawing and modification of the scheme).
+     * @param graph 
+     */
     private void normalizeGraphCoordinates(MapGraph graph) {
         for (MapNode n : graph.getNodes()) {
             Pair<Integer, Integer> newcoords = normalizeCoordinates(n.getCoords());
@@ -185,11 +190,11 @@ public class DrawingModule {
     }
 
     /**
-     * Calculates the LBC and RUC of given drawable structures
+     * Calculates the {@link #LBC} and {@link #RUC} of given drawable structures.
      *
      * @param structures List of Drawable structures for which i should find LBC
      * and RUC
-     * @return return pair (LBC,RUC)
+     * @return returns pair (LBC,RUC).
      */
     public Pair< Pair<Float, Float>, Pair<Float, Float>> getLBCandRUC(ArrayList<Drawable> structures) {
         Pair<Float, Float> LBC = new Pair<>(Float.MAX_VALUE, Float.MAX_VALUE);
@@ -217,7 +222,9 @@ public class DrawingModule {
         return new Pair<>(LBC, RUC);
     }
 
-    // funkcja tmczasowa - do zmiany, tylko do zaprezentowania dzialania
+    /**
+     * Draws all shapes contained in {@link MCDatabase#shapes}.
+     */
     public void drawShapesOnMap() {
         Set<String> set = new HashSet<>();
 
@@ -254,6 +261,9 @@ public class DrawingModule {
 
     }
 
+    /**
+     * Draws all stops contained in {@link MCDatabase#stops}.
+     */
     public void drawStopsOnMap() {
         ArrayList<Stop> stops = MCDatabase.getAllStops();
 
@@ -266,9 +276,9 @@ public class DrawingModule {
         }
     }
 
-    // jedna z mapek, ktora tworzy nasz program
-    // rysuje na mapie wszystko co jest dane w stops.txt oraz shapes.txt
-    // dodaje rowniez podpisy do przystankow czy lini
+    /**
+     * Creates ShapeMap - a scheme with all shapes drawn on it.
+     */
     public void drawShapeMap() {
 
         String path = (new File("").getAbsolutePath()) + "/GTFS/" + "shapes.txt";
@@ -287,6 +297,9 @@ public class DrawingModule {
         endSVG();
     }
 
+    /**
+     * Draws a basic graph - the one constructed by {@link MapGraphCreator}.
+     */
     public void drawDatabaseGraph() {
         System.out.println("Zaczynam tworzyc podstawowy graf z danych GTFS");
         graph = new MapGraphCreator().createMapGraphFromGtfsDatabase(MCSettings.getDRAWING_ROUTE_TYPE());
@@ -328,6 +341,9 @@ public class DrawingModule {
         System.out.println("Skonczylem rysowanie grafu z kontrakcja krawedzi\n\n");
     }
 
+    /**
+     * Draws force spaced graph (after procedure with use of force algorithm).
+     */
     private void drawForceSpacedGraph() {
         System.out.println("Zaczynam algorytm siłowy");
         System.out.println("");
@@ -368,6 +384,10 @@ public class DrawingModule {
         svg.addText(p, s, n.getTextFontSize(), n.getTextFormat(), n.getTextAngle());
     }
 
+    /**
+     * For given node sets all drawing parameters which will be used during modeling that node (e.g. stroke width, color, fill color).
+     * @param n node for which parameters should be set.
+     */
     private void setDrawingNodeParameters(MapNode n) {
         if (n.getDrawingWidth() != 0) {
             svg.setStrokeWidth(n.getDrawingWidth());
@@ -388,10 +408,10 @@ public class DrawingModule {
     }
 
     /**
-     * Draws graph nodes
+     * Draws graph nodes on a map.
      *
-     * @param graph Nodes from this graph will be drawn
-     * @return return the same graph to enable chain call
+     * @param graph Nodes from this graph will be drawn.
+     * @return returns the same graph to enable chain call.
      */
     private MapGraph drawGraphNodesOnMap(MapGraph graph) {
         Set<Integer> insignificantNodes = createInsignificantNodes(graph);
@@ -425,6 +445,10 @@ public class DrawingModule {
         return graph;
     }
 
+    /**
+     * Sets parameters used to draw an edge. (e.g. stroke width, color).
+     * @param e 
+     */
     private void setDrawingEdgeParameters(MapEdge e) {
         if (e.getHoverWidth() != 0) {
 
@@ -444,7 +468,7 @@ public class DrawingModule {
     }
 
     /**
-     * Draws contained stops in edges, and their names
+     * Draws stops contained in edges, and their names. 
      */
     private void drawEdgeContainedStops(MapGraph graph) {
         for (MapEdge e : graph.getEdges()) {
@@ -514,6 +538,11 @@ public class DrawingModule {
         }
     }
 
+    /**
+     * Function responsible for drawing edges in map. 
+     * @param graph
+     * @return 
+     */
     private MapGraph drawGraphEdgesOnMap(MapGraph graph) {
         ArrayList<Point> polyline = new ArrayList<>();
 
@@ -531,7 +560,12 @@ public class DrawingModule {
         return graph;
     }
 
-    // rysuje zadany graf do pliku svg
+    /**
+     * The crucial function in {@link DrawingModule}. It is called to draw a graph on the map.
+     * @param graph This graph will be drawn on the map.
+     * @param svgname name of the svg file in which the map should be saved.
+     * @return returns graph to enable chain call.
+     */
     public MapGraph drawGraphOnMap(MapGraph graph, String svgname) {
         if (graph == null) {
             return null;
@@ -563,7 +597,9 @@ public class DrawingModule {
      * called after drawing edges and nodes to avoid text being shadowed by
      * other node
      *
-     * @param graph
+     * @param graph texts of structures in this graph will be drawn.
+     * @see #drawEdgeText(mcgraphs.MapEdge)
+     * @see #drawNodeTexts(mcgraphs.MapGraph) 
      */
     private void drawTextsOnMap(MapGraph graph) {
         drawEdgeTexts(graph);
@@ -583,6 +619,10 @@ public class DrawingModule {
 
     }
 
+    /**
+     * Function used to draw text of MapNode elements in the graph.
+     * @param graph
+     */
     private void drawNodeTexts(MapGraph graph) {
         for (MapNode n : graph.getNodes()) {            
             if (n.isTextVisible()){
@@ -601,6 +641,11 @@ public class DrawingModule {
         }
     }
 
+    /**
+     * Creates insignificant nodes, that is nodes, that are not in any of the main (highlighted) routes.
+     * @param graph graph for which insignificant nodes will be determined.
+     * @return returns a set of integer with id's of insignificant nodes in given graph.
+     */
     private Set<Integer> createInsignificantNodes(MapGraph graph) {
         Set<Integer> insNodes = new HashSet<>();
         for (MapNode n : graph.getNodes()) {
@@ -618,6 +663,12 @@ public class DrawingModule {
         return insNodes;
     }
 
+    /**
+     * Function responsible for drawing main (highlighted) routes on graph. It finds insignificant nodes ({@link #createInsignificantNodes(mcgraphs.MapGraph) } and 
+     * creates all paths ({@link RoutePathCreator}. Subsequently it uses {@link #createHighlights(java.util.Map) }. After that, the function draws all main routes
+     * as polylines.
+     * @param graph 
+     */
     private void drawRoutesToHighlightOnGraph(MapGraph graph) {
         ArrayList<String> routes = MCSettings.getRoutesToHighlight();
         Map<String, ArrayList<GraphPath>> paths = new RoutePathCreator(graph).createRoutePaths(routes);
@@ -721,9 +772,9 @@ public class DrawingModule {
 
     /**
      * Creates {@link #highlights} map. For each pair of nodes we determine the
-     * number of highlighted routes between them
+     * number of highlighted routes between them.
      *
-     * @param paths
+     * @param paths this parameter must be a map created by {@link RoutePathCreator#createRoutePaths(java.util.ArrayList) } function.
      */
     private void createHighlights(Map<String, ArrayList<GraphPath>> paths) {
         highlights.clear();
@@ -781,7 +832,7 @@ public class DrawingModule {
      *
      * @param n We check for the given node
      * @return returns the maximum number of highlighted routes between node n
-     * and one of its neighbours
+     * and one of its neighbors.
      */
     private int getNodeDrawingWidthHighlightCoefficient(MapNode n) {
         int M = 0;
@@ -796,6 +847,10 @@ public class DrawingModule {
         return M;
     }
 
+    /**
+     * Function responsible for assigning to each node a {@link RouteEndGroup} object - it is an object with 'references' to all routes with an end in that node.
+     * @param graph graph for which the route ends will be created.
+     */
     private void createRouteEnds(MapGraph graph){
         Map<Integer, RouteEndGroup> routeEnds = selectedItems.getRouteEnds();
         if( routeEnds == null || routeEnds.isEmpty() == false ) return;
@@ -822,6 +877,11 @@ public class DrawingModule {
         }
     }
 
+    /**
+     * Function responsible for drawing route ends on graph.
+     * @param graph 
+     * @see #createRouteEnds(mcgraphs.MapGraph)
+     */
     private void drawRouteEndsOnGraph(MapGraph graph) {
         Map<Integer, RouteEndGroup> routeEnds = selectedItems.getRouteEnds();
         if( routeEnds == null ) return;
@@ -878,6 +938,9 @@ public class DrawingModule {
 
     }
     
+    /**
+     * Function responsible for drawing a rectangle during modifying the scheme with alignment methods.
+     */
     public void drawAlignmentRectangle(){
         if( selectedItems == null || selectedItems.getAlignmentBeg() == null || selectedItems.getAlignmentEnd() == null ) return;
         Point beg = new Point( selectedItems.getAlignmentBeg() );
@@ -944,7 +1007,7 @@ public class DrawingModule {
     }
     
     /**
-     * Draws shape on the ma
+     * Draws shape on the map.
      * @param shape {@link MCSettings#RECTANGLE} or {@link MCSettings#ELLIPSE} (so far)
      * @param p center of the shape
      * @param width width of the shape
@@ -972,8 +1035,17 @@ public class DrawingModule {
      * there is number of routes between them to be highlighted
      */
     private Map< Pair<Integer, Integer>, Integer> highlights = new HashMap<>();
+    /**
+     * Function used during drawing highlighted routes to determine the position of next segment of a polyline.
+     */
     private Map< Pair<Integer, Integer>, Float> leftHighlightOffset = new HashMap<>();
+    /**
+     * Function used during drawing highlighted routes to determine the position of next segment of a polyline.
+     */
     private Map< Pair<Integer, Integer>, Float> rightHighlightOffset = new HashMap<>();
 
+    /**
+     * Selected items - data of all editable elements.
+     */
     SelectedItems selectedItems = null;
 }

@@ -1,9 +1,10 @@
 package mctemplates;
 
 import com.sun.xml.internal.bind.v2.schemagen.Util;
+import mcalgorithms.GraphGlueing;
 
 /**
- *
+ *  Class with algorithm finding longest common substring of the strings. Used in {@link GraphGlueing#similarName(java.lang.String, java.lang.String, float)  }
  * @author swacisko
  */
 public class LongestCommonSubstring {

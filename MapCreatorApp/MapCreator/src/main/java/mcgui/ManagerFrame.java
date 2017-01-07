@@ -13,7 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 /**
- * 
+ * GUI frame with all panels enabling user to change settings, modify, draw and save schemes.
  * @author swacisko
  */
 public class ManagerFrame extends JFrame {

@@ -45,9 +45,12 @@ import mctemplates.Pair;
 import mctemplates.UsefulFunctions;
 
 /**
- * This class is a panel on which we draw a scheme. {@link SchemeContructionPanel} implements {@link DrawingModuleInterface} interface. It allows it to be used
- * by {@link DrawingModule} to draw a graph. In this case the graph is drawn on {@link SchemeContructionPanel} - it is on a JPanel. All drawing functions are 
- * currently implemented using java.swing package. 
+ * This class is a panel on which we draw a scheme.
+ * {@link SchemeContructionPanel} implements {@link DrawingModuleInterface}
+ * interface. It allows it to be used by {@link DrawingModule} to draw a graph.
+ * In this case the graph is drawn on {@link SchemeContructionPanel} - it is on
+ * a JPanel. All drawing functions are currently implemented using java.swing
+ * package.
  *
  * @author swacisko
  */
@@ -90,7 +93,7 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
                 if (graph == null) {
                     return;
                 }
-                if(FileChooser.saveSvgFile(SchemeContructionPanel.this) == false ){
+                if (FileChooser.saveSvgFile(SchemeContructionPanel.this) == false) {
                     return;
                 }
                 new DrawingModule(new SVG(MCSettings.getINITIAL_SVG_WIDTH(), MCSettings.getINITIAL_SVG_HEIGHT()), selectedItems)
@@ -165,15 +168,15 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
     @Override
     public void paintComponent(Graphics g) {
         graphics = (Graphics2D) g;
-        if (selectedItems == null || selectedItems.getGraph() == null || selectedItems.getGraph().getNodes() == null ||
-                selectedItems.getGraph().getNodes().isEmpty()) {
+        if (selectedItems == null || selectedItems.getGraph() == null || selectedItems.getGraph().getNodes() == null
+                || selectedItems.getGraph().getNodes().isEmpty()) {
             return;
         }
-        module.drawGraphOnMap(selectedItems.getGraph(), ("Graph drawing").intern() );
+        module.drawGraphOnMap(selectedItems.getGraph(), ("Graph drawing").intern());
     }
 
     @Override
-    public void addEllipse(Point p, int w, int h, int angle) {       
+    public void addEllipse(Point p, int w, int h, int angle) {
         Ellipse2D ellipse = new Ellipse2D.Double(p.x - (w / 2), p.y - (h / 2), w, h);
         AffineTransform at = new AffineTransform();
         at.setToRotation(2 * Math.PI * angle / 360f, p.x, p.y);
@@ -190,7 +193,7 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
 
     @Override
     public void addCircle(Point p, int radius) {
-        addEllipse(p, radius, radius,0);
+        addEllipse(p, radius, radius, 0);
     }
 
     @Override
@@ -213,8 +216,7 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
         }
         graphics.drawPolyline(x, y, polyline.size());
     }
-    
-    
+
     /**
      * Draws a rectangle
      *
@@ -224,15 +226,15 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
      */
     @Override
     public void addRectangle(Point p, int width, int height, int angle) {
-        Rectangle rect = new Rectangle(p.x-(width/2), p.y-(height/2), width, height);
+        Rectangle rect = new Rectangle(p.x - (width / 2), p.y - (height / 2), width, height);
         AffineTransform at = new AffineTransform();
         at.setToRotation(2 * Math.PI * angle / 360f, p.x, p.y);
         graphics.setTransform(at);
-        if( fillColor != null ){
+        if (fillColor != null) {
             graphics.setColor(fillColor);
             graphics.fill(rect);
-        }        
-        graphics.setStroke(new BasicStroke(strokeWidth));        
+        }
+        graphics.setStroke(new BasicStroke(strokeWidth));
         graphics.setColor(color);
         graphics.draw(rect);
         graphics.setTransform(new AffineTransform());
@@ -264,7 +266,7 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
 
     @Override
     public void setStrokeWidth(int width) {
-        strokeWidth = (int) ( MCSettings.getSvgToSwingFactor() * width);
+        strokeWidth = (int) (MCSettings.getSvgToSwingFactor() * width);
     }
 
     @Override
@@ -299,7 +301,9 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
     }
 
     /**
-     * Function moves selected node (that in {@link #selectedItems}) to the specified position specified by Point p.
+     * Function moves selected node (that in {@link #selectedItems}) to the
+     * specified position specified by Point p.
+     *
      * @param p point to which the node will be moved.
      */
     private void moveNodeToPosition(Point p) {
@@ -338,7 +342,9 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
     }
 
     /**
-     * Finds and returns a node under the cursor. This function enables user to select node by clicking on it.
+     * Finds and returns a node under the cursor. This function enables user to
+     * select node by clicking on it.
+     *
      * @param p the position of the cursor on the panel.
      * @return returns found node or null if no such node was found.
      */
@@ -364,10 +370,13 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
     }
 
     /**
-     * Function finds all nodes contained in a rectangle with its diagonal vertices in points abeg and aend.
+     * Function finds all nodes contained in a rectangle with its diagonal
+     * vertices in points abeg and aend.
+     *
      * @param abeg coordinates of the first vertex of a rectangle.
      * @param aend coordinates of the second vertex of the rectangle.
-     * @return returns found nodes - these within the specified rectangle - or an empty array list if no such nodes exist.
+     * @return returns found nodes - these within the specified rectangle - or
+     * an empty array list if no such nodes exist.
      */
     private ArrayList<MapNode> getNodesInRectangle(Point abeg, Point aend) {
         ArrayList<MapNode> list = new ArrayList<>();
@@ -403,13 +412,17 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
     }
 
     /**
-     * Function used in node-alignment procedure.
-     * If alignment parameter equals {@link MCSettings#HORIZONTAL_ALIGNMENT}, then the X coordinate of all nodes send
-     * in nodes parameter will be set to the value of the X coordinate of the COG (center of gravity) of these nodes.
-     * If alignment parameter equals {@link MCSettings#VERTICAL_ALIGNMENT}, then the Y coordinate of all nodes send
-     * in nodes parameter will be set to the value of the Y coordinate of the COG (center of gravity) of these nodes.
+     * Function used in node-alignment procedure. If alignment parameter equals
+     * {@link MCSettings#HORIZONTAL_ALIGNMENT}, then the X coordinate of all
+     * nodes send in nodes parameter will be set to the value of the X
+     * coordinate of the COG (center of gravity) of these nodes. If alignment
+     * parameter equals {@link MCSettings#VERTICAL_ALIGNMENT}, then the Y
+     * coordinate of all nodes send in nodes parameter will be set to the value
+     * of the Y coordinate of the COG (center of gravity) of these nodes.
+     *
      * @param nodes node to be aligned.
-     * @param alignment type of alignment - currently only vertical and horizontal alignment possible.
+     * @param alignment type of alignment - currently only vertical and
+     * horizontal alignment possible.
      */
     public void alignSelectedNodes(ArrayList<MapNode> nodes, int alignment) {
         ArrayList<Pair<Float, Float>> points = new ArrayList<>();
@@ -443,13 +456,13 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
     private MainFrame parentFrame = null;
 
     private SelectedItems selectedItems = null;
-    private int DEFAULT_WIDTH = 1500;
-    private int DEFAULT_HEIGHT = 1500;
+    //private int DEFAULT_WIDTH = 1500;
+    //private int DEFAULT_HEIGHT = 1500;
 
     private Color color = null;
     private Color fillColor = null;
-    private int textSize = -1;
-    private int textAngle = 0;
+   // private int textSize = -1;
+    // private int textAngle = 0;
     private int strokeWidth = 0;
     JPopupMenu popupMenu = null;
 
@@ -464,20 +477,17 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
             MapNode n = getMapNodeOnPosition(event.getPoint());
             //System.out.println( "Point:\t" + event.getPoint() );
             if (n == null) {
-                if (selectedItems.isMovableNode()) { 
-                    //moveNodeToPosition(event.getPoint()); // I don't want to move node when pressed, only when dragged.
-                } else {
-                    selectedItems.setSelectedNode1(null);
 
-                    if (selectedItems.getLayoutMouseAlignementMode() != 0) {
-                        selectedItems.setAlignmentBeg(event.getPoint());
-                    } else {
-                        selectedItems.setLayoutMouseAlignementMode(MCSettings.NO_ALIGNMENT);
-                        selectedItems.setAlignmentBeg(null);
-                        selectedItems.setAlignmentEnd(null);
-                    }
-                    return;
+                selectedItems.setSelectedNode1(null);
+
+                if (selectedItems.getLayoutMouseAlignementMode() != 0) {
+                    selectedItems.setAlignmentBeg(event.getPoint());
+                } else {
+                    selectedItems.setLayoutMouseAlignementMode(MCSettings.NO_ALIGNMENT);
+                    selectedItems.setAlignmentBeg(null);
+                    selectedItems.setAlignmentEnd(null);
                 }
+                return;
 
             } else {
                 //System.out.println( "Map node selected, name = " + n.getStructureName() + "   coords: " + n.getCoords() );
@@ -511,7 +521,7 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
                         return;
                     }
                     MyDialog dialog = new MyDialog();
-                    dialog.switchToPanel(new RouteEndGroupPanel(group, SchemeContructionPanel.this ), "Route ends");
+                    dialog.switchToPanel(new RouteEndGroupPanel(group, SchemeContructionPanel.this), "Route ends");
 
                     getParentFrame().repaint();
                 }
@@ -525,11 +535,9 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
                 ArrayList<MapNode> nodes = getNodesInRectangle(selectedItems.getAlignmentBeg(), selectedItems.getAlignmentEnd());
                 alignSelectedNodes(nodes, selectedItems.getLayoutMouseAlignementMode());
             }
-                //selectedItems.setLayoutMouseAlignementMode( MCSettings.NO_ALIGNMENT );
-                selectedItems.setAlignmentBeg(null);
-                selectedItems.setAlignmentEnd(null);                
-            
-        
+            //selectedItems.setLayoutMouseAlignementMode( MCSettings.NO_ALIGNMENT );
+            selectedItems.setAlignmentBeg(null);
+            selectedItems.setAlignmentEnd(null);
 
             getParentFrame().repaint();
         }

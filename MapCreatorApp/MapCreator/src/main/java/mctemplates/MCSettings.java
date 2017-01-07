@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
+ * Class with all constants and settings used during creating a scheme.
  * @author swacisko
  */
 public class MCSettings {

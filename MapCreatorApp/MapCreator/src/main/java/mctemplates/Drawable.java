@@ -6,7 +6,7 @@
 package mctemplates;
 
 /**
- *
+ * Interface which enables objects of implementing classes to be drawn on the map.
  * @author swacisko
  */
 public interface Drawable {

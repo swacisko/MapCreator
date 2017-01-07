@@ -8,9 +8,10 @@ package mcmapdrawing;
 import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
+import mcgui.SchemeContructionPanel;
 
 /**
- * Interface of a drawing module - DrawingModule and GraphLayoutModule must implement this interface
+ * Interface of a drawing module - {@link DrawingModule} and {@link SchemeContructionPanel} must implement this interface.
  * @author swacisko
  */
 public interface DrawingModuleInterface {
@@ -29,18 +30,18 @@ public interface DrawingModuleInterface {
      */
     public void addCircle(Point p, int radius);
     /**
-     * Draws a segment
-     * @param beg
-     * @param end 
+     * Draws a segment between point beg and end.
+     * @param beg beginning point of the segment.
+     * @param end end point of the segment.
      */
     public void addLine(Point beg, Point end);
     /**
-     * Draws a polyline
-     * @param polyline ArrayList of points in the line
+     * Draws a polyline.
+     * @param polyline ArrayList of points in the polyline.
      */
     public void addPolyline( ArrayList<Point> polyline );   
     /**
-     * Writes given text in module
+     * Writes given text.
      * @param p left bottom corner of the text
      * @param text text to be written
      * @param fontisze size of font of the text
@@ -49,10 +50,10 @@ public interface DrawingModuleInterface {
     public void addText( Point p, String text, int fontisze, int format, int angle );
     
     /**
-     * Draws a rectangle
-     * @param p
-     * @param width
-     * @param height 
+     * Draws a rectangle.
+     * @param p Point specified for the rectangle.
+     * @param width width of the rectangle.
+     * @param height  height of the rectangle.
      */
     public void addRectangle( Point p, int width, int height, int angle );
     

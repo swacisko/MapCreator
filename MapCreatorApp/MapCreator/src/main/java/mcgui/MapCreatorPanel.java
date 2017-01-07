@@ -24,7 +24,7 @@ import mctemplates.MCSettings;
 import mctemplates.UsefulFunctions;
 
 /**
- *
+ * GUI panel with options to create various types of maps.
  * @author swacisko
  */
 public class MapCreatorPanel extends JPanel {
@@ -93,6 +93,7 @@ public class MapCreatorPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (beginAction() == false) {
+                    endAction(null);
                     return;
                 }
                 MapGraph graph = new MapGraphCreator().createMapGraphFromGtfsDatabase(MCSettings.getDRAWING_ROUTE_TYPE());
@@ -184,6 +185,10 @@ public class MapCreatorPanel extends JPanel {
         this.selectedItems = selectedItems;
     }
 
+    /**
+     * Disables buttons for as long as it takes the program to create a graph in demand - e.g. as long as edge-contracted graph is created, user cannot choose other options.
+     * This behavior is to prevent user from causing unwillingly undefined actions - database is static, but actionPerformed methods may be called many times in threads.
+     */
     public void disableAllButtons() {
         basicMapButton.setEnabled(false);
         gluedMapButton.setEnabled(false);
@@ -192,6 +197,9 @@ public class MapCreatorPanel extends JPanel {
         // centralizedAttractionButton.setEnabled(false);
     }
 
+    /**
+     * Enables all buttons disabled in {@link #disableAllButtons() }.
+     */
     public void enableAllButtons() {
         basicMapButton.setEnabled(true);
         gluedMapButton.setEnabled(true);

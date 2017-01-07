@@ -24,7 +24,7 @@ import mctemplates.MCSettings;
 import mctemplates.UsefulFunctions;
 
 /**
- * {@link MRSPanel} is MainRoutesPanel. Here we can select routes we want to highlight on the scheme.
+ * {@link MRSPanel} is MainRoutesSettingsPanel. Here we can select routes we want to highlight on the scheme.
  * @author swacisko
  */
 public class MRSPanel extends JPanel {

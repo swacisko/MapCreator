@@ -20,7 +20,8 @@ import mctemplates.MCSettings;
 import mctemplates.Pair;
 
 /**
- *
+ *  {@link RouteEndGroup} is a class representing marks of the ends of routes. To node, in which ends any of highlighted routes, will be assigned an instance of this class
+ * containing 'references' to the routes, which end in that node.
  * @author swacisko
  */
 public class RouteEndGroupPanel extends JPanel implements ChangeListener {

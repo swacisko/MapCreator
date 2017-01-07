@@ -53,6 +53,8 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
     }
     
     private void updateComponentsData(){
+        moveNodeBox.setSelected( selectedItems.isMovableNode() );
+        
         MapNode n = selectedItems.getSelectedNode1();
         if( n == null ) {
             structureNameTextField.setText( "" );
@@ -69,7 +71,7 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
         }
                   
         
-        moveNodeBox.setSelected( selectedItems.isMovableNode() );
+        
                 
         containedStopsTextArea.setFont( new Font( "Serif",Font.BOLD, 25 ) );
         containedStopsTextArea.setBackground(Color.BLACK);

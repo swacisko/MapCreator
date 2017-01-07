@@ -19,13 +19,15 @@ import mcmapdrawing.DrawingModule;
 import mcmapdrawing.SVG;
 
 /**
- * Class represents an edge in the graph. Keeps references to its both ends and data concerning the edge (color, contained stops, etc.).
+ * Class represents a graph. It can be any graph. In case of MapCreator application it is used to represent a scheme of the communication and transport measures.
  * @author swacisko
  */
 public class MapGraph {
 
-    public MapGraph() {
-
+    /**
+     * Constructor of {@link MapGraph} class. Currently does nothing.
+     */
+    public MapGraph(){
     }
     
     private void resetNodeMap(){
@@ -142,12 +144,16 @@ public class MapGraph {
         System.out.println("Nie ma MapEdge o ID = " + id + ". Nic nie usuwam");
     }
 
+    /**
+     * Adds node to the graph.
+     * @param n node to be added.
+     */
     public void addMapNode(MapNode n) {
         nodes.add(n);
         nodesMap.put( n.getID(),n );
     }
 
-    // jezeli nie ma krawedzi o takim indeksie, to zwracam null
+    
     public MapNode getMapNode(int index) {
         if (index >= nodes.size()) {
             System.out.println("Zle indeksowanie w funkcji getMapNode w MapGraph(), zwracam null");
@@ -157,6 +163,11 @@ public class MapGraph {
         }
     }
 
+    /**
+     * 
+     * @param id id of the node to be returned.
+     * @return returns node with given id or null if there is no node with that id.
+     */
     public MapNode getMapNodeByID(int id) {
         /*for (MapNode n : nodes) {
             if (n.getID() == id) {
@@ -168,6 +179,7 @@ public class MapGraph {
         return nodesMap.get(id);
     }
 
+    
     public void removeMapNode(int index) {
         if (index >= nodes.size()) {
             System.out.println("Zle indeksowanie w funkcji removeMapNode w MapGraph(), nic nie usuwam");
@@ -251,7 +263,10 @@ public class MapGraph {
     }
     
     
-    // funkcja pozwala testowac graf - dodawac i usuwac wierzcholki lub krawedzie
+    /**
+     * Function used to test correctness of graph. It also allows (though it should be in separate classes) to check correctness of certain algorithms concerned
+     * with the graph.
+     */
     public void testGraph() {
         System.out.println("0. Wypisz opcje\n1. Dodaj wierzcholek\n2. Usun wierzcholek\n3. Dodaj krawedz\n4. Usun krawedz\n5. Wypisz graf\n6. Graph glueing"
                     + "\n7. Ustalenie wspolrzednych wierzcholka\n8. Algorytm silowy\n9. Wyjdz");
@@ -345,6 +360,12 @@ public class MapGraph {
     }
 
     //*******************************************************  STATIC BLOCK - ID generators
+    /**
+     * Function used to manage id distribution among {@link MapStructure} objects. Every time an instance of {@link MapStructure} object is created, it finds first free
+     * id and assigns it to the newborn objects. Always lowest available positive integer is taken. Every time an instance of {@link MapStructure} object is removed from graph or cleared away by GarbageCollector,
+     * the id is returned to the pool of available id.
+     * @return 
+     */
     public static int getFreeID() {
         int p = 1;
         while (unavailableIds.contains(p)) {
@@ -359,16 +380,27 @@ public class MapGraph {
         unavailableIds.remove(id);
     }
     
+    /**
+     * Clears graph. Removes all edges and vertices from it.
+     */
     public void clear(){
         nodes = new ArrayList<>();
         edges = new ArrayList<>();
         unavailableIds = new HashSet<>();
     }
     
+    /**
+     * 
+     * @return returns the number of nodes in the graph - more precisely, the size of {@link #nodes} array.
+     */
     public int countNodes(){
         return nodes.size();
     }
     
+    /**
+     * 
+     * @return returns the number of edges in the graph - size of {@link #edges}.
+     */
     public int countEdges(){
         return edges.size();
     }

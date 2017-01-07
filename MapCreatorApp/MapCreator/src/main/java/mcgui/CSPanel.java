@@ -25,7 +25,7 @@ import mctemplates.MCSettings;
 import mctemplates.UsefulFunctions;
 
 /**
- * CSPanel is ColorSettingsPanel. We can change default colors of elements in here
+ * {@link CSPanel} is ColorSettingsPanel. We can change here default colors of elements.
  * @author swacisko
  */
 public class CSPanel extends JPanel {

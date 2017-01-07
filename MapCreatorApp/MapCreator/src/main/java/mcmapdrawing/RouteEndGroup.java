@@ -12,7 +12,7 @@ import mctemplates.MCSettings;
 import mctemplates.Pair;
 
 /**
- *
+ * This class represents a set of routes. Instances of this class are used to store data for each node in the graph about routes with an end in that node.
  * @author swacisko
  */
 public class RouteEndGroup {

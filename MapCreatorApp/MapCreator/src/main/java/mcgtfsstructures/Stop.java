@@ -10,10 +10,9 @@ import mctemplates.Pair;
 import java.util.Map;
 
 /**
- *
+ * This class represent a single line of the stops.txt file. Data in each line is processed and mapped.
  * @author swacisko
  */
-// klasa Stop opisuje pojedyncze linie tekstu stops.txt
 public class Stop extends GtfsStructure implements Drawable{
 
     

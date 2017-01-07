@@ -11,7 +11,7 @@ import java.util.Objects;
 
 /**
  * This structure represents a path in the graph. It is jus a sequence of
- * {@link #MapNode} ids, nothing more
+ * {@link #MapNode} ids, nothing more.
  *
  * @author swacisko
  */

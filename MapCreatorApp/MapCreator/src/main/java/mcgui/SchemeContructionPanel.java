@@ -12,6 +12,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.PopupMenu;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -67,102 +68,8 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
         addMouseMotionListener(new MouseMotionHandler());
         addMouseListener(new MouseHandler());
 
-        addPopupMenu();
+        setComponentPopupMenu(new MyPopupMenu() );
 
-    }
-
-    /**
-     * Functions creates and adds a popup menu to the panel.
-     */
-    private void addPopupMenu() {
-        popupMenu = new JPopupMenu("Popup menu");
-        JMenuItem item = new JMenuItem("Show manager");
-        item.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                getParentFrame().showManager();
-            }
-        });
-        popupMenu.add(item);
-
-        item = new JMenuItem("Save file in svg");
-        item.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                MapGraph graph = selectedItems.getGraph();
-                if (graph == null) {
-                    return;
-                }
-                if (FileChooser.saveSvgFile(SchemeContructionPanel.this) == false) {
-                    return;
-                }
-                new DrawingModule(new SVG(MCSettings.getINITIAL_SVG_WIDTH(), MCSettings.getINITIAL_SVG_HEIGHT()), selectedItems)
-                        .drawGraphOnMap(graph, MCSettings.getSvgFileName());
-            }
-        });
-        popupMenu.add(item);
-
-        final JCheckBoxMenuItem moveNodeItem = new JCheckBoxMenuItem("Move node");
-        if (selectedItems != null) {
-            moveNodeItem.setSelected(selectedItems.isMovableNode());
-        }
-        moveNodeItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                selectedItems.setMovableNode(!selectedItems.isMovableNode());
-                moveNodeItem.setSelected(selectedItems.isMovableNode());
-            }
-        });
-        popupMenu.add(moveNodeItem);
-
-        JMenu alignmentMenu = new JMenu("Node alignments");
-
-        ButtonGroup group = new ButtonGroup();
-        JRadioButtonMenuItem nullAlignment = new JRadioButtonMenuItem("No alignement");
-        nullAlignment.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (selectedItems == null) {
-                    return;
-                }
-                selectedItems.setLayoutMouseAlignementMode(0);
-            }
-        });
-        group.add(nullAlignment);
-
-        JRadioButtonMenuItem horizontalAlignment = new JRadioButtonMenuItem("Horizontal alignment");
-        horizontalAlignment.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (selectedItems == null) {
-                    return;
-                }
-                selectedItems.setLayoutMouseAlignementMode(1);
-            }
-        });
-        group.add(horizontalAlignment);
-
-        JRadioButtonMenuItem verticalAlignment = new JRadioButtonMenuItem("Vertical alignment");
-        verticalAlignment.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (selectedItems == null) {
-                    return;
-                }
-                selectedItems.setLayoutMouseAlignementMode(2);
-            }
-        });
-        group.add(verticalAlignment);
-
-        alignmentMenu.add(nullAlignment);
-        alignmentMenu.add(horizontalAlignment);
-        alignmentMenu.add(verticalAlignment);
-
-        popupMenu.add(alignmentMenu);
-
-        setComponentPopupMenu(popupMenu);
     }
 
     @Override
@@ -461,12 +368,146 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
 
     private Color color = null;
     private Color fillColor = null;
-   // private int textSize = -1;
+    // private int textSize = -1;
     // private int textAngle = 0;
     private int strokeWidth = 0;
     JPopupMenu popupMenu = null;
 
     //*********************************************************
+    /**
+     * {@link MyPopupMenu} is a class representing the popup menu of {@link SchemeContructionPanel}.
+     */
+    class MyPopupMenu extends JPopupMenu {
+
+        public MyPopupMenu() {
+            super();
+            createPopupMenu();
+        }
+
+        @Override
+        public void paintComponent(Graphics g){
+            moveNodeItem.setSelected( selectedItems.isMovableNode() );
+        }
+        
+        private void createPopupMenu() {
+            addShowManagerItem();
+            addSaveMapItem();
+            addMoveNodeItem();
+            addAlignemntsItem();            
+        }
+
+        /**
+         * Adds item enabling user to save map in .svg format.
+         */
+        private void addSaveMapItem() {
+            JMenuItem item = new JMenuItem("Save file in svg");
+            item.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    MapGraph graph = selectedItems.getGraph();
+                    if (graph == null) {
+                        return;
+                    }
+                    if (FileChooser.saveSvgFile(SchemeContructionPanel.this) == false) {
+                        return;
+                    }
+                    new DrawingModule(new SVG(MCSettings.getINITIAL_SVG_WIDTH(), MCSettings.getINITIAL_SVG_HEIGHT()), selectedItems)
+                            .drawGraphOnMap(graph, MCSettings.getSvgFileName());
+                }
+            });
+            add(item);
+        }
+        /**
+         * Adds item enabling user to move nodes.
+         */
+        private void addMoveNodeItem() {   
+            moveNodeItem = new JCheckBoxMenuItem("Move node");
+            if (selectedItems != null) {
+                moveNodeItem.setSelected(selectedItems.isMovableNode());
+            }
+            moveNodeItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    selectedItems.setMovableNode(!selectedItems.isMovableNode());
+                    moveNodeItem.setSelected(selectedItems.isMovableNode());
+                }
+            });
+            add(moveNodeItem);
+        }
+
+        /**
+         * Adds item to enable user to show hidden (closed) manager frame.
+         */
+        private void addShowManagerItem() {
+            JMenuItem item = new JMenuItem("Show manager");
+            item.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    getParentFrame().showManager();
+                }
+            });
+            add(item);
+        }
+
+        /**
+         * Adds items enabling user to use alignments methods.
+         */
+        private void addAlignemntsItem() {
+            JMenu alignmentMenu = new JMenu("Node alignments");
+
+            ButtonGroup group = new ButtonGroup();
+            JRadioButtonMenuItem nullAlignment = new JRadioButtonMenuItem("No alignement");
+            nullAlignment.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (selectedItems == null) {
+                        return;
+                    }
+                    selectedItems.setLayoutMouseAlignementMode(0);
+                }
+            });
+            group.add(nullAlignment);
+
+            JRadioButtonMenuItem horizontalAlignment = new JRadioButtonMenuItem("Horizontal alignment");
+            horizontalAlignment.addActionListener(new ActionListener() {
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (selectedItems == null) {
+                        return;
+                    }
+                    selectedItems.setLayoutMouseAlignementMode(1);
+                }
+            });
+            group.add(horizontalAlignment);
+
+            JRadioButtonMenuItem verticalAlignment = new JRadioButtonMenuItem("Vertical alignment");
+            verticalAlignment.addActionListener(new ActionListener() {
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (selectedItems == null) {
+                        return;
+                    }
+                    selectedItems.setLayoutMouseAlignementMode(2);
+                }
+            });
+            group.add(verticalAlignment);
+
+            alignmentMenu.add(nullAlignment);
+            alignmentMenu.add(horizontalAlignment);
+            alignmentMenu.add(verticalAlignment);
+
+            add(alignmentMenu);
+
+        }
+
+        private JCheckBoxMenuItem moveNodeItem = null;
+    }
+
+    /**
+     * {@link MouseHandler} is a class representing a mouse handler of the {@link SchemeContructionPanel}. It extends {@link MouseAdapter}.
+     */
     class MouseHandler extends MouseAdapter {
 
         public MouseHandler() {
@@ -543,7 +584,9 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
         }
 
     }
-
+    /**
+     * {@link MouseMotionHandler} is the mouse motion handler of the {@link SchemeContructionPanel}. It implements {@link MouseMotionListener}.
+     */
     class MouseMotionHandler implements MouseMotionListener {
 
         public MouseMotionHandler() {

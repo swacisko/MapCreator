@@ -9,10 +9,9 @@ import java.util.Comparator;
 import java.util.Map;
 
 /**
- *
+ * This class represent a single line of the stoptimes.txt file. Data in each line is processed and mapped.
  * @author swacisko
  */
-// klasa StopTime opisuje pojedyncze linie pliku stoptimes.txt
 public class StopTime extends GtfsStructure {
     
     public StopTime( Map<String,String> d ){

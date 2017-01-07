@@ -10,7 +10,7 @@ import java.awt.Insets;
 
 /**
  * This class represents the GridBagContraints - it is faster and easier to use
- * it than GridBagContraints
+ * it than GridBagContraints.
  *
  * @author swacisko
  */

@@ -12,7 +12,7 @@ import mctemplates.MCSettings;
 import mctemplates.Pair;
 
 /**
- *
+ * Class represents an edge in the graph. Keeps references to its both ends and data concerning the edge (color, contained stops, etc.).
  * @author swacisko
  */
 public class MapEdge extends MapStructure {

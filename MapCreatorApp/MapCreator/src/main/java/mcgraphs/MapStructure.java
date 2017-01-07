@@ -12,7 +12,7 @@ import mctemplates.MCSettings;
 import mctemplates.Pair;
 
 /**
- * 
+ * MapStructure is the parent class of MapNode and MapEdge structures.
  * @author swacisko
  */
 public class MapStructure {
@@ -199,6 +199,9 @@ public class MapStructure {
      
 
     private Color hoverColor = Color.RED;
+    /**
+     * {@link #ID} is the unique number in all {@link MapStructure} elements.
+     */
     private int ID = -1;
     private Color color = MCSettings.getINITIAL_FILL_COLOR();
     private String description = "";
@@ -217,10 +220,25 @@ public class MapStructure {
     
     private Pair<Integer,Integer> textOffset = MCSettings.getINITIAL_TEXT_OFFSET();
 
+    /**
+     * Angle, at which the text concerned with this structure will be displayed.
+     */
     private int textAngle = 0;  
+    /**
+     * If set to true, then texts concerned with this structure will be displayed. Otherwise, these texts won't be displayed.
+     */
     private boolean textVisible = true;
+    /**
+     * Font size of the text concerned with this structure.
+     */
     private int textFontSize = MCSettings.getINITIAL_TEXT_FONT_SIZE();
+    /**
+     * Format of the text concerned with this structure. E.g. Font.BOLD;
+     */
     private int textFormat = Font.PLAIN;
+    /**
+     * Color of the text concerned with this structure.
+     */
     private Color textColor = MCSettings.getTEXT_COLOR();
 
     /**

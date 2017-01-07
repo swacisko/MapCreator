@@ -16,7 +16,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 /**
- *
+ *  {@link MyDialog} is a class used to call JOptionPane dialogs. An instance of this object is created only once, but each time a dialog is shown, panels in this
+ * object are being changed.
  * @author swacisko
  */
 public class MyDialog extends JFrame implements ActionListener {

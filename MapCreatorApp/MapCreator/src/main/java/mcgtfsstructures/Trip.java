@@ -8,10 +8,9 @@ package mcgtfsstructures;
 import java.util.Map;
 
 /**
- *
+ * This class represent a single line of the trips.txt file. Data in each line is processed and mapped.
  * @author swacisko
  */
-// klasa Trip opisuje pojedyncze linie pliku trips.txt
 public class Trip extends GtfsStructure{
 
     

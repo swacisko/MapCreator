@@ -11,7 +11,10 @@ import java.util.ArrayList;
 import mcgui.SchemeContructionPanel;
 
 /**
- * Interface of a drawing module - {@link DrawingModule} and {@link SchemeContructionPanel} must implement this interface.
+ * Interface of a drawing module - {@link DrawingModule} and {@link SchemeContructionPanel} must implement this interface. Instances of classed implementing this interface can be
+ * used by {@link DrawingModule} module to draw graphs on them. Henceforth a class implementing {@link DrawingModuleInterface} becomes some kind of canvas on which
+ * objects can be drawn.
+ *
  * @author swacisko
  */
 public interface DrawingModuleInterface {

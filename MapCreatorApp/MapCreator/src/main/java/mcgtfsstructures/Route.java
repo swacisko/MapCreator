@@ -10,11 +10,10 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * 
+ * This class represent a single line of the routes.txt file. Data in each line is processed and mapped.
  * @author swacisko
  */
 
-// klasa route opisuje poedyncze linie pliku routes.txt
 public class Route extends GtfsStructure {
 
     

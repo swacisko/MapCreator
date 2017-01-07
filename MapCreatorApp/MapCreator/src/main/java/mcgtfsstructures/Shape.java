@@ -11,7 +11,7 @@ import java.util.Comparator;
 import java.util.Map;
 
 /**
- *
+ *This class represent a single line of the shapes.txt file. Data in each line is processed and mapped.
  * @author swacisko
  */
 

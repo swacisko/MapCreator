@@ -11,7 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
+ * Local database class. This class is responsible for storing all data from gtfs files. Data is stored in arrays and maps to enable user quick acces to required 
+ * pieces of information. Since GTFS folder are not too big (no more than 100Mb for really big cities), all data is stored in program's memory.
  * @author swacisko
  */
 public class MCDatabase {

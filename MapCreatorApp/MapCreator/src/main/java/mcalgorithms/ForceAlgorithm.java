@@ -17,7 +17,7 @@ import mctemplates.MCSettings;
 import mctemplates.Pair;
 
 /**
- *
+ * This class is responsible for executing force algorithm. It is used to evenly space node of non-dense graph to ensure it is clear and readable for humans.
  * @author swacisko
  */
 public class ForceAlgorithm {

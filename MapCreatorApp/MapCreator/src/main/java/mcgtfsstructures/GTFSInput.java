@@ -11,6 +11,10 @@ import java.util.Map;
 import mctemplates.MCSettings;
 import mctemplates.UsefulFunctions;
 
+/**
+ * Class responsible for reading and processing data from gtfs files - routes.txt, stops.txt, etc.
+ * @author swacisko
+ */
 public class GTFSInput {
 
     public GTFSInput() {

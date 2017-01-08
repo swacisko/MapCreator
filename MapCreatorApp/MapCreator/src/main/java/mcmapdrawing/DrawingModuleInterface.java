@@ -62,7 +62,7 @@ public interface DrawingModuleInterface {
     
     /**
      * Sets color of the object we want to draw. I.e. before calling one of the functions: {@link #addCircle(java.awt.Point, int)}, {@link #addEllipse(java.awt.Point, int, int)},
-     * {@link #addLine(java.awt.Point, java.awt.Point, int) }, {@link #addPolyline(java.util.ArrayList, int) }, {@link #addText(java.lang.String, java.awt.Point, int) }
+     * {@link #addLine(java.awt.Point, java.awt.Point, int)}, {@link #addPolyline(java.util.ArrayList, int)}, {@link #addText(java.lang.String, java.awt.Point, int)}
      * it sets the color of stroke or font of next objects and/or texts.
      * @param c chosen color
      */

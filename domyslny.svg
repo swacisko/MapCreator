@@ -1,0 +1,19 @@
+<svg width="1000" height="600">
+   <circle cx="730" cy="421" r="4" stroke="green" stroke-width="2" fill="yellow" />
+   <circle cx="513" cy="204" r="4" stroke="green" stroke-width="2" fill="yellow" />
+   <line x1="513" y1="204" x2="730" y2="421" style="stroke:rgb(255,0,0);stroke-width:2" />
+   <circle cx="534" cy="197" r="4" stroke="green" stroke-width="2" fill="yellow" />
+   <line x1="534" y1="197" x2="513" y2="204" style="stroke:rgb(255,0,0);stroke-width:2" />
+   <circle cx="492" cy="180" r="4" stroke="green" stroke-width="2" fill="yellow" />
+   <line x1="492" y1="180" x2="534" y2="197" style="stroke:rgb(255,0,0);stroke-width:2" />
+   <circle cx="503" cy="181" r="4" stroke="green" stroke-width="2" fill="yellow" />
+   <line x1="503" y1="181" x2="492" y2="180" style="stroke:rgb(255,0,0);stroke-width:2" />
+   <circle cx="498" cy="181" r="4" stroke="green" stroke-width="2" fill="yellow" />
+   <line x1="498" y1="181" x2="503" y2="181" style="stroke:rgb(255,0,0);stroke-width:2" />
+   <circle cx="503" cy="184" r="4" stroke="green" stroke-width="2" fill="yellow" />
+   <line x1="503" y1="184" x2="498" y2="181" style="stroke:rgb(255,0,0);stroke-width:2" />
+   <circle cx="499" cy="185" r="4" stroke="green" stroke-width="2" fill="yellow" />
+   <line x1="499" y1="185" x2="503" y2="184" style="stroke:rgb(255,0,0);stroke-width:2" />
+   <circle cx="273" cy="315" r="4" stroke="green" stroke-width="2" fill="yellow" />
+   <line x1="273" y1="315" x2="499" y2="185" style="stroke:rgb(255,0,0);stroke-width:2" />
+</svg>

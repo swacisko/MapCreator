@@ -1,0 +1,71 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package mcgtfsstructures;
+
+import mctemplates.Drawable;
+import mctemplates.Pair;
+import java.util.Map;
+
+/**
+ * This class represent a single line of the stops.txt file. Data in each line is processed and mapped.
+ * @author swacisko
+ */
+public class Stop extends GtfsStructure implements Drawable{
+
+    
+    public Stop(Map<String, String> d) {
+        super(d);
+    }
+    
+    @Override
+    public boolean equals( Object o ){
+        if( !(o instanceof Stop) ) return false;
+        Stop r = (Stop) o;
+        return getStopId().equals( r.getStopId() );
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 11;
+        hash = 91 * hash + getStopId().hashCode();
+        return hash;
+    }
+
+    public String getStopId() {
+        return getData().get("stop_id");
+    }
+
+    public String getStopName() {
+        return getData().get("stop_name");
+    }
+
+    public String getStopLat() {
+        return getData().get("stop_lat");
+    }
+
+    public String getStopLon() {
+        return getData().get("stop_lon");
+    }
+
+    @Override
+    public Pair<Float, Float> getCoords() {
+        if( coords == null ){
+            float lat = Float.parseFloat( getStopLat() );
+            float lon = Float.parseFloat( getStopLon() );
+            coords = new Pair<>(lon,lat);
+        }
+        return coords;
+    }
+    
+    public void setCoords(Pair<Float, Float> coords) {
+        this.coords = coords;
+    }
+    
+    private Pair<Float,Float> coords = null;
+
+    
+
+}

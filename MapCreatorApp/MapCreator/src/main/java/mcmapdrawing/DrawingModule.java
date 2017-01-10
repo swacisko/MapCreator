@@ -1,0 +1,1051 @@
+package mcmapdrawing;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Point;
+import java.io.File;
+import mcgraphs.MapNode;
+import mcgraphs.MapGraph;
+import mcgtfsstructures.Stop;
+import mcgtfsstructures.Shape;
+import mctemplates.Drawable;
+import mctemplates.Pair;
+import mcgtfsstructures.MCDatabase;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import javax.swing.JOptionPane;
+import mcalgorithms.EdgeContraction;
+import mcalgorithms.ForceAlgorithm;
+import mcalgorithms.GraphGlueing;
+import mcalgorithms.MapGraphCreator;
+import mcalgorithms.RoutePathCreator;
+import mcgraphs.GraphPath;
+import mcgraphs.MapEdge;
+import mcgui.SelectedItems;
+import mctemplates.MCSettings;
+import mctemplates.UsefulFunctions;
+
+public class DrawingModule {
+
+    public DrawingModule(DrawingModuleInterface s, SelectedItems items ) {
+        selectedItems = items;
+        svg = s;
+        //initialSVGFileName = "./DrawingFolder/" + svg.getName();        
+        //createLBCandRUC();
+    }
+
+    public void beginSVG() {
+        svg.begin();
+        /*svg.addPolylineStyle();
+         svg.addCircleStyle();
+         svg.addRectangleStyle();
+         svg.addEllipseStyle();*/
+    }
+
+    public void endSVG() {
+        svg.end();
+    }
+
+    private void compareLBCRUC(Pair< Pair<Float, Float>, Pair<Float, Float>> LBCRUC) {
+        if (LBCRUC.getST().getST() < LBC.getST()) {
+            LBC.setST(LBCRUC.getST().getST());
+        }
+        if (LBCRUC.getST().getND() < LBC.getND()) {
+            LBC.setND(LBCRUC.getST().getND());
+        }
+        if (LBCRUC.getND().getST() > RUC.getST()) {
+            RUC.setST(LBCRUC.getND().getST());
+        }
+        if (LBCRUC.getND().getND() > RUC.getND()) {
+            RUC.setND(LBCRUC.getND().getND());
+        }
+
+    }
+
+    private void createLBCandRUC() {
+        Pair< Pair<Float, Float>, Pair<Float, Float>> LBCRUC = getLBCandRUC(new ArrayList<Drawable>(MCDatabase.getAllStops())); // TUTAJ NIE MOZE BYC
+        LBC = LBCRUC.getST();
+        RUC = LBCRUC.getND();
+
+        scaleSVG();
+        modifyLBCandRUC();
+    }
+
+    private void modifyLBCandRUC() {
+        float ratio = MCSettings.getLBCRUCModificationFactor(); // dziwne jest, ze nawet jak zmienie wartosci wzglednie o 1 tysieczna to i tak rysunek sie mocno wygina
+        float dW = RUC.getST() - LBC.getST();
+        float dH = RUC.getND() - LBC.getND();
+
+        LBC.setST(LBC.getST() - ratio * dW);
+        LBC.setND(LBC.getND() - ratio * dH);
+        RUC.setST(RUC.getST() + ratio * dW);
+        RUC.setND(RUC.getND() + ratio * dH);
+    }
+
+    private void createLBCandRUC(MapGraph graph) {
+        LBC = new Pair<>(Float.MAX_VALUE, Float.MAX_VALUE);
+        RUC = new Pair<>(Float.MIN_VALUE, Float.MIN_VALUE);
+
+        ArrayList<MapNode> nodes = graph.getNodes();
+        for (MapNode n : nodes) {
+            Pair<Float, Float> p = n.getCoords();
+            if (p.getST() < LBC.getST()) {
+                LBC.setST(p.getST());
+            }
+
+            if (p.getND() < LBC.getND()) {
+                LBC.setND(p.getND());
+            }
+
+            if (p.getST() > RUC.getST()) {
+                RUC.setST(p.getST());
+            }
+
+            if (p.getND() > RUC.getND()) {
+                RUC.setND(p.getND());
+            }
+        }
+
+        scaleSVG();
+        modifyLBCandRUC();
+    }
+
+    /**
+     * Function scales SVG. As LBC and RUC are set, this function changes
+     * svg.width, so that the proportions of image are adequate.
+     */
+    private void scaleSVG() {
+        float dW = RUC.getST() - LBC.getST();
+        float dH = RUC.getND() - LBC.getND();
+
+        if (dH <= 0) {
+            dH = 0.00001f;
+        }
+
+        float ratio = dW / dH;
+        float H = svg.getHeight();
+        float W = svg.getWidth();
+        if ((svg instanceof SVG) == false) {
+            if (W >= ratio * H) {
+                svg.setSize(Math.round((ratio * H)), svg.getHeight());
+            } else {
+                svg.setSize(svg.getWidth(), Math.round((W / ratio)));
+            }
+        } else {
+            svg.setSize(Math.round((ratio * H)), svg.getHeight());
+        }
+        //System.out.println( "width = " + svg.getWidth() + "   height = " + svg.getHeight() );
+    }
+
+    /**
+     *
+     * @param LBC Left Bottom Corner of our graph
+     * @param RUC Right Upper Corner of our graph
+     * @param coords Coordinates of a point we want to locate on the map
+     * @return returns svg-coordinates corresponding to coords
+     */
+    public Pair<Integer, Integer> normalizeCoordinates(Pair<Float, Float> coords) {
+        float x = coords.getST();
+        float y = coords.getND();
+
+        x -= LBC.getST();
+        y -= LBC.getND(); // translacja tak, aby LBC byl w punkcie (0,0)
+
+        float dW = RUC.getST() - LBC.getST();
+        float dH = RUC.getND() - LBC.getND();
+
+        if (dW == 0) {
+            dW = 0.00001f;
+        }
+        if (dH == 0) {
+            dH = 0.00001f;
+        }
+
+        y = dH - y; // zamiana wspolrzednych na wspolrzedne mapowe w svg        
+
+        float W = (float) svg.getWidth();
+        float H = (float) svg.getHeight();
+
+        int x2 = Math.round((W * x) / dW);
+        int y2 = Math.round((H * y) / dH);
+
+        return new Pair<>(x2, y2);
+    }
+
+    /**
+     * Function normalizes coordinates of all nodes in the graph. This function will be used to optimize number of calculations (it may come very useful ans significantly
+     * speed up the process of drawing and modification of the scheme).
+     * @param graph 
+     */
+    private void normalizeGraphCoordinates(MapGraph graph) {
+        for (MapNode n : graph.getNodes()) {
+            Pair<Integer, Integer> newcoords = normalizeCoordinates(n.getCoords());
+            Pair<Float, Float> res = new Pair<>((float) newcoords.getST(), (float) newcoords.getND());
+            n.setCoords(res);
+        }
+    }
+
+    /**
+     * Calculates the {@link #LBC} and {@link #RUC} of given drawable structures.
+     *
+     * @param structures List of Drawable structures for which i should find LBC
+     * and RUC
+     * @return returns pair (LBC,RUC).
+     */
+    public Pair< Pair<Float, Float>, Pair<Float, Float>> getLBCandRUC(ArrayList<Drawable> structures) {
+        Pair<Float, Float> LBC = new Pair<>(Float.MAX_VALUE, Float.MAX_VALUE);
+        Pair<Float, Float> RUC = new Pair<>(Float.MIN_VALUE, Float.MIN_VALUE);
+
+        for (Drawable d : structures) {
+            Pair<Float, Float> p = d.getCoords();
+            if (p.getST() < LBC.getST()) {
+                LBC.setST(p.getST());
+            }
+
+            if (p.getND() < LBC.getND()) {
+                LBC.setND(p.getND());
+            }
+
+            if (p.getST() > RUC.getST()) {
+                RUC.setST(p.getST());
+            }
+
+            if (p.getND() > RUC.getND()) {
+                RUC.setND(p.getND());
+            }
+        }
+
+        return new Pair<>(LBC, RUC);
+    }
+
+    /**
+     * Draws all shapes contained in {@link MCDatabase#shapes}.
+     */
+    public void drawShapesOnMap() {
+        Set<String> set = new HashSet<>();
+
+        ArrayList<Shape> allShapes = MCDatabase.getAllShapes();
+        ArrayList<Shape> shapeById = null;
+
+        for (Shape s : allShapes) {
+            if (!set.contains(s.getShapeId())) {
+                set.add(s.getShapeId());
+                shapeById = MCDatabase.getAllShapesOfId(s.getShapeId());
+
+                ArrayList<Integer> x = new ArrayList<>();
+                ArrayList<Integer> y = new ArrayList<>(); // tego nie powinno byc - bedzie do czasu gdy Asia zrobic funkcje dodawania lini dla par
+
+                for (Shape sh : shapeById) {
+                    Pair<Integer, Integer> norm = normalizeCoordinates(sh.getCoords());
+                    x.add(norm.getST());
+                    y.add(norm.getND());
+                }
+
+                /*svg.setPolylineWidth(3);
+                 svg.setPolylineColor(UsefulFunctions.parseColor(UsefulFunctions.getNextColor()));*/
+                svg.setStrokeWidth(3);
+                svg.setColor(UsefulFunctions.getNextColor());
+                ArrayList<Point> list = new ArrayList<>();
+                for (int i = 0; i < x.size(); i++) {
+                    list.add(new Point(x.get(i), y.get(i)));
+                }
+                addPolyline(list);
+
+                //  System.out.println( "Narysowalem linie dla " + s.getShapeId() );
+            }
+        }
+
+    }
+
+    /**
+     * Draws all stops contained in {@link MCDatabase#stops}.
+     */
+    public void drawStopsOnMap() {
+        ArrayList<Stop> stops = MCDatabase.getAllStops();
+
+        for (Stop s : stops) {
+            float x = Float.parseFloat(s.getStopLon());
+            float y = Float.parseFloat(s.getStopLat());
+            Pair<Integer, Integer> p = normalizeCoordinates(new Pair<>(x, y));
+            svg.addCircle(new Point(p.getST(), p.getND()), 3);
+            //   System.out.println( "Dodalem przystanek o id = " + s.getStopId() + "   x = " + p.getST() + "  y = " + p.getND() );
+        }
+    }
+
+    /**
+     * Creates ShapeMap - a scheme with all shapes drawn on it.
+     */
+    public void drawShapeMap() {
+
+        String path = (new File("").getAbsolutePath()) + "/GTFS/" + "shapes.txt";
+        if (UsefulFunctions.existsFile(path) == false) {
+            System.out.println("No shapes.txt file,   path = " + path);
+            return;
+        }
+
+        createLBCandRUC();
+        svg.setName(initialSVGFileName + "_shape_map");
+        beginSVG();
+
+        drawShapesOnMap();
+        drawStopsOnMap();
+
+        endSVG();
+    }
+
+    /**
+     * Draws a basic graph - the one constructed by {@link MapGraphCreator}.
+     */
+    public void drawDatabaseGraph() {
+        System.out.println("Zaczynam tworzyc podstawowy graf z danych GTFS");
+        graph = new MapGraphCreator().createMapGraphFromGtfsDatabase(MCSettings.getDRAWING_ROUTE_TYPE());
+        System.out.println("Ukonczylem tworzenie grafu z danych GTFS");
+        System.out.println("Basic graph ma " + graph.countNodes() + " wierzcholkow i " + graph.countEdges() + " krawedzi");
+
+        System.out.println("Rozpoczynam rysowanie podstawowego grafu");
+        drawGraphOnMap(graph, "basic");
+        System.out.println("Skonczylem rysowac podstawowy graf\n\n");
+    }
+
+    /**
+     * Function drawGluedGraph draws glued graph. Earlier drawDatabaseGraph
+     * function must be called
+     */
+    private void drawGluedGraph() {
+        System.out.println("Zaczynam procedure sklejania grafu");
+        new GraphGlueing(graph).convertGraph();
+        System.out.println("Skonczylem procedure sklejania grafu");
+        System.out.println("GLUED graph ma " + graph.countNodes() + " wierzcholkow i " + graph.countEdges() + " krawedzi");
+
+        System.out.println("Rozpoczynam rysowanie sklejonego grafu");
+        drawGraphOnMap(graph, "glued");
+        System.out.println("Skonczylem rysowanie sklejonego grafu\n\n");
+    }
+
+    /**
+     * Function drawEdgeContractedGraph draws edge-contracted graph. Earlier
+     * functions drawDatabaseGraph and drawGluedGraph must be called
+     */
+    private void drawEdgeContractedGraph() {
+        System.out.println("Zaczynam procedure kontrakcji krawedzi");
+        new EdgeContraction(graph).convertGraph();
+        System.out.println("Skonczylem procedure kontrakcji krawedzi");
+        System.out.println("Edgecontracted graph ma " + graph.countNodes() + " wierzcholkow i " + graph.countEdges() + " krawedzi");
+
+        System.out.println("Rozpoczynam rysowanie grafu z kontrakcja krawedzi");
+        drawGraphOnMap(graph, "edgecontracted");
+        System.out.println("Skonczylem rysowanie grafu z kontrakcja krawedzi\n\n");
+    }
+
+    /**
+     * Draws force spaced graph (after procedure with use of force algorithm).
+     */
+    private void drawForceSpacedGraph() {
+        System.out.println("Zaczynam algorytm siłowy");
+        System.out.println("");
+        new ForceAlgorithm(graph, svg).convertGraph();
+        System.out.println("Zakonczylem dzialanie algorytmu silowego");
+        System.out.println("Force-spaced graph ma " + graph.countNodes() + " wierzcholkow i " + graph.countEdges() + " krawedzi");
+
+        System.out.println("Rozpoczynam rysowanie grafu force-spaced");
+        drawGraphOnMap(graph, "force-spaced");
+        System.out.println("Skonczylem rysowanie grafu force-spaced\n\n");
+    }
+
+    /**
+     * Draws all maps that can be generated
+     */
+    public void drawAllMaps() {
+        drawShapeMap();
+
+        drawDatabaseGraph(); // UWAGA - to rysowanie musi byc w takiej kolejnosci!
+        drawGluedGraph();
+        drawEdgeContractedGraph();
+        drawForceSpacedGraph();
+    }
+
+    private void drawNodeText(MapNode n, Color c) {
+        svg.setColor(c);
+        String s = n.getStructureName();
+        //s += ":" + n.getContainedStopsIds().size();
+        Point p = UsefulFunctions.convertToPoint(normalizeCoordinates(n.getCoords()));
+        Pair<Integer, Integer> offset = n.getTextOffset();
+        if ((svg instanceof SVG) == false) {
+            p.x += (int) (MCSettings.getSvgToSwingFactor() * offset.getST());
+            p.y += (int) (MCSettings.getSvgToSwingFactor() * offset.getND());
+        } else {
+            p.x += offset.getST();
+            p.y += offset.getND();
+        }
+        svg.addText(p, s, n.getTextFontSize(), n.getTextFormat(), n.getTextAngle());
+    }
+
+    /**
+     * For given node sets all drawing parameters which will be used during modeling that node (e.g. stroke width, color, fill color).
+     * @param n node for which parameters should be set.
+     */
+    private void setDrawingNodeParameters(MapNode n) {
+        if (n.getDrawingWidth() != 0) {
+            svg.setStrokeWidth(n.getDrawingWidth());
+        }
+        if (n.getHoverWidth() != 0) {
+            svg.setStrokeWidth(n.getDrawingWidth());
+        }
+        if (n.getHoverColor() != null) {
+            svg.setColor(n.getColor());
+            svg.setFill(n.getFillColor());
+        }
+        if (n.getColor() != null) {
+            svg.setColor(n.getColor());
+        }
+        if (n.getFillColor() != null) {
+            svg.setFill(n.getFillColor());
+        }
+    }
+
+    /**
+     * Draws graph nodes on a map.
+     *
+     * @param graph Nodes from this graph will be drawn.
+     * @return returns the same graph to enable chain call.
+     */
+    private MapGraph drawGraphNodesOnMap(MapGraph graph) {
+        Set<Integer> insignificantNodes = createInsignificantNodes(graph);
+        for (MapNode n : graph.getNodes()) {
+            setDrawingNodeParameters(n);
+
+            int dW = MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH() * getNodeDrawingWidthHighlightCoefficient(n);
+            if (insignificantNodes.contains(n.getID())) {
+                dW = 3;
+            }
+            float svgFactor = 1;
+            if( (svg instanceof SVG) == false ){
+                svgFactor = MCSettings.getSvgToSwingFactor();
+            }
+
+            int width,height;
+            if ((n.getContainedStopsIds().size() >= 4) || (insignificantNodes.contains(n.getID()) == false)) {
+                width = 3 * n.getWidth() + dW;
+                height = 2 * n.getHeight() + dW;
+            } else if (n.countEdges() == 1 || (n.countEdges() < 4 && n.isContractable() == false)) {
+                width = n.getWidth() + dW;
+                height = n.getHeight() + dW;
+            } else {
+                width = 3 * n.getWidth() + dW;
+                height = 2 * n.getHeight() + dW;
+            }
+            
+            addShape( n.getShape(),UsefulFunctions.convertToPoint(normalizeCoordinates(n.getCoords())), (int)(svgFactor*width) , (int)(svgFactor*height) ,0 );
+        }
+
+        return graph;
+    }
+
+    /**
+     * Sets parameters used to draw an edge. (e.g. stroke width, color).
+     * @param e 
+     */
+    private void setDrawingEdgeParameters(MapEdge e) {
+        if (e.getHoverWidth() != 0) {
+
+            //svg.setPolylineWidthHover(e.getHoverWidth());
+        }
+        if (e.getDrawingWidth() != 0) {
+            svg.setStrokeWidth(e.getDrawingWidth());
+            //svg.setPolylineWidth(e.getDrawingWidth());
+        }
+        if (e.getColor() != null) {
+            svg.setColor(e.getColor());
+            //svg.setPolylineColor(UsefulFunctions.parseColor(e.getColor()));
+        }
+        if (e.getHoverColor() != null) {
+            //svg.setPolylineColorHover(UsefulFunctions.parseColor(e.getHoverColor()));
+        }
+    }
+
+    /**
+     * Draws stops contained in edges, and their names. 
+     */
+    private void drawEdgeContainedStops(MapGraph graph) {
+        for (MapEdge e : graph.getEdges()) {
+            Pair<MapNode, MapNode> ends = e.getEnds();
+            MapNode beg = ends.getST();
+            MapNode end = ends.getND();
+            Pair<Integer, Integer> begCoords = normalizeCoordinates(beg.getCoords());
+            Pair<Integer, Integer> endCoords = normalizeCoordinates(end.getCoords());
+            ArrayList<String> containedStops = e.getContainedForwardStopsIds();
+            int L = containedStops.size();
+            Pair<Float, Float> vec = new Pair<>((float) endCoords.getST() - begCoords.getST(), (float) endCoords.getND() - begCoords.getND());
+            vec.setST(vec.getST() / (L + 1));
+            vec.setND(vec.getND() / (L + 1));
+            
+            int width = e.getContainedStopsWidth();
+            int height = e.getContainedStopsHeight();
+            if( highlights != null && highlights.get( new Pair<>( Math.min( beg.getID(), end.getID() ), Math.max( beg.getID(), end.getID() )  ) ) != null){                
+                height += MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH() * 
+                    highlights.get( new Pair<>( Math.min( beg.getID(), end.getID() ), Math.max( beg.getID(), end.getID() )  ) );
+            }
+            
+            if( (svg instanceof SVG) == false ){
+                width *= MCSettings.getSvgToSwingFactor();
+                height *= MCSettings.getSvgToSwingFactor();
+            }
+            
+            int angle = 0;
+            if( begCoords.getST().intValue() != endCoords.getST().intValue() ){
+                double alpha = Math.atan( ((double)( endCoords.getND() - begCoords.getND() )) / ( (double)( endCoords.getST() - begCoords.getST() )  ) );
+                angle = (int)Math.round(180*alpha / Math.PI);                
+            }else{
+                angle = 90;
+            }
+            
+            Pair<Integer, Integer> offset = e.getTextOffset();
+            float offx = offset.getST();
+            float offy = offset.getND();
+            if ((svg instanceof SVG) == false) {
+                offx *= MCSettings.getSvgToSwingFactor();
+                offy *= MCSettings.getSvgToSwingFactor();
+            }
+            int rectangleFactor = 1;// ((svg instanceof SVG) && e.getShape().equals(MCSettings.RECTANGLE) ) ? 2 : 1;
+            
+            for (int i = 1; i <= L; i++) {
+                svg.setFill( Color.GRAY );
+                svg.setColor( Color.BLACK );
+                svg.setStrokeWidth(3);
+                /*addEllipse((int) (begCoords.getST() + i * vec.getST()), (int) (begCoords.getND() + i * vec.getND()), radius, radius);
+                addRectangle( new Point((int) (begCoords.getST() + i * vec.getST()), (int) (begCoords.getND() + i * vec.getND())  ),
+                        width, height, angle);*/
+                addShape( e.getShape(),new Point((int) (begCoords.getST() + i * vec.getST()), (int) (begCoords.getND() + i * vec.getND())  ),
+                        rectangleFactor*width, rectangleFactor*height, angle);
+                
+                Stop st = MCDatabase.getStopOfID(e.getContainedForwardStopsIds().get(i - 1));
+                String text = e.getContainedForwardStopsIds().get(i - 1);
+                if (st != null) {
+                    text = st.getStopName();
+                }
+                
+                svg.setColor(e.getTextColor());
+                svg.setStrokeWidth( e.getDrawingWidth() );
+                if (MCSettings.isDrawContainedStopsTexts() && e.isTextVisible()) {
+                    svg.addText(new Point((int) (begCoords.getST() + i * vec.getST() + offx), (int) (begCoords.getND() + i * vec.getND() + offy)),
+                            text, e.getTextFontSize(), e.getTextFormat(), e.getTextAngle());
+                }
+            }
+        }
+    }
+
+    /**
+     * Function responsible for drawing edges in map. 
+     * @param graph
+     * @return 
+     */
+    private MapGraph drawGraphEdgesOnMap(MapGraph graph) {
+        ArrayList<Point> polyline = new ArrayList<>();
+
+        for (MapEdge e : graph.getEdges()) {
+            polyline.clear();
+            MapNode n1 = e.getEnds().getST();
+            MapNode n2 = e.getEnds().getND();
+            polyline.add(UsefulFunctions.convertToPoint(normalizeCoordinates(n1.getCoords())));
+            polyline.add(UsefulFunctions.convertToPoint(normalizeCoordinates(n2.getCoords())));
+
+            setDrawingEdgeParameters(e);
+
+            addPolyline(polyline);
+        }
+        return graph;
+    }
+
+    /**
+     * The crucial function in {@link DrawingModule}. It is called to draw a graph on the map.
+     * @param graph This graph will be drawn on the map.
+     * @param svgname name of the svg file in which the map should be saved.
+     * @return returns graph to enable chain call.
+     */
+    public MapGraph drawGraphOnMap(MapGraph graph, String svgname) {
+        if (graph == null) {
+            return null;
+        }
+
+        createLBCandRUC(graph);
+        //normalizeGraphCoordinates( graph);
+
+        svg.setName(initialSVGFileName + svgname);
+        beginSVG();
+        // svg.addImageLink( "background.jpg" );        
+
+        drawGraphEdgesOnMap(graph);
+        drawRoutesToHighlightOnGraph(graph);
+        drawGraphNodesOnMap(graph);
+        drawRouteEndsOnGraph(graph);
+        drawEdgeContainedStops(graph);
+        drawTextsOnMap(graph);
+
+        drawAlignmentRectangle(); // this should not be int drawGraph!!!
+        
+        endSVG();
+        return graph;
+    }
+
+    /**
+     * Draws text we want to show on map. This includes among the others
+     * structure names of nodes and route names of edges. This function is
+     * called after drawing edges and nodes to avoid text being shadowed by
+     * other node
+     *
+     * @param graph texts of structures in this graph will be drawn.
+     * @see #drawEdgeText(mcgraphs.MapEdge)
+     * @see #drawNodeTexts(mcgraphs.MapGraph) 
+     */
+    private void drawTextsOnMap(MapGraph graph) {
+        drawEdgeTexts(graph);
+        drawNodeTexts(graph);
+    }
+
+    private void drawEdgeTexts(MapGraph graph) {
+
+    }
+
+    /**
+     * Writes every information we want to write, concerned with the edge.
+     *
+     * @param edge Writes for given MapEdge
+     */
+    private void drawEdgeText(MapEdge edge) {
+
+    }
+
+    /**
+     * Function used to draw text of MapNode elements in the graph.
+     * @param graph
+     */
+    private void drawNodeTexts(MapGraph graph) {
+        for (MapNode n : graph.getNodes()) {            
+            if (n.isTextVisible()){
+                if( highlights != null && (MCSettings.isDrawBackgroundTexts() == false) ){
+                    for( MapNode m : graph.getNodes() ){
+                        if( highlights.get( new Pair<>( Math.min(n.getID(), m.getID()), Math.max( n.getID(),m.getID() ) ) ) != null ){
+                            drawNodeText(n, n.getTextColor());
+                            break;
+                        }
+                    }
+                }else{
+                    drawNodeText(n, n.getTextColor());
+                }                
+                
+            }
+        }
+    }
+
+    /**
+     * Creates insignificant nodes, that is nodes, that are not in any of the main (highlighted) routes.
+     * @param graph graph for which insignificant nodes will be determined.
+     * @return returns a set of integer with id's of insignificant nodes in given graph.
+     */
+    private Set<Integer> createInsignificantNodes(MapGraph graph) {
+        Set<Integer> insNodes = new HashSet<>();
+        for (MapNode n : graph.getNodes()) {
+            insNodes.add(n.getID());
+        }
+        ArrayList<String> routes = MCSettings.getRoutesToHighlight();
+        Map<String, ArrayList<GraphPath>> paths = new RoutePathCreator(graph).createRoutePaths(routes);
+        for (Map.Entry<String, ArrayList<GraphPath>> entry : paths.entrySet()) {
+            for (GraphPath gp : entry.getValue()) {
+                for (Integer d : gp.getPathSequence()) {
+                    insNodes.remove(d);
+                }
+            }
+        }
+        return insNodes;
+    }
+
+    /**
+     * Function responsible for drawing main (highlighted) routes on graph. It finds insignificant nodes ({@link #createInsignificantNodes(mcgraphs.MapGraph) } and 
+     * creates all paths ({@link RoutePathCreator}. Subsequently it uses {@link #createHighlights(java.util.Map) }. After that, the function draws all main routes
+     * as polylines.
+     * @param graph 
+     */
+    private void drawRoutesToHighlightOnGraph(MapGraph graph) {
+        ArrayList<String> routes = MCSettings.getRoutesToHighlight();
+        Map<String, ArrayList<GraphPath>> paths = new RoutePathCreator(graph).createRoutePaths(routes);
+        createHighlights(paths);
+
+        for (Map.Entry<String, ArrayList<GraphPath>> entry : paths.entrySet()) {
+            for (GraphPath gp : entry.getValue()) {
+                ArrayList<Point> polyline = new ArrayList<>();
+                if (gp.getPathSequence().size() < 2) {
+                    continue;
+                }
+
+                for (int i = 1; i < gp.getPathSequence().size(); i++) {
+                    MapNode nA = graph.getMapNodeByID(gp.getPathSequence().get(i - 1));
+                    MapNode nB = graph.getMapNodeByID(gp.getPathSequence().get(i));
+
+                    if (nA == null || nB == null) {
+                        JOptionPane.showMessageDialog(null, "nA or nB = null", "NULL ERROR", JOptionPane.ERROR_MESSAGE);
+                    }
+
+                    boolean reversed = false;
+                    if (nA.getID() > nB.getID()) {
+                        reversed = true;
+                        MapNode temp = nA;
+                        nA = nB;
+                        nB = temp;
+                    }
+
+                    Pair<Float, Float> coordsA = UsefulFunctions.parsePairToFloat(normalizeCoordinates(nA.getCoords()));
+                    Pair<Float, Float> coordsB = UsefulFunctions.parsePairToFloat(normalizeCoordinates(nB.getCoords()));
+
+                    if (coordsA == null || coordsB == null) {
+                        System.out.println("coordsA = " + coordsA + "\ncoordsB = " + coordsB);
+                        System.out.println("nA = " + nA + "\nnB = " + nB);
+                        break;
+                    }
+
+                    Pair<Float, Float> perpVec = UsefulFunctions.getNormalizedPerpendicularVector(coordsA, coordsB);
+                    if (reversed) {
+                        perpVec = UsefulFunctions.getNormalizedPerpendicularVector(coordsB, coordsA);
+                        // perpVec.setST( -perpVec.getST() );
+                        //  perpVec.setND( -perpVec.getND() );
+                    }
+
+                    /*if( (UsefulFunctions.getVectorLength(perpVec) < 0.999f) || (UsefulFunctions.getVectorLength(perpVec) > 1.001f) ){
+                     System.out.println( "perpVec has length equal to " + UsefulFunctions.getVectorLength(perpVec) );
+                     }*/
+                    float x = coordsB.getST();
+                    float deltax = leftHighlightOffset.get(new Pair<>(nA.getID(), nB.getID())) * perpVec.getST();
+
+                    float y = coordsB.getND();
+                    float deltay = leftHighlightOffset.get(new Pair<>(nA.getID(), nB.getID())) * perpVec.getND();
+
+                    if (reversed) {
+                        x = coordsA.getST();
+                        deltax = rightHighlightOffset.get(new Pair<>(nA.getID(), nB.getID())) * perpVec.getST();
+                        y = coordsA.getND();
+                        deltay = rightHighlightOffset.get(new Pair<>(nA.getID(), nB.getID())) * perpVec.getND();
+                    }
+
+                    float c = coordsA.getST();
+                    float d = coordsA.getND();
+                    if (reversed) {
+                        c = coordsB.getST();
+                        d = coordsB.getND();
+                    }
+
+                    polyline.add(new Point(Math.round(c + deltax), Math.round(d + deltay)));
+                    polyline.add(new Point(Math.round(x + deltax), Math.round(y + deltay)));
+
+                    float factor = 1f;
+                    if ((svg instanceof SVG) == false) {
+                        factor *= MCSettings.getSvgToSwingFactor();
+                    }
+
+                    if (reversed) {
+                        float val = rightHighlightOffset.get(new Pair<>(nA.getID(), nB.getID()));
+                        val -= factor * MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH();
+                        rightHighlightOffset.remove(new Pair<>(nA.getID(), nB.getID()));
+                        rightHighlightOffset.put(new Pair<>(nA.getID(), nB.getID()), val);
+                    } else {
+                        float val = leftHighlightOffset.get(new Pair<>(nA.getID(), nB.getID()));
+
+                        val -= factor * MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH();
+                        leftHighlightOffset.remove(new Pair<>(nA.getID(), nB.getID()));
+                        leftHighlightOffset.put(new Pair<>(nA.getID(), nB.getID()), val);
+                    }
+                }
+
+                Color c = MCSettings.getRouteToHighlightColor(entry.getKey());
+
+                float strokeWidth = MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH();
+                svg.setStrokeWidth((int) strokeWidth);
+
+                svg.setColor(c);
+                addPolyline(polyline);
+
+            }
+        }
+    }
+
+    /**
+     * Creates {@link #highlights} map. For each pair of nodes we determine the
+     * number of highlighted routes between them.
+     *
+     * @param paths this parameter must be a map created by {@link RoutePathCreator#createRoutePaths(java.util.ArrayList) } function.
+     */
+    private void createHighlights(Map<String, ArrayList<GraphPath>> paths) {
+        highlights.clear();
+        leftHighlightOffset.clear();
+        rightHighlightOffset.clear();
+        for (Map.Entry<String, ArrayList<GraphPath>> entry : paths.entrySet()) {
+            for (GraphPath gp : entry.getValue()) {
+                for (int i = 1; i < gp.getPathSequence().size(); i++) {
+                    int a = gp.getPathSequence().get(i);
+                    int b = gp.getPathSequence().get(i - 1);
+                    if (a > b) {
+                        int temp = a;
+                        a = b;
+                        b = temp;
+                    }
+                    Pair<Integer, Integer> p = new Pair<>(a, b);
+
+                    if (highlights.containsKey(p) == false) {
+                        highlights.put(p, 0);
+                    }
+
+                    int val = highlights.get(p);
+                    highlights.remove(p);
+                    highlights.put(p, val + 1);
+                }
+            }
+        }
+
+        for (Map.Entry< Pair<Integer, Integer>, Integer> entry : highlights.entrySet()) {
+            int offset = entry.getValue();
+            float val;
+            float factor = 1;
+            if ((svg instanceof SVG) == false) {
+                factor *= MCSettings.getSvgToSwingFactor();
+            }
+
+            if (offset % 2 == 0) {
+                offset /= 2;
+                val = factor * MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH() * offset;
+                val -= (factor * MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH()) / 2;
+                leftHighlightOffset.put(entry.getKey(), val);
+                rightHighlightOffset.put(entry.getKey(), val);
+            } else {
+                offset /= 2;
+                val = factor * MCSettings.getINITIAL_ROUTE_HIGHLIGHT_WIDTH() * offset;
+                leftHighlightOffset.put(entry.getKey(), val);
+                rightHighlightOffset.put(entry.getKey(), val);
+            }
+        }
+    }
+
+    /**
+     * For given map node we check what is the maximal number of highlighted
+     * routes that visit this node
+     *
+     * @param n We check for the given node
+     * @return returns the maximum number of highlighted routes between node n
+     * and one of its neighbors.
+     */
+    private int getNodeDrawingWidthHighlightCoefficient(MapNode n) {
+        int M = 0;
+        for (MapNode neigh : n.getNeighbours()) {
+            int a = n.getID();
+            int b = neigh.getID();
+            int val = (highlights.get(new Pair<>(a < b ? a : b, a < b ? b : a)) == null) ? 0 : highlights.get(new Pair<>(a < b ? a : b, a < b ? b : a));
+            if (val > M) {
+                M = val;
+            }
+        }
+        return M;
+    }
+
+    /**
+     * Function responsible for assigning to each node a {@link RouteEndGroup} object - it is an object with 'references' to all routes with an end in that node.
+     * @param graph graph for which the route ends will be created.
+     */
+    private void createRouteEnds(MapGraph graph){
+        Map<Integer, RouteEndGroup> routeEnds = selectedItems.getRouteEnds();
+        if( routeEnds == null || routeEnds.isEmpty() == false ) return;
+        ArrayList<String> routes = MCSettings.getRoutesToHighlight();
+        Map<String, ArrayList<GraphPath>> paths = new RoutePathCreator(graph).createRoutePaths(routes);
+        routeEnds.clear();
+        for (Map.Entry<String, ArrayList<GraphPath>> entry : paths.entrySet()) {
+            for (GraphPath path : entry.getValue()) {
+                if (routeEnds.get(path.getPathBegValue()) == null) {
+                    routeEnds.put(path.getPathBegValue(), new RouteEndGroup(path.getPathBegValue()));
+                }
+
+                if (routeEnds.get(path.getPathEndValue()) == null) {
+                    routeEnds.put(path.getPathEndValue(), new RouteEndGroup(path.getPathEndValue()));
+                }
+
+                routeEnds.get(path.getPathBegValue()).addRouteEnd(entry.getKey());
+                routeEnds.get(path.getPathEndValue()).addRouteEnd(entry.getKey());
+            }
+        }        
+        
+        for( Map.Entry<Integer,RouteEndGroup> entry : routeEnds.entrySet() ){
+            entry.getValue().makeUniqueRouteIds();
+        }
+    }
+
+    /**
+     * Function responsible for drawing route ends on graph.
+     * @param graph 
+     * @see #createRouteEnds(mcgraphs.MapGraph)
+     */
+    private void drawRouteEndsOnGraph(MapGraph graph) {
+        Map<Integer, RouteEndGroup> routeEnds = selectedItems.getRouteEnds();
+        if( routeEnds == null ) return;
+        createRouteEnds(graph);
+        for (MapNode n : graph.getNodes()) {
+            int id = n.getID();
+            if (routeEnds.get(id) == null) {
+                continue;
+            }
+            
+            RouteEndGroup group = routeEnds.get(id);
+            Pair<Integer,Integer> coords = normalizeCoordinates( n.getCoords() );
+            int offsetX = group.getOffset().getST();
+            int offsetY = group.getOffset().getND();
+            ArrayList<String> routeIds = group.getRouteIds();
+            int columns = group.getColumns();
+            int singleSquareSize = group.getSingleSquareSize();
+            int fontsize = (int)( 1.15f*singleSquareSize);            
+            if( (svg instanceof SVG) == false ){
+                singleSquareSize *= MCSettings.getSvgToSwingFactor();
+                offsetX *= MCSettings.getSvgToSwingFactor();
+                offsetY *= MCSettings.getSvgToSwingFactor();
+            }
+            
+            int x = 0;
+            int y = 0;
+            
+            for( int i=0; i<routeIds.size(); i++ ){               
+                Color fillcolor = MCSettings.getRouteToHighlightColor( routeIds.get(i) );
+                svg.setFill(fillcolor);
+                svg.setColor(fillcolor );
+                
+                int length = routeIds.get(i).length();
+                float widthFactor = -0.5f + (float)length / 2;
+                
+                float diff = widthFactor * singleSquareSize / 2;
+                svg.addRectangle( new Point( coords.getST() + offsetX + (int)(x+diff), coords.getND() + offsetY + (int)y  ),
+                       (int)(singleSquareSize*(1+widthFactor)), singleSquareSize,0);
+                
+                svg.setColor(fillcolor == Color.BLUE ? Color.WHITE : Color.BLACK );
+                
+                svg.addText( new Point( coords.getST() + offsetX + (int)(x) + (int)( (0.2f)* singleSquareSize ) - (singleSquareSize/2), 
+                        coords.getND() + offsetY + (int)(y+singleSquareSize) - (int)( (0.15f )* singleSquareSize ) - (singleSquareSize/2) ),
+                        routeIds.get(i), fontsize, Font.BOLD,0 );
+                                 
+                x += singleSquareSize * ( 1 + widthFactor );
+                if( (i+1)%columns == 0 ){
+                    x = 0;
+                    y += singleSquareSize;
+                }          
+                
+            }
+        }
+
+    }
+    
+    /**
+     * Function responsible for drawing a rectangle during modifying the scheme with alignment methods.
+     */
+    public void drawAlignmentRectangle(){
+        if( selectedItems == null || selectedItems.getAlignmentBeg() == null || selectedItems.getAlignmentEnd() == null ) return;
+        Point beg = new Point( selectedItems.getAlignmentBeg() );
+        Point end = new Point( selectedItems.getAlignmentEnd() );
+        
+        if (beg.x > end.x) {
+            int temp = beg.x;
+            beg.x = end.x;
+            end.x = temp;
+        }
+
+        if (beg.y > end.y) {
+            int temp = beg.y;
+            beg.y = end.y;
+            end.y = temp;
+        }
+        
+        int dW = end.x - beg.x;
+        int dH = end.y - beg.y;
+        
+        svg.setColor(Color.red);
+        svg.setFill( null );
+        svg.setStrokeWidth(1);
+        svg.addRectangle( new Point( beg.x + (dW/2), beg.y + (dH/2) ), dW, dH, 0 );
+    }
+
+    public Map<Integer, RouteEndGroup> getRouteEnds() {
+        return selectedItems.getRouteEnds();
+    }
+
+    public void setRouteEnds(Map<Integer, RouteEndGroup> routeEnds) {
+        selectedItems.setRouteEnds(routeEnds);
+    }
+
+    private void addPolyline(ArrayList<Point> list) {
+        svg.addPolyline(list);
+    }
+
+    private void addCircle(int x, int y, int r) {
+        svg.addCircle(new Point(x, y), r);
+    }
+
+    private void addCircle(Point p, int r) {
+        addCircle((int) p.getX(), (int) p.getY(), r);
+    }
+
+    private void addEllipse(int x, int y, int width, int height, int angle) {
+        svg.addEllipse(new Point(x, y), width, height, angle);
+    }
+
+    private void addEllipse(Point p, int width, int height, int angle) {
+        addEllipse((int) p.getX(), (int) p.getY(), width, height, angle);
+    }
+    
+    /**
+     * Draws a rectangle with specified parameters
+     * @param p center of the rectangle
+     * @param width width of the rectangle
+     * @param height height of the rectangle
+     * @param angle angle at which the rectangle should be rotated, around point p
+     */
+    private void addRectangle( Point p, int width, int height, int angle ){
+        svg.addRectangle( p,width,height,angle );
+    }
+    
+    /**
+     * Draws shape on the map.
+     * @param shape {@link MCSettings#RECTANGLE} or {@link MCSettings#ELLIPSE} (so far)
+     * @param p center of the shape
+     * @param width width of the shape
+     * @param height height of the shape
+     * @param angle angle, at which the shape should be drawn
+     */
+    private void addShape( String shape, Point p, int width, int height, int angle ){
+        if( shape.equals( MCSettings.RECTANGLE ) ){
+            addRectangle(p, width, height, angle);
+            
+        }else if( shape.equals( MCSettings.ELLIPSE ) ){
+            addEllipse(p, width, height,angle);            
+        }
+    }
+
+    private String initialSVGFileName = MCSettings.getMapsDirectoryPath();
+    private DrawingModuleInterface svg = null;
+    private MapGraph graph = new MapGraph();
+
+    private Pair<Float, Float> RUC = null;
+    private Pair<Float, Float> LBC = null;
+
+    /**
+     * {@link #highlights} is a map in which for each pair of nodes in a graph
+     * there is number of routes between them to be highlighted
+     */
+    private Map< Pair<Integer, Integer>, Integer> highlights = new HashMap<>();
+    /**
+     * Function used during drawing highlighted routes to determine the position of next segment of a polyline.
+     */
+    private Map< Pair<Integer, Integer>, Float> leftHighlightOffset = new HashMap<>();
+    /**
+     * Function used during drawing highlighted routes to determine the position of next segment of a polyline.
+     */
+    private Map< Pair<Integer, Integer>, Float> rightHighlightOffset = new HashMap<>();
+
+    /**
+     * Selected items - data of all editable elements.
+     */
+    SelectedItems selectedItems = null;
+}

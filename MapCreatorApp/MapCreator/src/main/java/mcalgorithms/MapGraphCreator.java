@@ -20,7 +20,6 @@ import mctemplates.Pair;
  * {@link MapGraphCreator} contains all methods needed to create basic graph from database.
  * @author swacisko
  */
-// TWORZY GRAF Z DANYCH GTFS
 public class MapGraphCreator {
 
     /**

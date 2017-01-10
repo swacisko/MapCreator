@@ -251,7 +251,7 @@ public class DSPanel extends JPanel {
     
     
     /**
-     * 
+     * Creates JSlider object with specified parameters. Invokes methods: setPaintTicks(), setPaintTrack(), setPaintLabels()m setMajorTickSpacing()
      * @param min minimal value of slider scope
      * @param max maximal value of slider scope
      * @param value initial value of the slider

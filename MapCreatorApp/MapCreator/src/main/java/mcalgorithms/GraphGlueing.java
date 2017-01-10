@@ -180,8 +180,10 @@ public class GraphGlueing {
      * Glues node n2 to node n1. Afterwards n2 will be erased from the graph (but it will happen in glueGraph function).
      * @param n1 A node we want to glue with n2. n1 will remain in graph
      * @param n2 Data from node n2 will be merged into data from n1.
+     * @param glueingTime glueing time is the number of gluing we are doing in the algorithm. During first glueing {@link LongestCommonSubstring} class is used
+     * to determine name of the stop. During second glueing remains the name of the more numerous stop.
      */
-    private void glueNodes( MapNode n1, MapNode n2 ){
+    public static void glueNodes( MapNode n1, MapNode n2, int glueingTime ){
         ArrayList<MapEdge> edges = n2.getEdges();
         for( MapEdge e : edges ){            
             if( e.hasEndInMapNodeOfID( n1.getID() ) ){ // jezeli ta krawedz ma koniec w n1, to nic nie robie - zostanie ona pozniej usunieta
@@ -230,7 +232,7 @@ public class GraphGlueing {
         for( int i=0; i<nodes.size(); i++ ){
             for( int k=i+1; k<nodes.size(); k++ ){
                 if( canBeGluedTogether(nodes.get(i), nodes.get(k)) ){
-                    glueNodes( nodes.get(i), nodes.get(k) );
+                    glueNodes( nodes.get(i), nodes.get(k), glueingTime );
                     graph.removeMapNode(k);
                     k--;
                 }
@@ -244,21 +246,14 @@ public class GraphGlueing {
      */
     public MapGraph convertGraph() {
         if( graph == null ) return null;
-        // resGraph = graph;
         CNT = 0;
-       // System.out.println( "Przed sklejaniem graf ma " + graph.countNodes() + "  wierzcholkow i " + graph.countEdges() + " krawedzi" );
-        
-        //resGraph = new MapGraph(); // to jest potrzebne gdy uzywamy funkcji gluegraphold
-        //glueGraphOld();   
-        
         glueingParameter = MCSettings.getFIRST_GLUEING_DISTANCE_PARAMETER();
         glueGraph();
         glueingTime++;
-        glueingParameter = MCSettings.getSECOND_GLUEING_DISTANCE_PARAMTER();
+        glueingParameter = MCSettings.getSECOND_GLUEING_DISTANCE_PARAMETER();
         glueGraph();
         trimNodeStructureNames();
         //transformPolishLetters();
-        //System.out.println( "Po sklejaniu graf ma " + graph.countNodes() + "  wierzcholkow i " + graph.countEdges() + " krawedzi" );
         
         return graph;
     }

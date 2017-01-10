@@ -18,7 +18,7 @@ import mcmapdrawing.RouteEndGroup;
  * {@link SelectedItems} objects store data of (almost) all non-settings editable elements. (e.g. graph nodes, edges, route ends, selected options in GUI).
  * @author swacisko
  */
-public class SelectedItems {
+public class SelectedItems{
 
     public SelectedItems() {
 
@@ -91,6 +91,17 @@ public class SelectedItems {
         return !isEdgeSelection();
     }
     
+    /**
+     * 
+     * @return returns true if {@link #glueNodeEnabled} is set, false otherwise.
+     */
+     public boolean isGlueNodeEnabled() {
+        return glueNodeEnabled;
+    }
+
+    public void setGlueNodeEnabled(boolean glueNodeEnabled) {
+        this.glueNodeEnabled = glueNodeEnabled;
+    }
 
     public Map<Integer, RouteEndGroup> getRouteEnds() {
         return routeEnds;
@@ -158,6 +169,12 @@ public class SelectedItems {
      */
     private boolean movableNode = false;
     private boolean edgeSelection = false;
+    /**
+     * If the value of this variable is set, then user may select node, to which earlier selected node will be glued.
+     */
+    private boolean glueNodeEnabled = false;
+
+   
     
     private int layoutMouseAlignementMode = 0; 
     private Point alignmentBeg = null;

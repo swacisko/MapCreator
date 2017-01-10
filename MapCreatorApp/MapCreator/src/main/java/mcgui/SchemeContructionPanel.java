@@ -32,6 +32,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
+import mcalgorithms.GraphGlueing;
 import mcgraphs.MapEdge;
 import mcgraphs.MapGraph;
 import mcgraphs.MapNode;
@@ -540,7 +541,12 @@ public class SchemeContructionPanel extends JPanel implements DrawingModuleInter
                         MapEdge e = selectedItems.getGraph().getMapEdgeWithNeighbours(n.getID(), n2.getID());
                         selectedItems.setSelectedEdge(e);
                     }
-                } else {
+                } else if( selectedItems.isGlueNodeEnabled() ){
+                    if( selectedItems.getSelectedNode1() != null && selectedItems.getSelectedNode1() != n ){
+                        GraphGlueing.glueNodes(n, selectedItems.getSelectedNode1(), 2);
+                    }
+                    selectedItems.setGlueNodeEnabled(false);
+                }else {
                     selectedItems.setSelectedNode1(n);
                 }
 

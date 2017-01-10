@@ -33,7 +33,7 @@ import mctemplates.MCSettings;
 import mctemplates.UsefulFunctions;
 
 /**
- *
+ * This panel contains tools needed by user to manage data concerned with any stop on the scheme (vertex in the graph).
  * @author swacisko
  */
 public class SelectedNodePanel extends JPanel implements ActionListener, ChangeListener {
@@ -333,8 +333,9 @@ public class SelectedNodePanel extends JPanel implements ActionListener, ChangeL
             }                         
            
         }else if( source == glueNodeButton ){
-            
-            
+            JOptionPane.showMessageDialog(this, "Please click now on the stop you want to glue your selected node with", "Select node",
+                        JOptionPane.INFORMATION_MESSAGE);      
+            selectedItems.setGlueNodeEnabled(true);
         }else if( source == textVisibleBox ){            
             n.setTextVisible(textVisibleBox.isSelected());            
         }else if( source == textBoldBox ){

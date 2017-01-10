@@ -404,7 +404,7 @@ public class MCSettings {
         MCSettings.FIRST_GLUEING_DISTANCE_PARAMETER = FIRST_GLUEING_DISTANCE_PARAMETER;
     }
 
-    public static float getSECOND_GLUEING_DISTANCE_PARAMTER() {
+    public static float getSECOND_GLUEING_DISTANCE_PARAMETER() {
         return SECOND_GLUEING_DISTANCE_PARAMTER;
     }
 

@@ -23,44 +23,70 @@ public class SettingsPanel extends JPanel{
          
          setLayout( new GridLayout(5,1) );
          
-         colorSettingButton = new JButton( "Color settings" );
+         add( new JPanel() );
+         addColorSettingsButton();
+         addDisplaySettingsButton();
+         addMainRouteSettingsButton();  
+         addAlgorithmParametersButton();
+    }
+    
+    private void addAlgorithmParametersButton(){
+        /*algorithmParametersButton = new JButton("Algorithm parameters");
+        algorithmParametersButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showMyDialog( new APPanel(), "Algorithm parameters" );
+            }
+        }); 
+        add( algorithmParametersButton );   */
+        addSettingsPanelButton(algorithmParametersButton, "Algorithm parameters", new APPanel() );
+    }
+    
+    private void addMainRouteSettingsButton(){
+        /*mainRoutesSettingsButton = new JButton( "Main routes settings" );
+        mainRoutesSettingsButton.addActionListener(new ActionListener() {
+             @Override
+             public void actionPerformed(ActionEvent e) {
+                 showMyDialog( new MRSPanel(), "Main routes settings" );
+             }
+         }); 
+         add( mainRoutesSettingsButton );*/
+         addSettingsPanelButton(mainRoutesSettingsButton, "Main routes settings", new MRSPanel() );
+    }
+    
+    private void addDisplaySettingsButton(){
+        /*displaySettingsButton = new JButton( "Display settings" );
+        displaySettingsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showMyDialog( new DSPanel(), "Display Settings" );
+            }
+        }); 
+        add( displaySettingsButton );*/
+        addSettingsPanelButton(displaySettingsButton, "Display settings", new DSPanel() );
+    }
+    
+    private void addColorSettingsButton(){
+        /*colorSettingButton = new JButton( "Color settings" );
          colorSettingButton.addActionListener(new ActionListener() {
              @Override
              public void actionPerformed(ActionEvent e) {
                  showMyDialog( new CSPanel(), "Color settings" );
              }
-         });        
-         
-         displaySettingsButton = new JButton( "Display settings" );
-         displaySettingsButton.addActionListener(new ActionListener() {
+         }); 
+         add( colorSettingButton );*/
+        addSettingsPanelButton(colorSettingButton, "Color settings", new CSPanel() );
+    }
+    
+    private void addSettingsPanelButton( JButton button, final String name, final JPanel panel ){
+        button = new JButton( name );
+        button.addActionListener(new ActionListener() {
              @Override
              public void actionPerformed(ActionEvent e) {
-                 showMyDialog( new DSPanel(), "Display Settings" );
+                 showMyDialog( panel, name );
              }
-         });        
-         
-         mainRoutesSettingsButton = new JButton( "Main routes settings" );
-         mainRoutesSettingsButton.addActionListener(new ActionListener() {
-             @Override
-             public void actionPerformed(ActionEvent e) {
-                 showMyDialog( new MRSPanel(), "Main routes settings" );
-             }
-         });        
-         
-         algorithmParametersButton = new JButton("Algorithm parameters");
-         algorithmParametersButton.addActionListener(new ActionListener() {
-             @Override
-             public void actionPerformed(ActionEvent e) {
-                 showMyDialog( new APSPanel(), "Algorithm parameters" );
-             }
-         });        
-         
-         
-         add( new JPanel() );
-         add( colorSettingButton );
-         add( displaySettingsButton );
-         add( mainRoutesSettingsButton );
-         add( algorithmParametersButton );          
+         });
+         add( button );
     }
     
     private void showMyDialog( JPanel panel, String title ){       
